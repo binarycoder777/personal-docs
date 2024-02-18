@@ -31,7 +31,6 @@
         <h1>近期动态</h1>
         <a href="/markdown-examples">阅览更多...</a>
         <div class="features-cards">
-           
             <div class="feature-card">
                 <div class="card-icon">
                     <!-- 假设您使用的是图像文件 -->
@@ -63,7 +62,7 @@ export default {
     mounted() {
         console.log(111);
 
-    console.log(this);
+    console.log(this.latestArticles);
 
     console.log(222);
 

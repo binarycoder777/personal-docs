@@ -1,53 +1,74 @@
 {
-  "hash": "f05ebd24",
-  "configHash": "7654c64e",
+  "hash": "53bc92d2",
+  "configHash": "f6403203",
   "lockfileHash": "7e42e58f",
-  "browserHash": "f4cfa9c3",
+  "browserHash": "e3d1c569",
   "optimized": {
     "vue": {
       "src": "../../../node_modules/vue/dist/vue.runtime.esm-bundler.js",
       "file": "vue.js",
-      "fileHash": "5d87e11f",
+      "fileHash": "163034e9",
       "needsInterop": false
     },
     "vitepress > @vue/devtools-api": {
       "src": "../../../node_modules/@vue/devtools-api/dist/index.js",
       "file": "vitepress___@vue_devtools-api.js",
-      "fileHash": "2725be02",
+      "fileHash": "3a51dc20",
       "needsInterop": false
     },
     "vitepress > @vueuse/core": {
       "src": "../../../node_modules/@vueuse/core/index.mjs",
       "file": "vitepress___@vueuse_core.js",
-      "fileHash": "52f4e8f6",
+      "fileHash": "631cb17d",
+      "needsInterop": false
+    },
+    "vitepress > @vueuse/integrations/useFocusTrap": {
+      "src": "../../../node_modules/@vueuse/integrations/useFocusTrap.mjs",
+      "file": "vitepress___@vueuse_integrations_useFocusTrap.js",
+      "fileHash": "3090d4ec",
+      "needsInterop": false
+    },
+    "vitepress > mark.js/src/vanilla.js": {
+      "src": "../../../node_modules/mark.js/src/vanilla.js",
+      "file": "vitepress___mark__js_src_vanilla__js.js",
+      "fileHash": "b264c665",
+      "needsInterop": false
+    },
+    "vitepress > minisearch": {
+      "src": "../../../node_modules/minisearch/dist/es/index.js",
+      "file": "vitepress___minisearch.js",
+      "fileHash": "79baa1f0",
       "needsInterop": false
     },
     "@fortawesome/vue-fontawesome": {
       "src": "../../../node_modules/@fortawesome/vue-fontawesome/index.es.js",
       "file": "@fortawesome_vue-fontawesome.js",
-      "fileHash": "302d8af4",
+      "fileHash": "b669493e",
       "needsInterop": false
     },
     "@fortawesome/fontawesome-svg-core": {
       "src": "../../../node_modules/@fortawesome/fontawesome-svg-core/index.mjs",
       "file": "@fortawesome_fontawesome-svg-core.js",
-      "fileHash": "771daf95",
+      "fileHash": "2643ad4d",
       "needsInterop": false
     },
     "@fortawesome/free-solid-svg-icons": {
       "src": "../../../node_modules/@fortawesome/free-solid-svg-icons/index.mjs",
       "file": "@fortawesome_free-solid-svg-icons.js",
-      "fileHash": "4e6fe48b",
+      "fileHash": "d2660b79",
       "needsInterop": false
     },
     "@fortawesome/free-brands-svg-icons": {
       "src": "../../../node_modules/@fortawesome/free-brands-svg-icons/index.mjs",
       "file": "@fortawesome_free-brands-svg-icons.js",
-      "fileHash": "aaf311fd",
+      "fileHash": "fc8fb31c",
       "needsInterop": false
     }
   },
   "chunks": {
+    "chunk-DN3Q4TEW": {
+      "file": "chunk-DN3Q4TEW.js"
+    },
     "chunk-456JUNPJ": {
       "file": "chunk-456JUNPJ.js"
     },
