@@ -1,2 +1,2 @@
-/.vitepress/cache
-/node_modules
+.vitepress/cache/
+node_modules/
