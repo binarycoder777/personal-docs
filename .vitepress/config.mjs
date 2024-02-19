@@ -4,7 +4,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   // 部署配置
   ignoreDeadLinks: true,
-  // base: '/personal-docs/',
+  base: '/',
   // 站点配置
   title: "My Awesome Project",
   description: "A VitePress Site",
