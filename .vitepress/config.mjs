@@ -2,8 +2,10 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+  // 部署配置
   ignoreDeadLinks: true,
-
+  base: '/personal-docs/',
+  // 站点配置
   title: "My Awesome Project",
   description: "A VitePress Site",
   themeConfig: {
