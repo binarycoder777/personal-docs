@@ -45,8 +45,7 @@ export default defineConfig({
             }
           ]
         }
-      ]
-    },
+      ],
     '/docs/book/': [
       {
         text: 'ElasticSearch系列',
@@ -83,11 +82,12 @@ export default defineConfig({
           { text: 'Runtime API Examples', link: '/api-examples' }
         ]
       },
+      
     ]
   },
-
   socialLinks: [
     { icon: 'github', link: 'https://github.com/vuejs/vitepress' }
   ]
+      },
 })
 
