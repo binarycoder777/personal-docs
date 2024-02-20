@@ -58,7 +58,7 @@ export default defineConfig({
             items: [
               {
                 text: 'Apache Lucene简介',
-                link: ''
+                link: '/docs/book/ElasticSearch系列/深入理解ElasticSearch/Apache Lucene简介.md'
               }
             ]
           },
