@@ -89,7 +89,7 @@ Elasticsearch的架构遵循了一些设计理念：
 
 当Elasticsearch节点启动时，它使用发现（discovery）模块来发现同一个集群中的其他节点（这里的关键是配置文件中的集群名称）并与它们连接。默认情况下，Elasticsearch节点会向网络中发送广播请求，以找到拥有相同集群名称的其他节点。集群中有一个节点被选为主（master）节点。该节点负责集群的状态管理以及在集群拓扑变化时做出反应，分发索引分片至集群的相应节点上去。
 
-![](https://gitee.com/cqut_atao/personal-pic/raw/master/pic/Xnip2024-02-21_09-29-39.jpg)
+![](https://github.com/binarycoder777/personal-pic/blob/main/pic/Xnip2024-02-21_09-29-39.jpg?raw=true)
 
 管理节点读取集群的状态信息，如果有必要，它会进行恢复（recovery）处理。在该阶段，管理节点会检查有哪些索引分片，并决定哪些分片将用作主分片。此后，整个集群进入黄色状态。这意味着集群可以执行查询，但是系统的吞吐量以及各种可能的状况是未知的（这种状况可以简单理解为所有的主分片已经被分配了，但是副本没有被分配）。下面的事情就是寻找到冗余的分片用作副本。如果某个主分片的副本数过少，管理节点将决定基于某个主分片创建分片和副本。如果一切顺利，集群将进入绿色状态（这意味着所有主分片以及副本均已分配好）。
 
@@ -107,7 +107,7 @@ Elasticsearch的架构遵循了一些设计理念：
 
 建索引操作只会发生在主分片上，而不是副本上。当一个索引请求被发送至一个节点上时，如果该节点没有对应的主分片或者只有副本，那么这个请求会被转发到拥有正确的主分片的节点。然后，该节点将会把索引请求群发给所有副本，等待它们的响应（这一点可以由用户控制），最后，当特定条件具备时（比如说达到规定数目的副本都完成了更新时）结束索引过程。
 
-![](https://gitee.com/cqut_atao/personal-pic/raw/master/pic/Xnip2024-02-21_10-12-59.jpg)
+![](https://github.com/binarycoder777/personal-pic/blob/main/pic/Xnip2024-02-21_10-12-59.jpg?raw=true)
 
 ***查询数据***
 
@@ -122,7 +122,7 @@ Elasticsearch的架构遵循了一些设计理念：
 
 查询并不是一个简单的、单步骤的操作。一般来说，查询分为两个阶段：分散阶段（scatter phase）和合并阶段（gather phase）。在分散阶段将查询分发到包含相关文档的多个分片中去执行查询，而在合并阶段则从众多分片中收集返回结果，然后对它们进行合并、排序，进行后续处理，然后返回给客户端。
 
-![](https://gitee.com/cqut_atao/personal-pic/raw/master/pic/Xnip2024-02-21_10-15-35.jpg)
+![](https://github.com/binarycoder777/personal-pic/blob/main/pic/Xnip2024-02-21_10-15-35.jpg?raw=true)
 
 ## 最后
 
