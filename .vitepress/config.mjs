@@ -21,6 +21,9 @@ export default defineConfig({
       { text: '项目开发', link: '/docs/project/' },
       { text: '其他', link: '/markdown-examples' }
     ],
+    socialLinks: [
+      { icon: 'github', link: 'https://github.com/binarycoder777' },
+    ],
 
     footer: {
       message: 'Released under the MIT License.',
