@@ -2,7 +2,7 @@
 import { h } from 'vue'
 import DefaultTheme from 'vitepress/theme'
 import PersonalInfo from './components/PersonalInfo.vue'
-import CurrentDo from './components/CurrentDo.vue'
+
 
 
 import './style.css'
@@ -19,8 +19,7 @@ export default {
   Layout: () => {
     return h(DefaultTheme.Layout, null, {
       // https://vitepress.dev/guide/extending-default-theme#layout-slots
-      'home-hero-after': () => h(PersonalInfo),
-      'home-features-before': () => h(CurrentDo)
+      'home-features-after': () => h(PersonalInfo)
     })
   },
   enhanceApp({ app, router, siteData }) {

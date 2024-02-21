@@ -19,7 +19,18 @@ export default defineConfig({
       { text: '日常随笔', link: '/docs/article/' },
       { text: '个人书库', link: '/docs/book/' },
       { text: '项目开发', link: '/docs/project/' },
-      { text: '其他', link: '/markdown-examples' }
+      {
+        text: '其他', items: [
+          {
+            text: "ChatGPT",
+            link: "https://chat.openai.com/"
+          },
+          {
+            text: "MyLobeChat",
+            link: "https://lobe-chat-xi-dusky.vercel.app"
+          }
+        ]
+      }
     ],
     socialLinks: [
       { icon: 'github', link: 'https://github.com/binarycoder777' },
@@ -55,49 +66,49 @@ export default defineConfig({
           ]
         }
       ],
-    '/docs/book/': [
-      {
-        text: 'ElasticSearch系列',
-        collapsed: true,
-        items: [
-          {
-            text: '深入理解ElasticSearch',
-            collapsed: true,
-            items: [
-              {
-                text: 'Apache Lucene简介',
-                link: '/docs/book/ElasticSearch系列/深入理解ElasticSearch/Apache Lucene简介.md'
-              },
-              {
-                text: '关于Elasticsearch',
-                link: '/docs/book/ElasticSearch系列/深入理解ElasticSearch/关于Elasticsearch.md'
-              }
-            ]
-          },
-          {
-            text: 'ElasticSearch源码解析与优化实战',
-            collapsed: true,
-            items: [
-              {
-                text: '走进ElasticSearch',
-                link: ''
-              }
-            ]
-          }
-        ]
-      },
-    ],
-    '/docs/project/': [
-      {
-        text: '基于Astro的个人站点搭建',
-        items: [
-          { text: 'Markdown Examples', link: '/markdown-examples' },
-          { text: 'Runtime API Examples', link: '/api-examples' }
-        ]
-      },
-      
-    ]
-  }
+      '/docs/book/': [
+        {
+          text: 'ElasticSearch系列',
+          collapsed: true,
+          items: [
+            {
+              text: '深入理解ElasticSearch',
+              collapsed: true,
+              items: [
+                {
+                  text: '关于Elasticsearch',
+                  link: '/docs/book/ElasticSearch系列/深入理解ElasticSearch/关于Elasticsearch.md'
+                },
+                {
+                  text: 'Apache Lucene简介',
+                  link: '/docs/book/ElasticSearch系列/深入理解ElasticSearch/Apache Lucene简介.md'
+                },
+              ]
+            },
+            {
+              text: 'ElasticSearch源码解析与优化实战',
+              collapsed: true,
+              items: [
+                {
+                  text: '走进ElasticSearch',
+                  link: ''
+                }
+              ]
+            }
+          ]
+        },
+      ],
+      '/docs/project/': [
+        {
+          text: '个人站点搭建',
+          items: [
+            { text: '基于PicGo搭建一个图床', link: '/docs/project/个人站点搭建/基于PicGo搭建一个图床.md' },
+            { text: '基于Vitepress搭建个人文档站点', link: '/docs/project/个人站点搭建/基于Vitepress搭建个人文档站点.md' }
+          ]
+        },
+
+      ]
+    }
   },
 })
 
