@@ -29,7 +29,13 @@ export default defineConfig({
       message: 'Released under the MIT License.',
       copyright: 'Copyright © 2019-present BinaryCoder777'
     },
-
+    // 开启最后更新于
+    lastUpdated: true,
+    image: {
+      // 默认禁用图片懒加载
+      lazyLoading: true
+    },
+    // 侧边栏
     sidebar: {
       '/docs/article/': [
         {
