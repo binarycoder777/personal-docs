@@ -6,8 +6,8 @@ export default defineConfig({
   ignoreDeadLinks: true,
   base: '/',
   // 站点配置
-  title: "My Awesome Project",
-  description: "A VitePress Site",
+  title: "BinaryCoder777",
+  description: "个人站点，分享",
   themeConfig: {
     logo: "https://binarycoder777-site.oss-cn-chengdu.aliyuncs.com/21707272915_.pic.jpg",
     siteTitle: 'BinaryCoder777',
