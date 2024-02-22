@@ -16,6 +16,7 @@ export default defineConfig({
     },
     nav: [
       { text: '主页', link: '/' },
+      { text: '编程导航', link: '/docs/program' },
       { text: '日常随笔', link: '/docs/article/' },
       { text: '个人书库', link: '/docs/book/' },
       { text: '项目开发', link: '/docs/project/' },

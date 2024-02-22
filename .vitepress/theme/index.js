@@ -2,6 +2,7 @@
 import { h } from 'vue'
 import DefaultTheme from 'vitepress/theme'
 import PersonalInfo from './components/PersonalInfo.vue'
+import MNavLinks from './components/MNavLinks.vue'
 
 
 
@@ -25,6 +26,6 @@ export default {
   enhanceApp({ app, router, siteData }) {
     // ...
     app.component('font-awesome-icon', FontAwesomeIcon);
-
+    app.component('MNavLinks', MNavLinks)
   }
 }
