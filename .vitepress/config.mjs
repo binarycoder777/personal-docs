@@ -96,8 +96,24 @@ export default defineConfig({
                 }
               ]
             }
-          ]
+          ],
         },
+        {
+          text: 'Go语言系列',
+          collapsed: true,
+          items: [
+            {
+              text: 'Go语言圣经',
+              collapsed: true,
+              items: [
+                {
+                  text: '程序结构',
+                  link: '/docs/book/Go语言系列/Go语言圣经/程序结构.md'
+                }
+              ]
+            },
+          ],
+        }
       ],
       '/docs/project/': [
         {
