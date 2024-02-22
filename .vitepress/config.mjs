@@ -7,7 +7,7 @@ export default defineConfig({
   base: '/',
   // 站点配置
   title: "BinaryCoder777",
-  description: "个人站点，分享",
+  description: "个人站点",
   themeConfig: {
     logo: "https://binarycoder777-site.oss-cn-chengdu.aliyuncs.com/21707272915_.pic.jpg",
     siteTitle: 'BinaryCoder777',
@@ -109,6 +109,9 @@ export default defineConfig({
                 {
                   text: '程序结构',
                   link: '/docs/book/Go语言系列/Go语言圣经/程序结构.md'
+                },{
+                  text: '数据类型',
+                  link: '/docs/book/Go语言系列/Go语言圣经/数据类型.md'
                 }
               ]
             },
@@ -118,6 +121,7 @@ export default defineConfig({
       '/docs/project/': [
         {
           text: '个人站点搭建',
+          collapsed: true,
           items: [
             { text: '基于PicGo搭建一个图床', link: '/docs/project/个人站点搭建/基于PicGo搭建一个图床.md' },
             { text: '基于Vitepress搭建个人文档站点', link: '/docs/project/个人站点搭建/基于Vitepress搭建个人文档站点.md' }
