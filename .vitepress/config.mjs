@@ -112,6 +112,9 @@ export default defineConfig({
                 },{
                   text: '数据类型',
                   link: '/docs/book/Go语言系列/Go语言圣经/数据类型.md'
+                },{
+                  text: '方法',
+                  link: '/docs/book/Go语言系列/Go语言圣经/方法.md'
                 }
               ]
             },
