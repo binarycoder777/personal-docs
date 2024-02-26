@@ -17,8 +17,8 @@ export default defineConfig({
     nav: [
       { text: '主页', link: '/' },
       { text: '编程导航', link: '/docs/program' },
-      { text: '日常随笔', link: '/docs/article/' },
-      { text: '个人书库', link: '/docs/book/' },
+      { text: '随思随笔', link: '/docs/article/' },
+      { text: '技术秘籍', link: '/docs/book/' },
       { text: '项目开发', link: '/docs/project/' },
       {
         text: '其他', items: [
@@ -121,6 +121,9 @@ export default defineConfig({
                 },{
                   text: '接口',
                   link: '/docs/book/Go语言系列/Go语言圣经/接口.md'
+                },{
+                  text: 'Goroutines和Channels',
+                  link: '/docs/book/Go语言系列/Go语言圣经/Goroutines和Channels.md'
                 }
               ]
             },

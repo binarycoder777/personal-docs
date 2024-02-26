@@ -18,6 +18,17 @@ export const NAV_DATA: NavData[] = [
     ],
   },
   {
+    title:'开拓视野',
+    items: [
+      {
+        icon: '',
+        title: '科技爱好者周刊',
+        desc: '记录每周值得分享的科技内容，周五发布',
+        link: 'https://github.com/ruanyf/weekly?tab=readme-ov-file',
+      }
+    ]
+  },
+  {
     title: '常用工具',
     items: [
       {
