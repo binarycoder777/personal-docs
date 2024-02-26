@@ -7,6 +7,17 @@ type NavData = {
 
 export const NAV_DATA: NavData[] = [
   {
+    title: '常用站点',
+    items: [
+      {
+        icon: 'https://raw.githubusercontent.com/binarycoder777/personal-pic/main/pic/Xnip2024-02-26_10-10-49.jpg',
+        title: 'zlibrary',
+        desc: '全球最大数字图书馆',
+        link: 'https://zlibrary-china.se/',
+      }
+    ],
+  },
+  {
     title: '常用工具',
     items: [
       {

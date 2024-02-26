@@ -113,8 +113,14 @@ export default defineConfig({
                   text: '数据类型',
                   link: '/docs/book/Go语言系列/Go语言圣经/数据类型.md'
                 },{
+                  text: '函数',
+                  link: '/docs/book/Go语言系列/Go语言圣经/函数.md'
+                },{
                   text: '方法',
                   link: '/docs/book/Go语言系列/Go语言圣经/方法.md'
+                },{
+                  text: '接口',
+                  link: '/docs/book/Go语言系列/Go语言圣经/接口.md'
                 }
               ]
             },
