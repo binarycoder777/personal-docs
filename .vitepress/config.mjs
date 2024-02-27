@@ -124,6 +124,12 @@ export default defineConfig({
                 },{
                   text: 'Goroutines和Channels',
                   link: '/docs/book/Go语言系列/Go语言圣经/Goroutines和Channels.md'
+                },{
+                  text: '基于共享变量的并发',
+                  link: '/docs/book/Go语言系列/Go语言圣经/基于共享变量的并发.md'
+                },{
+                  text: '包和工具',
+                  link: '/docs/book/Go语言系列/Go语言圣经/包和工具.md'
                 }
               ]
             },

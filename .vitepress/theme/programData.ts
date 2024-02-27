@@ -7,7 +7,7 @@ type NavData = {
 
 export const NAV_DATA: NavData[] = [
   {
-    title: '常用站点',
+    title: '图书站点',
     items: [
       {
         icon: 'https://raw.githubusercontent.com/binarycoder777/personal-pic/main/pic/Xnip2024-02-26_10-10-49.jpg',
@@ -18,6 +18,17 @@ export const NAV_DATA: NavData[] = [
     ],
   },
   {
+    title: '社区论坛',
+    items: [
+      {
+        icon: '',
+        title: '黑客新闻',
+        desc: 'Hacker News 是美国最大的程序员社区',
+        link: 'https://news.ycombinator.com/',
+      },
+    ]
+  },
+  {
     title:'开拓视野',
     items: [
       {
@@ -26,12 +37,17 @@ export const NAV_DATA: NavData[] = [
         desc: '记录每周值得分享的科技内容，周五发布',
         link: 'https://github.com/ruanyf/weekly?tab=readme-ov-file',
       },
+    ]
+  },
+  {
+    title: '独立开发者',
+    items: [
       {
         icon: '',
-        title: '黑客新闻',
-        desc: 'Hacker News 是美国最大的程序员社区',
-        link: 'https://news.ycombinator.com/',
-      },
+        title: 'Solo 独立开发者社区',
+        desc: '针对独立开发者的交流、合作、分享的平台',
+        link: 'https://solo.xin/'
+      }
     ]
   },
   {
