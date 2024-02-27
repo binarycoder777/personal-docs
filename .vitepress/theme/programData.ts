@@ -25,7 +25,13 @@ export const NAV_DATA: NavData[] = [
         title: '科技爱好者周刊',
         desc: '记录每周值得分享的科技内容，周五发布',
         link: 'https://github.com/ruanyf/weekly?tab=readme-ov-file',
-      }
+      },
+      {
+        icon: '',
+        title: '黑客新闻',
+        desc: 'Hacker News 是美国最大的程序员社区',
+        link: 'https://news.ycombinator.com/',
+      },
     ]
   },
   {
