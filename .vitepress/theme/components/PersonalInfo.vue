@@ -222,7 +222,7 @@ export default {
     width: 300px;
     /* 根据实际需求调整 */
     padding: 1rem;
-    background: #ffffff;
+    /* background: #ffffff; */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     margin: 0 1rem;
@@ -239,12 +239,12 @@ export default {
 
 .card-title {
     font-size: 1.2rem;
-    color: #333;
+    /* color: #333; */
     margin-bottom: 0.5rem;
 }
 
 .card-detail {
-    color: #666;
+    /* color: #666; */
     font-size: 0.9rem;
 }
 /* Add more styles as necessary */</style>

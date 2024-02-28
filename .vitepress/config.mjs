@@ -2,6 +2,10 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+  head: [
+    // 添加 favicon.ico
+    ['link', { rel: 'icon', href: '.vitepress/public/favicon.ico', type: 'image/x-icon' }],
+  ],
   // 部署配置
   ignoreDeadLinks: true,
   base: '/',
@@ -9,7 +13,7 @@ export default defineConfig({
   title: "BinaryCoder777",
   description: "个人站点",
   themeConfig: {
-    logo: "https://binarycoder777-site.oss-cn-chengdu.aliyuncs.com/21707272915_.pic.jpg",
+    // logo: "https://binarycoder777-site.oss-cn-chengdu.aliyuncs.com/21707272915_.pic.jpg",
     siteTitle: 'BinaryCoder777',
     search: {
       provider: 'local'

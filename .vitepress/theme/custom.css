@@ -1,0 +1,13 @@
+/* .vitepress/theme/custom.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
+
+
+.title {
+    font-family: 'Dancing Script', cursive !important; /* 使用你从 Google Fonts 选择的字体 */
+    font-size: 25px !important;
+}
+  
+.VPImage{
+    border-radius: 50%; 
+}
