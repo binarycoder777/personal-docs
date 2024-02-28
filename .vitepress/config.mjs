@@ -130,6 +130,15 @@ export default defineConfig({
                 },{
                   text: '包和工具',
                   link: '/docs/book/Go语言系列/Go语言圣经/包和工具.md'
+                },{
+                  text: '测试',
+                  link: '/docs/book/Go语言系列/Go语言圣经/测试.md'
+                },{
+                  text: '反射',
+                  link: '/docs/book/Go语言系列/Go语言圣经/反射.md'
+                },{
+                  text: '底层编程',
+                  link: '/docs/book/Go语言系列/Go语言圣经/底层编程.md'
                 }
               ]
             },
