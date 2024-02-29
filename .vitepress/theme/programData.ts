@@ -29,6 +29,17 @@ export const NAV_DATA: NavData[] = [
     ]
   },
   {
+    title: 'Go语言资源',
+    items: [
+      {
+        icon: 'https://besticon-demo.herokuapp.com/icon?url=https://go.dev/&size=80..120..200',
+        title: 'Go语言官网',
+        desc: '学习、了解Go语言途径',
+        link: 'https://go.dev/',
+      },
+    ]
+  },
+  {
     title:'开拓视野',
     items: [
       {

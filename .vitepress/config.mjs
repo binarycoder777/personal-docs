@@ -1,3 +1,4 @@
+import { text } from 'stream/consumers'
 import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
@@ -13,7 +14,6 @@ export default defineConfig({
   title: "BinaryCoder777",
   description: "个人站点",
   themeConfig: {
-    // logo: "https://binarycoder777-site.oss-cn-chengdu.aliyuncs.com/21707272915_.pic.jpg",
     siteTitle: 'BinaryCoder777',
     // 搜索栏
     search: {
@@ -115,6 +115,10 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
+              text: '前言',
+              link: '/docs/book/Go语言系列/index.md'
+            },
+            {
               text: 'Go语言圣经',
               collapsed: true,
               items: [
@@ -154,6 +158,24 @@ export default defineConfig({
                 }
               ]
             },
+            {
+              text: 'Go程序设计语言',
+              collapsed: true,
+              items:[
+                {
+                  
+                }
+              ]
+            },            
+            {
+              text: 'Go语言实战',
+              collapsed: true,
+              items:[
+                {
+                  
+                }
+              ]
+            }
           ],
         }
       ],
