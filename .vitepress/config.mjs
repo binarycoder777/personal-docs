@@ -4,7 +4,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   head: [
     // 添加 favicon.ico
-    ['link', { rel: 'icon', href: '/favicon.ico', type: 'image/x-icon' }],
+    ['link', { rel: 'icon', href: '/public/favicon.ico', type: 'image/x-icon' }],
   ],
   // 部署配置
   ignoreDeadLinks: true,
@@ -15,9 +15,16 @@ export default defineConfig({
   themeConfig: {
     // logo: "https://binarycoder777-site.oss-cn-chengdu.aliyuncs.com/21707272915_.pic.jpg",
     siteTitle: 'BinaryCoder777',
+    // 搜索栏
     search: {
       provider: 'local'
     },
+     // 编辑链接
+     editLink: {
+      pattern: "https://github.com/vuejs/vitepress/edit/main/docs/:path", // 自己项目仓库地址
+      text: "在 github 上编辑此页",
+    },
+    // navbar栏
     nav: [
       { text: '主页', link: '/' },
       { text: '编程导航', link: '/docs/program' },
@@ -47,6 +54,7 @@ export default defineConfig({
     },
     // 开启最后更新于
     lastUpdated: true,
+    lastUpdatedText: "最后更新", // string
     image: {
       // 默认禁用图片懒加载
       lazyLoading: true
