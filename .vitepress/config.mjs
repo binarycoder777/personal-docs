@@ -71,8 +71,8 @@ export default defineConfig({
               collapsed: true,
               items: [
                 {
-                  text: 'Apache Lucene简介',
-                  link: ''
+                  text: '重新整理vim常用指令',
+                  link: '/docs/article/2024/2月/重新整理vim常用指令.md'
                 }
               ]
             }
