@@ -159,7 +159,16 @@ export default defineConfig({
               ]
             },
             {
-              text: 'Go程序设计语言',
+              text: 'Go语言实战',
+              collapsed: true,
+              items:[
+                {
+                  
+                }
+              ]
+            },
+            {
+              text: 'Go Web 编程',
               collapsed: true,
               items:[
                 {
@@ -168,7 +177,7 @@ export default defineConfig({
               ]
             },            
             {
-              text: 'Go语言实战',
+              text: 'Go语言高级编程',
               collapsed: true,
               items:[
                 {
