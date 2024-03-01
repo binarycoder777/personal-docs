@@ -26,6 +26,30 @@ export const NAV_DATA: NavData[] = [
         desc: 'Hacker News 是美国最大的程序员社区',
         link: 'https://news.ycombinator.com/',
       },
+      {
+        icon: 'https://besticon-demo.herokuapp.com/icon?url=https://www.producthunt.com/&size=80..120..200',
+        title: 'Product Hunt',
+        desc: '供用户分享和发现产品的平台',
+        link: 'https://solo.xin/'
+      },
+      {
+        icon: 'https://besticon-demo.herokuapp.com/icon?url=https://www.indiehackers.com/&size=80..120..200',
+        title: 'Indie hackers',
+        desc: '专门为独立开发者设立的论坛',
+        link: 'https://www.indiehackers.com/'
+      },
+      {
+        icon:'https://besticon-demo.herokuapp.com/icon?url=https://www.reddit.com/&size=80..120..200',
+        title: 'Reddit',
+        desc: 'Reddit是一个娱乐、社交及新闻网站',
+        link: 'https://www.reddit.com/'
+      },
+      {
+        icon:'https://besticon-demo.herokuapp.com/icon?url=https://stackoverflow.com&size=80..120..200',
+        title: 'StackOverFlow',
+        desc: '专为程序员提供的国际性问题解答交流社区',
+        link: 'https://stackoverflow.com'
+      }
     ]
   },
   {
@@ -54,17 +78,6 @@ export const NAV_DATA: NavData[] = [
         desc: '供想要学习如何运行开源项目并为开源项目做出贡献的个人、社区和公司使用',
         link: 'https://opensource.guide/',
       },
-    ]
-  },
-  {
-    title: '独立开发者',
-    items: [
-      {
-        icon: 'https://solo.xin/_nuxt/icons/icon_512x512.1f1136.png',
-        title: 'Solo 独立开发者社区',
-        desc: '针对独立开发者的交流、合作、分享的平台',
-        link: 'https://solo.xin/'
-      }
     ]
   },
   {
