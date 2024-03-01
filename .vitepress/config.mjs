@@ -163,7 +163,8 @@ export default defineConfig({
               collapsed: true,
               items:[
                 {
-                  
+                  text:'打包和工具链',
+                  link: '/docs/book/Go语言系列/Go语言实战/打包和工具链.md'
                 }
               ]
             },
