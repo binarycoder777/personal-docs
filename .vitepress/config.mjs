@@ -5,7 +5,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   head: [
     // 添加 favicon.ico
-    ['link', { rel: 'icon', href: '/public/favicon.ico', type: 'image/x-icon' }],
+    ['link', { rel: 'icon', href: '/favicon.ico', type: 'image/x-icon' }],
   ],
   // 部署配置
   ignoreDeadLinks: true,
