@@ -71,6 +71,10 @@ export default defineConfig({
               collapsed: true,
               items: [
                 {
+                  text:'关于ResolvableTypeProvider',
+                  link:'/docs/article/2024/2月/关于ResolvableTypeProvider.md'
+                },
+                {
                   text: '重新整理vim常用指令',
                   link: '/docs/article/2024/2月/重新整理vim常用指令.md'
                 }
