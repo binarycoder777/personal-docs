@@ -8,11 +8,10 @@
 
 ## 概述
 
-在开始ResolvableTypeProvider之前，还是希望回顾一下[Java的泛型机制](/docs\book\Java语言系列\Java核心技术卷Ⅰ\泛型程序设计.md)，因为ResolvableTypeProvider就是Spring中优雅解决泛型擦除问题的。
+在开始ResolvableTypeProvider之前，还是希望回顾一下【[Java的泛型机制](/docs\book\Java语言系列\Java核心技术卷Ⅰ\泛型程序设计.md)】，因为ResolvableTypeProvider就是Spring中优雅解决泛型擦除问题的。
 
 在目前主流的编程语言中，编译器主要有以下两种处理泛型的方法：
-1) Code specialization
-使用这种方法，每当实例化一个泛型类的时候都会产生一份新的字节代码，例如，对于泛型 ArrayList，当使用 ArrayList<String>、ArrayList<Integer>初始化两个实例的时候，就会针对 String 与 Integer 生成两份单独的代码。
+1.Code specialization：使用这种方法，每当实例化一个泛型类的时候都会产生一份新的字节代码，例如，对于泛型 ArrayList，当使用 ArrayList`<String>`、ArrayList`<Integer>`初始化两个实例的时候，就会针对 String 与 Integer 生成两份单独的代码。
 C++ 语言中的模板正是采用这种方式实现的，显然这种方法会导致代码膨胀（code bloat），从而浪费空间。
 
 2) Code sharing
@@ -28,7 +27,7 @@ Java 泛型擦除（类型擦除）是指在编译器处理带泛型定义的类
 
 原始类型是指抹去泛型信息后的类型，在 Java 语言中，它必须是一个引用类型（非基本数据类型），一般而言，它对应的是泛型的定义上界。
 
-> 示例：<T> 中的 T 对应的原始泛型是 Object，<T extends String> 对应的原始类型就是 String。
+> 示例：`<T>`中的 T 对应的原始泛型是 Object，`<T extends String>` 对应的原始类型就是 String。
 
 具体就不在这里过多叙述关于java泛型的内容了【想详细了解可以移步[Java的泛型机制](/docs\book\Java语言系列\Java核心技术卷Ⅰ\泛型程序设计.md)】，下面开始进入正题Spring是如何解决泛型擦除，没错，就是标题提到的ResolvableTypeProvider。
 
@@ -40,7 +39,7 @@ Java 泛型擦除（类型擦除）是指在编译器处理带泛型定义的类
 
 Spring也提供了如ContextRefreshedEvent	、ContextStartedEvent、ContextClosedEvent等的标准事件。用于开发人员介入容器的整个生命周期，去做灵活的配置更改等。我们也可以自己去实现自己的业务事件。
 
-``` Java
+``` java
 public class BlackListEvent extends ApplicationEvent {
 
     private final String address;
@@ -58,7 +57,7 @@ public class BlackListEvent extends ApplicationEvent {
 ```
 然后通过实现ApplicationEventPublisherAware接口并把它注册为一个Spring bean的时候它就完成事件发布
 
-``` Java
+``` java
 public class EmailService implements ApplicationEventPublisherAware {
 
     private List<String> blackList;
@@ -84,7 +83,7 @@ public class EmailService implements ApplicationEventPublisherAware {
 }
 ```
 对应的Listener则如下:
-``` Java
+``` java
 public class BlackListNotifier implements ApplicationListener<BlackListEvent> {
 
     private String notificationAddress;
@@ -108,7 +107,7 @@ public class BlackListNotifier implements ApplicationListener<BlackListEvent> {
 
 从Spring 4.2开始，一个事件监听器可以通过EventListener注解注册在任何managed bean的公共方法上。BlackListNotifier可以重写如下：
 
-``` Java
+``` java
 public class BlackListNotifier {
 
     private String notificationAddress;
@@ -128,7 +127,7 @@ public class BlackListNotifier {
 如上所示，方法签名实际上会推断出它监听的是哪一个类型的事件。这也适用于泛型嵌套，只要你在过滤的时候可以根据泛型参数解析出实际的事件。
 
 如果你的方法需要监听好几个事件或根本没有参数定义它，事件类型也可以用注解本身指明：
-``` Java
+``` java
 @EventListener({ContextStartedEvent.class, ContextRefreshedEvent.class})
 public void handleContextStart() {
 
@@ -140,7 +139,7 @@ public void handleContextStart() {
 
 例如，只要事件的测试属性等于foo，notifier可以被重写为只被调用：
 
-``` Java
+``` java
 @EventListener(condition = "#blEvent.test == 'foo'")
 public void processBlackListEvent(BlackListEvent blEvent) {
     // notify appropriate parties via notificationAddress...
@@ -165,7 +164,7 @@ public void processBlackListEvent(BlackListEvent event) {
 **顺序的监听器**
 
 如果你需要一个监听器在另一个监听器调用前被调用，只需要在方法声明上添加@Order注解：
-```Java
+```java
 @EventListener
 @Order(42)
 public void processBlackListEvent(BlackListEvent event) {
@@ -212,7 +211,7 @@ public class EntityCreatedEvent<T>
 
 ResolvableTypeProvider接口在Spring框架中的应用可以极大地增强对泛型信息的处理能力，尤其是在运行时需要解析泛型类型时。以下是几个使用ResolvableTypeProvider的经典例子，它们展示了如何在不同场景下利用这个接口来提高代码的灵活性和类型安全性。
 
-- 例子 1: Spring 事件监听
+**Spring 事件监听：**
 在Spring的事件发布/监听机制中，事件对象可以实现ResolvableTypeProvider来提供确切的泛型事件类型。这使得监听器能够更精确地区分和处理不同类型的事件。
 
 ``` java
@@ -240,12 +239,12 @@ public class CustomEvent<T> extends ApplicationEvent implements ResolvableTypePr
     }
 }
 ```
-这样，当你发布一个CustomEvent<String>或CustomEvent<MyCustomType>时，监听器可以通过泛型类型来区分不同的事件。
+这样，当你发布一个CustomEvent`<String>`或CustomEvent`<MyCustomType>`时，监听器可以通过泛型类型来区分不同的事件。
 
-- 例子 2: 泛型响应封装
+**泛型响应封装：**
 在构建REST API时，你可能会想要一个统一的响应结构来封装不同类型的数据。通过实现ResolvableTypeProvider，可以使得这个响应结构能够携带具体的泛型类型信息。
 
-``` java
+```java
 import org.springframework.core.ResolvableType;
 import org.springframework.core.ResolvableTypeProvider;
 
@@ -263,10 +262,10 @@ public class ApiResponse<T> implements ResolvableTypeProvider {
 }
 ```
 
-- 例子 3: 泛型容器类
+**泛型容器类：**
 在实现自定义的泛型容器类时，例如一个用于特定业务逻辑的泛型缓存或工厂，通过ResolvableTypeProvider可以在运行时准确地获取泛型类型信息，以便进行类型安全的操作。
 
-``` java
+```java
 import org.springframework.core.ResolvableType;
 import org.springframework.core.ResolvableTypeProvider;
 
