@@ -55,6 +55,10 @@ export default defineConfig({
     // 开启最后更新于
     lastUpdated: true,
     lastUpdatedText: "最后更新", // string
+    docFooter: {
+      prev: '上一页',
+      next: '下一页'
+    },
     image: {
       // 默认禁用图片懒加载
       lazyLoading: true
@@ -169,6 +173,14 @@ export default defineConfig({
                 {
                   text:'打包和工具链',
                   link: '/docs/book/Go语言系列/Go语言实战/打包和工具链.md'
+                },
+                {
+                  text: '数组、切片和映射',
+                  link: '/docs/book/Go语言系列/Go语言实战/数组、切片和映射.md'
+                },
+                {
+                  text:'类型系统',
+                  link: '/docs/book/Go语言系列/Go语言实战/类型系统.md'
                 }
               ]
             },
