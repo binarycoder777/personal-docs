@@ -182,6 +182,15 @@ export default defineConfig({
                   text:'类型系统',
                   link: '/docs/book/Go语言系列/Go语言实战/类型系统.md'
                 }
+                ,
+                {
+                  text: '并发',
+                  link: 'docs/book/Go语言系列/Go语言实战/并发.md'
+                },
+                {
+                  text: '并发实战',
+                  link: 'docs/book/Go语言系列/Go语言实战/并发实战.md'
+                }
               ]
             },
             {
