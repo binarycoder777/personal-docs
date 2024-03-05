@@ -21,19 +21,19 @@
       </p>
       <br />
       <div class="social-links">
-        <a href="https://github.com/yourusername" target="_blank">
+        <a href="https://github.com/binarycoder777" target="_blank" class="tooltip" data-title="GitHub">
           <font-awesome-icon :icon="['fab', 'github']" /> 
         </a>
-        <a href="mailto:your@email.com">
+        <a href="mailto:atao67276@gmail.com" class="tooltip" data-title="Email">
           <font-awesome-icon :icon="['fas', 'envelope']" /> 
         </a>
-        <a href="your-wechat-url">
+        <a href="https://raw.githubusercontent.com/binarycoder777/personal-pic/main/pic/vx.jpg" target="_blank" class="tooltip" data-title="微信">
           <font-awesome-icon :icon="['fab', 'weixin']" /> 
         </a>
       </div>
     </div>
     <div class="language-stats">
-      <h2>Most Used Languages</h2>
+      <!-- <h2>Most Used Languages</h2> -->
       <img src='https://github-readme-stats.vercel.app/api/top-langs/?username=BinaryCoder777&layout=donut&langs_count=10'
         alt="Most Used Languages" />
     </div>
@@ -102,6 +102,7 @@ export default {
 }
 </script>
 
+
 <style scoped>
 .container {
   display: flex;
@@ -155,6 +156,55 @@ export default {
 .social-links i {
   margin-right: 8px; /* 图标和文本之间的间隔 */
 }
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.tooltip::after,
+.tooltip::before {
+  content: "";
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.tooltip::after {
+  content: attr(data-title);
+  bottom: 120%; /* 调整这个值来改变工具提示与图标的距离 */
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  background-color: #555; /* 工具提示的背景色 */
+  color: #fff; /* 文字颜色 */
+  padding: 8px 12px; /* 内边距 */
+  border-radius: 6px; /* 圆角 */
+  font-size: 14px; /* 文字大小 */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* 阴影效果 */
+  z-index: 1000;
+}
+
+.tooltip::before {
+  content: "";
+  bottom: 110%; /* 箭头与图标的距离 */
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent; /* 箭头颜色 */
+}
+
+.tooltip:hover::after,
+.tooltip:hover::before {
+  visibility: visible;
+  opacity: 1;
+}
+
+
 
 .language-stats {
   flex: 1;
