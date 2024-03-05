@@ -190,6 +190,14 @@ export default defineConfig({
                 {
                   text: '并发实战',
                   link: 'docs/book/Go语言系列/Go语言实战/并发实战.md'
+                },
+                {
+                  text: '标准库',
+                  link: '/docs/book/Go语言系列/Go语言实战/标准库.md'
+                },
+                {
+                  text: '测试和性能',
+                  link:'/docs/book/Go语言系列/Go语言实战/测试和性能.md'
                 }
               ]
             },
