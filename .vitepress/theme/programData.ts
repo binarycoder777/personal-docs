@@ -64,6 +64,17 @@ export const NAV_DATA: NavData[] = [
     ]
   },
   {
+    title: '前端资源',
+    items: [
+      {
+        icon: 'https://besticon-demo.herokuapp.com/icon?url=https://zh.javascript.info/&size=80..120..200',
+        title: '现代 JavaScript 教程',
+        desc: '通过简单但足够详细的内容，为你讲解从基础到高阶的 JavaScript 相关知识。',
+        link: 'https://zh.javascript.info/'
+      }
+    ]
+  },
+  {
     title:'开拓视野',
     items: [
       {
