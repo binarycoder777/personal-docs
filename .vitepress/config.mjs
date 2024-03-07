@@ -83,6 +83,16 @@ export default defineConfig({
                   link: '/docs/article/2024/2月/重新整理vim常用指令.md'
                 }
               ]
+            },
+            {
+              text: '3月',
+              collapsed:true,
+              items: [
+                {
+                  text: 'JNI-在Java中调用C代码',
+                  link: '/docs/article/2024/3月/JNI-在Java中调用C代码.md'
+                }
+              ]
             }
           ]
         }
