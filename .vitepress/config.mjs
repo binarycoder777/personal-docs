@@ -121,8 +121,16 @@ export default defineConfig({
               collapsed: true,
               items: [
                 {
-                  text: '走进ElasticSearch',
-                  link: ''
+                  text: '集群启动流程',
+                  link: 'docs/book/ElasticSearch系列/ElasticSearch源码解析与优化实战/集群启动流程.md'
+                },
+                {
+                  text: '节点的启动和关闭',
+                  link: '/docs/book/ElasticSearch系列/ElasticSearch源码解析与优化实战/节点的启动和关闭.md'
+                },
+                {
+                  text: '选主流程',
+                  link: '/docs/book/ElasticSearch系列/ElasticSearch源码解析与优化实战/选主流程.md'
                 }
               ]
             }
