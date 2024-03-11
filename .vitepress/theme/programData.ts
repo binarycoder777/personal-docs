@@ -61,6 +61,12 @@ export const NAV_DATA: NavData[] = [
         desc: '学习、了解Go语言途径',
         link: 'https://go.dev/',
       },
+      {
+        icon:'',
+        title: 'Medium',
+        desc: '一个轻量级内容发行的平台，允许单一用户或多人协作，将自己创作的内容以主题的形式结集为专辑（Collection）',
+        link:'https://medium.com/tag/programming'
+      }
     ]
   },
   {
