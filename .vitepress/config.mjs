@@ -147,6 +147,10 @@ export default defineConfig({
                 {
                   text: 'Search流程',
                   link: '/docs/book/ElasticSearch系列/ElasticSearch源码解析与优化实战/Search流程.md'
+                },
+                {
+                  text: '索引恢复流程分析',
+                  link: '/docs/book/ElasticSearch系列/ElasticSearch源码解析与优化实战/索引恢复流程分析.md'
                 }
               ]
             }
