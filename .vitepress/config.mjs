@@ -131,6 +131,22 @@ export default defineConfig({
                 {
                   text: '选主流程',
                   link: '/docs/book/ElasticSearch系列/ElasticSearch源码解析与优化实战/选主流程.md'
+                },
+                {
+                  text: '数据模型',
+                  link: '/docs/book/ElasticSearch系列/ElasticSearch源码解析与优化实战/数据模型.md'
+                },
+                {
+                  text: '写流程',
+                  link: '/docs/book/ElasticSearch系列/ElasticSearch源码解析与优化实战/写流程.md'
+                },
+                {
+                  text: 'GET流程',
+                  link: '/docs/book/ElasticSearch系列/ElasticSearch源码解析与优化实战/GET流程.md'
+                },
+                {
+                  text: 'Search流程',
+                  link: '/docs/book/ElasticSearch系列/ElasticSearch源码解析与优化实战/Search流程.md'
                 }
               ]
             }
