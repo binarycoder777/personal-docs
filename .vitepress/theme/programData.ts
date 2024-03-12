@@ -53,6 +53,23 @@ export const NAV_DATA: NavData[] = [
     ]
   },
   {
+    title: 'Java资源',
+    items: [
+      {
+        icon: 'https://besticon-demo.herokuapp.com/icon?url=https://docs.oracle.com&size=80..120..200',
+        title: 'Java 官方文档',
+        desc: '了解Java的标准API、新特性等',
+        link: 'https://docs.oracle.com/javase/8/',
+      },
+      {
+        icon: 'https://besticon-demo.herokuapp.com/icon?url=https://tech.meituan.com/2019/09/05/java-bytecode-enhancement.html&size=80..120..200',
+        title: '美团技术团队',
+        desc: '美团发布总结的一些技术文章',
+        link: 'https://tech.meituan.com/',
+      }
+    ]
+  },
+  {
     title: 'Go语言资源',
     items: [
       {

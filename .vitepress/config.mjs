@@ -89,6 +89,10 @@ export default defineConfig({
               collapsed:true,
               items: [
                 {
+                  text:'Instrument-字节码插桩',
+                  link: '/docs/article/2024/3月/Instrument-字节码插桩.md'
+                },
+                {
                   text: 'JNI-在Java中调用C代码',
                   link: '/docs/article/2024/3月/JNI-在Java中调用C代码.md'
                 }
@@ -98,6 +102,26 @@ export default defineConfig({
         }
       ],
       '/docs/book/': [
+        {
+          text: '字节码编程',
+          collapsed: true,
+          items: [
+            {
+              text: 'ASM用户手册',
+              collapsed: true,
+              items: [
+                {
+                  text: '介绍',
+                  link: '/docs/book/Java字节码编程/ASM用户手册/介绍.md'
+                },
+                {
+                  text: 'Core API(Classes)',
+                  link: 'docs/book/Java字节码编程/ASM用户手册/Core API(Classes).md'
+                },
+              ]
+            }
+          ]
+        },
         {
           text: 'ElasticSearch系列',
           collapsed: true,
