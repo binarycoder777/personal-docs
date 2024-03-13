@@ -89,6 +89,10 @@ export default defineConfig({
               collapsed:true,
               items: [
                 {
+                  text:'Java命令行打包总结',
+                  link:'/docs/article/2024/3月/Java命令行打包总结.md'
+                },
+                {
                   text:'Instrument-字节码插桩',
                   link: '/docs/article/2024/3月/Instrument-字节码插桩.md'
                 },
