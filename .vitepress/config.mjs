@@ -123,6 +123,16 @@ export default defineConfig({
                   link: 'docs/book/Java字节码编程/ASM用户手册/Core API(Classes).md'
                 },
               ]
+            },
+            {
+              text: 'javaassist手册',
+              collapsed: true,
+              items: [
+                {
+                  text: '读和写字节码',
+                  link: '/docs/book/Java字节码编程/javassist手册/读和写字节码.md'
+                }
+              ]
             }
           ]
         },
