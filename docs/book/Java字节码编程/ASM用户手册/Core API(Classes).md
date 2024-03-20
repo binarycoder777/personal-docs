@@ -1,5 +1,5 @@
 ---
-
+outline: 3
 ---
 
 # Core API
@@ -421,4 +421,1024 @@ public class MultiClassAdapter extends ClassVisitor {
 
 ![](https://raw.githubusercontent.com/binarycoder777/personal-pic/main/pic/20240312110224.png)
 
+
+## 工具
+
+除了 ClassVisitor 类和相关的 ClassReader、ClassWriter 组件之外，ASM 还在org.objectweb.asm.util 包中提供了几个工具，这些工具在开发类生成器或适配器时可能非常有用，但在运行时不需要它们。ASM 还ᨀ供了一个实用类，用于在运行时处理内部名、类型描述符和方法描述符。
+
+### Type
+ASM API 公开 Java 类型的形式就是它们在已编译类中的存储形式，也就是说，作为内部特性或类型描述符。也可以按照它们在源代码中的形式来公开它们，使代码更便于阅读。但这样就需要在 ClassReader 和 ClassWriter 中的两种表示形式之间进行系统转换，从而使性能降低。这就是为什么 ASM 没有透明地将内部名和类型描述符转换为它们等价的源代码形式。但它提供了 Type 类，可以在必要时进行手动转换。
+
+一个 Type 对象表示一种 Java 类型，既可以由类型描述符构造，也可以由 Class 对象构建。Type 类还包含表示基元类型的静态变量。例如，Type.INT_TYPE 是表示 int 类型的 Type 对象。
+
+getInternalName 方法返回一个 Type 的内部名。例如，
+Type.getType(String.class). getInternalName()给出 String 类的内部名，即
+"java/lang/String"。这一方法只能对类或接口类型使用。
+
+getDescriptor 方法返回一个 Type 的᧿述符。比如，在代码中可以不使用
+"Ljava/lang/String;" ，而是使用 Type.getType(String.class). 
+getDescriptor()。或者，可以不使用 I，而是使用 Type.INT_TYPE.getDescriptor()。
+
+Type 对象还可以表示方法类型。这种对象既可以从一个方法᧿述符构建，也可以由 Method
+对象构建。 getDescriptor 方法返回与这一类型对应的方法᧿述符。此外，
+getArgumentTypes 和 getReturnType 方法可用于获取与一个方法的参数类型和返回类型
+相对应的 Type 对象。例如，Type.getArgumentTypes("(I)V")返回一个仅有一个元素
+Type.INT_TYPE 的数组。与此类似，调用 Type.getReturnType("(I)V") 将返回
+Type.VOID_TYPE 对象。
+
+### TraceClassVisitor
+
+要确认所生成或转换后的类符合你的预期，ClassWriter 返回的字母数组并没有什么真正
+的用处，因为它对人类来说是不可读的。如果有文本表示形式，那使用起来就容易多了。这正是
+TraceClassVisitor 类ᨀ供的东西。从名字可以看出，这个类扩展了 ClassVisitor 类，
+并生成所访问类的文本表示。因此，我们不是用 ClassWriter 来生成类，而是使用
+TraceClassVisitor，以获得关于实际所生成内容的一个可读轨迹。甚至可以同时使用这两
+者，这样要更好一些。除了其默认行为之外，TraceClassVisitor 实际上还可以将对其方法
+的所有调用委托给另一个访问器，比如 ClassWriter：
+
+``` java
+ClassWriter cw = new ClassWriter(0); 
+TraceClassVisitor cv = new TraceClassVisitor(cw, printWriter); 
+cv.visit(...); 
+... 
+cv.visitEnd(); 
+byte b[] = cw.toByteArray(); 
+```
+### CheckClassAdapter
+
+ClassWriter 类并不会核实对其方法的调用顺序是否恰当，以及参数是否有效。因此，有
+可能会生成一些被 Java 虚拟机验证器拒绝的无效类。为了尽可能ᨀ前检测出部分此类错误，可
+以使用 CheckClassAdapter 类。和 TraceClassVisitor 类似，这个类也扩展了
+ClassVisitor 类，并将对其方法的所有调用都委托到另一个 ClassVisitor，比如一个
+TraceClassVisitor 或一个 ClassWriter。但是，这个类并不会打印所访问类的文本表示，
+而是验证其对方法的调用顺序是否适当，参数是否有效，然后才会委托给下一个访问器。当发生
+错误时，会抛出 IllegalStateException 或 IllegalArgumentException。
+
+为核对一个类，打印这个类的文本表示形式，最终创建一个字节数组表示形式，应当使用类似于如下代码：
+```java
+ClassWriter cw = new ClassWriter(0); 
+TraceClassVisitor tcv = new TraceClassVisitor(cw, printWriter); 
+CheckClassAdapter cv = new CheckClassAdapter(tcv); 
+cv.visit(...); 
+... 
+cv.visitEnd(); 
+byte b[] = cw.toByteArray();
+```
+
+和使用 TraceClassVisitor 时一样，也可以在一个生成链或转换链的任意位置使用CheckClassAdapter，以查看该链中这一点的类，而不一定只是恰好在 ClassWriter 之前使用。
+
+
+### ASMifier
+
+这个类为 TraceClassVisitor 工具ᨀ供了一种替代后端（该工具在默认情况下使用
+Textifier 后端，生成如上所示类型的输出）。这个后端使 TraceClassVisitor 类的每个方法都会打印用于调用它的 Java 代码。例如，调用 visitEnd()方法将打印 cv.visitEnd();。
+其结果是，当一个具有 ASMifier 后端的 TraceClassVisitor 访问器访问一个类时，它会打
+印用 ASM 生成这个类的源代码。如果用这个访问器来访问一个已经存在的类，那这一点是很有
+用的。例如，如果你不知道如何用 ASM 生成某个已编译类，可以编写相应的源代码，用 javac
+编译它，并用 ASMifier 来访问这个编译后的类。将会得到生成这个已编译类的 ASM 代码！
+
+ASMifier 类也可以在命令行中使用。例如，使用以下命令，
+``` bash
+java -classpath asm.jar:asm-util.jar \ 
+ org.objectweb.asm.util.ASMifier \ 
+ java.lang.Runnable
+ ```
+ 将会生成一些代码，经过缩进后，这些代码就是如下模样：
+ ```java
+package asm.java.lang; 
+import org.objectweb.asm.*; 
+public class RunnableDump implements Opcodes { 
+ public static byte[] dump() throws Exception { 
+ ClassWriter cw = new ClassWriter(0); 
+ FieldVisitor fv; 
+ MethodVisitor mv; 
+ AnnotationVisitor av0; 
+ cw.visit(V1_5, ACC_PUBLIC + ACC_ABSTRACT + ACC_INTERFACE, 
+ "java/lang/Runnable", null, "java/lang/Object", null); 
+ { 
+ mv = cw.visitMethod(ACC_PUBLIC + ACC_ABSTRACT, "run", "()V", 
+ null, null); 
+ mv.visitEnd(); 
+ } 
+ cw.visitEnd(); 
+ return cw.toByteArray(); 
+ } 
+}
+```
+
+## 方法
+在编译类的内部，方法的代码存储为一系列的字节码指令。为生成和转换类，最根本的就是要了解这些指令，并理解它们是如何工作的。
+
+### 结构
+
+Java 代码是
+在线程内部执行的。每个线程都有自己的执行栈，栈由帧组成。每个帧表示一个方法调用：每次
+调用一个方法时，会将一个新帧压入当前线程的执行栈。当方法返回时，或者是正常返回，或者
+是因为异常返回，会将这个帧从执行栈中弹出，执行过程在发出调用的方法中继续进行（这个方
+法的帧现在位于栈的顶端）
+
+每一帧包括两部分：一个局部变量部分和一个操作数栈部分。局部变量部分包含可根据索引
+以随机顺序访问的变量。由名字可以看出，操作数栈部分是一个栈，其中包含了供字节代码指令
+用作操作数的值。这意味着这个栈中的值只能按照“后入先出”顺序访问。不要将操作数栈和线
+程的执行栈相混淆：执行栈中的每一帧都包含自己的操作数栈。
+
+局部变量部分与操作数栈部分的大小取决于方法的代码。这一大小是在编译时计算的，并随
+字节代码指令一起存储在已编译类中。因此，对于对应于某一给定方法调用的所有帧，其局部变
+量与操作数栈部分的大小相同，但对应于不同方法的帧，这一大小可能不同。
+
+在创建一个帧时，会将其初始化，ᨀ供一个空栈，并用目标对象 this（对于非静态方法）
+及该方法的参数来初始化其局部变量。例如，调用方法 a.equals(b)将创建一帧，它有一个空
+栈，前两个局部变量被初始化为 a 和 b（其他局部变量未被初始化）。
+
+局部变量部分和操作数栈部分中的每个槽（slot）可以保存除 long 和 double 变量之外的
+任意 Java 值。long 和 double 变量需要两个槽。这使局部变量的管理变得复杂：例如，第 i 个
+方法参数不一定存储在局部变量 i 中。例如，调用 Math.max(1L, 2L)创建一个帧，1L 值位
+于前两个局部变量槽中，值 2L 存储在第三和第四个槽中。
+
+#### 字节代码指令
+字节代码指令由一个标识该指令的操作码和固定数目的参数组成：
+
+**操作码**
+
+是一个无符号字节值——即字节代码名，由助记符号标识。例如，操作码 0 用助记符号 NOP 表示，对应于不做任何操作的指令。
+
+**参数**
+
+是静态值，确定了精确的指令行为。它们紧跟在操作码之后给出。比如 GOTO 标记
+指令（其操作码的值为 167）以一个指明下一条待执行指令的标记作为参数标记。不要
+将指令参数与指令操作数相混淆：参数值是静态已知的，存储在编译后的代码中，而
+操作数值来自操作数栈，只有到运行时才能知道。
+
+字节代码指令可以分为两类：一小组指令，设计用来在局部变量和操作数栈之间传送值；其
+他一些指令仅用于操作数栈：它们从栈中弹出一些值，根据这些值计算一个结果，并将它压回栈
+中。
+
+ILOAD, LLOAD, FLOAD, DLOAD 和 ALOAD 指令读取一个局部变量，并将它的值压到操
+作数栈中。它们的参数是必须读取的局部变量的索引 i。ILOAD 用于加载一个 boolean、byte、
+char、short或int局部变量。LLOAD、FLOAD和DLOAD分别用于加载long、float或double
+值。（LLOAD 和 DLOAD 实际加载两个槽 i 和 i+1）。最后，ALOAD 用于加载任意非基元值，即对
+象和数组引用。与之对应，ISTORE、LSTORE、FSTORE、DSTORE 和 ASTORE 指令从操作数栈
+中弹出一个值，并将它存储在由其索引 i 指定的局部变量中。
+
+可以看到，xLOAD 和 xSTORE 指令被赋入了类型。它用于确保不会执行非法转换。实际上，将一个值存储在局部变量中，然后
+再以不同类型加载它，是非法的。例如，ISTORE 1 ALOAD 1 序列是非法的——它允许将一个
+任意内存位置存储在局部变量 1 中，并将这个地址转换为对象引用！但是，如果向一个局部变
+量中存储一个值，而这个值的类型不同于该局部变量中存储的当前值，却是完全合法的。这意味着一个局部变量的类型，即这个局部变量中所存值的类型可以在方法执行期间发生变化。
+
+**栈** 
+
+这些指令用于处理栈上的值：POP 弹出栈顶部的值，DUP 压入顶部栈值的一个副本，SWAP 弹出两个值，并按逆序压入它们，等等。
+
+**常量** 
+
+这些指令在操作数栈压入一个常量值：ACONST_NULL 压入 null，ICONST_0 压入
+int 值 0，FCONST_0 压入 0f，DCONST_0 压入 0d，BIPUSH b 压入字节值 b，SIPUSH
+s 压入 short 值 s，LDC cst 压入任意 int、float、long、double、String 或 class①
+常量 cst，等等。
+
+**算术与逻辑**
+
+ 这些指令从操作数栈弹出数值，合并它们，并将结果压入栈中。它们没有任何
+参数。xADD、xSUB、xMUL、xDIV 和 xREM 对应于+、-、*、/和%运算，其中 x 为 I、
+L、F 或 D 之一。类似地，还有其他对应于<<、>>、>>>、|、&和^运算的指令，用于
+处理 int 和 long 值。
+
+**类型变换**
+ 
+ 这些指令从栈中弹出一个值，将其转换为另一类型，并将结果压入栈中。它们对
+应于 Java 中的类型转换表达式。I2F, F2D, L2D 等将数值由一种数值类型转换为另一种
+类型。CHECKCAST t 将一个引用值转换为类型 t。
+对象 这些指令用于创建对象、锁定它们、检测它们的类型，等等。例如，NEW type 指令将
+一个 type 类型的新对象压入栈中（其中 type 是一个内部名）。
+
+
+**字段**
+
+ 这些指令读或写一个字段的值。GETFIELD owner name desc 弹出一个对象引用，并
+压和其 name 字段中的值。PUTFIELD owner name desc 弹出一个值和一个对象引用，并
+将这个值存储在它的 name 字段中。在这两种情况下，该对象都必须是 owner 类型，它
+的字段必须为 desc 类型。GETSTATIC 和 PUTSTATIC 是类似指令，但用于静态字段。
+
+**方法**
+
+ 这些指令调用一个方法或一个构造器。它们弹出值的个数等于其方法参数个数加 1
+（用于目标对象），并压回方法调用的结果。INVOKEVIRTUAL owner name desc 调用在
+类 owner 中定义的 name 方法，其方法᧿述符为 desc。INVOKESTATIC 用于静态方法，
+INVOKESPECIAL 用于私有方法和构造器，INVOKEINTERFACE 用于接口中定义的方
+法。最后，对于 Java 7 中的类，INVOKEDYNAMIC 用于新动态方法调用机制。
+
+**数组**
+
+ 这些指令用于读写数组中的值。xALOAD 指令弹出一个索引和一个数组，并压入此索
+引处数组元素的值。xASTORE 指令弹出一个值、一个索引和一个数组，并将这个值存
+储在该数组的这一索引处。这里的 x 可以是 I、L、F、D 或 A，还可以是 B、C 或 S。
+
+**跳转**
+
+ 这些指令无条件地或者在某一条件为真时跳转到一条任意指令。它们用于编译 if、
+for、do、while、break 和 continue 指令。例如，IFEQ label 从栈中弹出一个
+int 值，如果这个值为 0，则跳转到由这个 label 指定的指令处（否则，正常执行下一
+条指令）。还有许多其他跳转指令，比如 IFNE 或 IFGE。最后，TABLESWITCH 和LOOKUPSWITCH 对应于 switch Java 指令。
+
+**返回** 
+
+最后，xRETURN 和 RETURN 指令用于终止一个方法的执行，并将其结果返回给调用者。RETURN 用于返回 void 的方法，xRETURN 用于其他方法。
+
+### 示例
+``` java
+package pkg; 
+public class Bean { 
+ private int f; 
+ public int getF() { 
+ return this.f; 
+ } 
+ public void setF(int f) { 
+ this.f = f; 
+ } 
+} 
+```
+getter 方法的字节代码为：
+``` bash
+ALOAD 0 
+GETFIELD pkg/Bean f I 
+IRETURN
+```
+
+第一条指令读取局部变量 0（它在为这个方法调用创建帧期间被初始化为 this），并将这个
+值压入操作数栈中。第二个指令从栈中弹出这个值，即 this，并将这个对象的 f 字段压入栈中，
+即 this.f。最后一条指令从栈中弹出这个值，并将其返回给调用者。
+
+setter 方法的字节代码：
+```bash
+ALOAD 0 
+ILOAD 1 
+PUTFIELD pkg/Bean f I 
+RETURN
+```
+和之前一样，第一条指令将 this 压入操作数栈。第二条指令压入局部变量 1，在为这个方
+法调用创建帧期间，以 f 参数初始化该变量。第三条指令弹出这两个值，并将 int 值存储在被
+引用对象的 f 字段中，即存储在 this.f 中。最后一条指令在源代码中是隐式的，但在编译后的代码中却是强制的，销毁当前执行帧，并返回调用者。
+
+Bean 类还有一个默认的公有构造器，由于程序员没有定义显式的构造器，所以它是由编译
+器生成的。这个默认的公有构造器被生成为 Bean() { super(); }。这个构造器的字节代码
+如下：
+```bash
+ALOAD 0 
+INVOKESPECIAL java/lang/Object <init> ()V 
+RETURN
+```
+第一条指令将 this 压入操作数栈中。第二条指令从栈中弹出这个值，并调用在 Object
+对象中定义的<init>方法。这对应于 super()调用，也就是对超类 Object 构造器的调用。
+在这里可以看到，在已编译类和源类中对构造器的命名是不同的：在编译类中，它们总是被命名
+为<init>，而在源类中，它们的名字与定义它们的类同名。最后一条指令返回调用者。
+
+
+### 异常处理器
+
+不存在用于捕获异常的字节代码：而是将一个方法的字节代码与一个异常处理器列表关联在
+一起，这个列表规定了在某方法中一给定部分抛出异常时必须执行的代码。异常处理器类似于
+try catch 块：它有一个范围，也就是与 try 代码块内容相对应的一个指令序列，还有一个处
+理器，对应于 catch 块中的内容。这个范围由一个起始标记和一个终止标记指定，处理器由一
+个起始标记指定。比如下面的源代码：
+``` java
+public static void sleep(long d) { 
+ try { 
+ Thread.sleep(d); 
+ } catch (InterruptedException e) { 
+ e.printStackTrace(); 
+ } 
+}
+```
+可被编译为
+```bash
+TRYCATCHBLOCK try catch catch java/lang/InterruptedException 
+try: 
+ LLOAD 0 
+ INVOKESTATIC java/lang/Thread sleep (J)V 
+ RETURN 
+catch: 
+ INVOKEVIRTUAL java/lang/InterruptedException printStackTrace ()V 
+ RETURN 
+ ```
+Try 和 catch 标记之间的代码对应于 try 块，而 catch 标记之后的代码对应于 catch。
+TRYCATCHBLOCK 行指定了一个异常处理器，覆盖了 try 和 catch 标记之间的范围，有一个开
+始于 catch 标记的处理器，用于处理一些异常，这些异常的类是 InterruptedException
+的子类。这意味着，如果在 try 和 catch 之间抛出了这样一个异常，栈将被清空，异常被压入
+这个空栈中，执行过程在 catch 处继续。
+
+### 帧
+
+除了字节代码指令之外，用 Java 6 或更高版本编译的类中还包含一组栈映射帧，用于加快
+Java 虚拟机中类验证过程的速度。栈映射帧给出一个方法的执行帧在执行过程中某一时刻的状
+态。更准确地说，它给出了在就要执行某一特定字节代码指令之前，每个局部变量槽和每个操作
+数栈槽中包含的值的类型。
+
+考虑前面的 getF 方法，可以定义三个栈映射帧，给出执行帧在即将执行
+ALOAD、即将执行 GETFIELD 和即将执行 IRETURN 之前的状态。
+```
+[pkg/Bean] [] ALOAD 0
+[pkg/Bean] [pkg/Bean] GETFIELD
+[pkg/Bean] [I] IRETURN
+```
+
+除了 Uninitialized(label)类型之外，它与前面的方法均类似。这是一种仅在栈映射帧
+中使用的特殊类型，它指定了一个对象，已经为其分配了内存，但还没有调用其构造器。参数规
+定了创建此对象的指令。对于这个类型的值，只能调用一种方法，那就是构造器。在调用它时，
+在帧中出现的所有这一类型都被代以一个实际类型，这里是 IllegalArgumentException。
+栈映射帧可使用三种其他特殊类型：UNINITIALIZED_THIS 是构造器中局部变量 0 的初始类
+型，TOP 对应于一个未定义的值，而 NULL 对应于 null。
+
+从 Java 6 开始，除了字节代码之外，已编译类中还包含了一组栈映射帧。为
+节省空间，已编译方法中并没有为每条指令包含一个帧：事实上，它仅为那些对应于跳转目标或
+异常处理器的指令，或者跟在无条件跳转指令之后的指令包含帧。事实上，可以轻松、快速地由
+这些帧推断出其他帧。
+
+### 接口与组件
+用于生成和转换已编译方法的 ASM API 是基于 MethodVisitor 抽象类的，它
+由 ClassVisitor 的 visitMethod 方法返回。除了一些与注释和调试信息有关的方法之外，这个类为每个字节代码指令类别定义了一个方法，其依据就是这些指令
+的参数个数和类型。这些方法必须按以下顺序调用（在
+MethodVisitor 接口的 Javadoc 中还规定了其他一些约束条件）：
+``` bash
+visitAnnotationDefault? 
+( visitAnnotation | visitParameterAnnotation | visitAttribute )* 
+( visitCode 
+ ( visitTryCatchBlock | visitLabel | visitFrame | visitXxxInsn | 
+ visitLocalVariable | visitLineNumber )* 
+ visitMaxs )? 
+visitEnd
+```
+这就意味着，对于非抽象方法，如果存在注释和属性的话，必须首先访问它们，然后是该方
+法的字节代码。对于这些方法，其代码必须按顺序访问，位于对 visitCode 的调用（有且仅有
+一个调用）与对 visitMaxs 的调用（有且仅有一个调用）之间。
+
+``` java
+abstract class MethodVisitor { // public accessors ommited 
+MethodVisitor(int api); 
+MethodVisitor(int api, MethodVisitor mv); 
+AnnotationVisitor visitAnnotationDefault(); 
+AnnotationVisitor visitAnnotation(String desc, boolean visible); 
+AnnotationVisitor visitParameterAnnotation(int parameter, 
+String desc, boolean visible); 
+void visitAttribute(Attribute attr); 
+void visitCode(); 
+void visitFrame(int type, int nLocal, Object[] local, int nStack, 
+Object[] stack); 
+void visitInsn(int opcode); 
+void visitIntInsn(int opcode, int operand); 
+void visitVarInsn(int opcode, int var); 
+void visitTypeInsn(int opcode, String desc); 
+void visitFieldInsn(int opc, String owner, String name, String desc);
+void visitMethodInsn(int opc, String owner, String name, String desc); 
+void visitInvokeDynamicInsn(String name, String desc, Handle bsm, 
+Object... bsmArgs); 
+void visitJumpInsn(int opcode, Label label); 
+void visitLabel(Label label); 
+void visitLdcInsn(Object cst); 
+void visitIincInsn(int var, int increment); 
+void visitTableSwitchInsn(int min, int max, Label dflt, Label[] labels); 
+void visitLookupSwitchInsn(Label dflt, int[] keys, Label[] labels); 
+void visitMultiANewArrayInsn(String desc, int dims); 
+void visitTryCatchBlock(Label start, Label end, Label handler, 
+String type); 
+void visitLocalVariable(String name, String desc, String signature, 
+Label start, Label end, int index); 
+void visitLineNumber(int line, Label start); 
+void visitMaxs(int maxStack, int maxLocals); 
+void visitEnd(); 
+}
+```
+于是，visitCode 和 visitMaxs 方法可用于检测该方法的字节代码在一个事件序列中的
+开始与结束。和类的情况一样，visitEnd 方法也必须在最后调用，用于检测一个方法在一个事
+件序列中的结束。
+
+可以将 ClassVisitor 和 MethodVisitor 类合并，生成完整的类：
+``` java
+ClassVisitor cv = ...; 
+cv.visit(...); 
+MethodVisitor mv1 = cv.visitMethod(..., "m1", ...); 
+mv1.visitCode(); 
+mv1.visitInsn(...); 
+... 
+mv1.visitMaxs(...); 
+mv1.visitEnd(); 
+MethodVisitor mv2 = cv.visitMethod(..., "m2", ...); 
+mv2.visitCode(); 
+mv2.visitInsn(...); 
+... 
+mv2.visitMaxs(...); 
+mv2.visitEnd(); 
+cv.visitEnd();
+```
+注意，并不一定要在完成一个方法之后才能开始访问另一个方法。事实上，MethodVisitor
+实例是完全独立的，可按任意顺序使用（只要还没有调用 cv.visitEnd()）：
+``` java
+ClassVisitor cv = ...; 
+cv.visit(...); 
+MethodVisitor mv1 = cv.visitMethod(..., "m1", ...); 
+mv1.visitCode(); 
+mv1.visitInsn(...); 
+... 
+MethodVisitor mv2 = cv.visitMethod(..., "m2", ...); 
+mv2.visitCode(); 
+mv2.visitInsn(...); 
+... 
+mv1.visitMaxs(...); 
+mv1.visitEnd(); 
+... 
+mv2.visitMaxs(...); 
+mv2.visitEnd();
+cv.visitEnd(); 
+```
+ASM 提供了三个基于 MethodVisitor API 的核心组件，用于生成和转换方法：
+- ClassReader 类分析已编译方法的内容，在其 accept 方法的参数中传送了
+- ClassVisitor ， ClassReader 类将针对这一 ClassVisitor 返回的MethodVisitor 对象调用相应方法。
+- ClassWriter 的 visitMethod 方法返回 MethodVisitor 接口的一个实现，它直
+接以二进制形式生成已编译方法。
+
+MethodVisitor类将它接收到的所有方法调用委托给另一个MethodVisitor方法。
+可以将它看作一个事件筛选器。
+
+为一个方法计算栈映射帧并不是非常容易：必须计算所有帧，找出与
+跳转目标相对应的帧，或者跳在无条件跳转之后的帧，最后压缩剩余帧。与此类似，为一个方法
+计算局部变量与操作数栈部分的大小要容易一些，但依然算不上非常容易。
+
+幸好 ASM 能为我们完成这一计算。在创建 ClassWriter 时，可以指定必须自动计算哪些
+内容：
+
+- 在使用 new ClassWriter(0)时，不会自动计算任何东西。必须自行计算帧、局部变
+量与操作数栈的大小。
+
+- 在使用 new ClassWriter(ClassWriter.COMPUTE_MAXS)时，将为你计算局部变量
+与操作数栈部分的大小。还是必须调用 visitMaxs，但可以使用任何参数：它们将被
+忽略并重新计算。使用这一选项时，仍然必须自行计算这些帧。
+
+- 在 new ClassWriter(ClassWriter.COMPUTE_FRAMES)时，一切都是自动计算。
+不再需要调用 visitFrame，但仍然必须调用 visitMaxs（参数将被忽略并重新计
+算）。
+
+
+这些选项的使用很方便，但有一个代价：COMPUTE_MAXS 选项使 ClassWriter 的速度降
+低 10%，而使用 COMPUTE_FRAMES 选项则使其降低一半。这必须与我们自行计算时所耗费的时
+间进行比较：在特定情况下，经常会存在一些比 ASM 所用算法更容易、更快速的计算方法，但
+ASM 使用的算法必须能够处理所有情况。
+
+注意，如果选择自行计算这些帧，可以让 ClassWriter 为你执行压缩步骤。为此，只需
+要用 visitFrame(F_NEW, nLocals, locals, nStack, stack)访问未压缩帧，其中的
+nLocals 和 nStack 是局部变量的个数和操作数栈的大小，locals 和 stack 是包含相应类
+型的数组
+
+还要注意，为了自动计算帧，有时需要计算两个给定类的公共超类。默认情况下，
+ClassWriter 类会在 getCommonSuperClass 方法中进行这一计算，它会将两个类加载到
+JVM 中，并使用反射 API。如果我们正在生成几个相互引用的类，那可能会导致问题，因为被
+引用的类可能尚未存在。在这种情况下，可以重写 getCommonSuperClass 方法来解决这一问
+题。
+
+#### 生成方法
+
+```java
+mv.visitCode(); 
+mv.visitVarInsn(ALOAD, 0); 
+mv.visitFieldInsn(GETFIELD, "pkg/Bean", "f", "I"); 
+mv.visitInsn(IRETURN); 
+mv.visitMaxs(1, 1); 
+mv.visitEnd();
+```
+
+第一个调用启动字节代码的生成过程。然后是三个调用，生成这一方法的三条指令（可以看
+出，字节代码与 ASM API 之间的映射非常简单）。对 visitMaxs 的调用必须在已经访问了所有
+这些指令后执行。它用于为这个方法的执行帧定义局部变量和操作数栈部分的大小。
+
+#### 转换方法
+方法可以像类一样进行转换，也就是使用一个方法适配器将它收到的
+方法调用转发出去，并进行一些修改：改变参数可用于改变各具体指令；不转发某一收到的调用
+将删除一条指令；在接收到的调用之间插入调用，将增加新的指令。MethodVisitor 类ᨀ供
+了这样一种方法适配器的基本实现，它只是转发它接收到的所有方法，而未做任何其他事
+
+``` java
+public class RemoveNopAdapter extends MethodVisitor { 
+ public RemoveNopAdapter(MethodVisitor mv) { 
+ super(ASM4, mv); 
+ } 
+ @Override 
+ public void visitInsn(int opcode) { 
+ if (opcode != NOP) { 
+ mv.visitInsn(opcode); 
+ } 
+ } 
+}
+```
+这个适配器可以在一个类适配器内部使用，如下所示：
+```java
+ public RemoveNopClassAdapter(ClassVisitor cv) {
+    { 
+ super(ASM4, cv); 
+ } 
+ @Override 
+ public MethodVisitor visitMethod(int access, String name, 
+ String desc, String signature, String[] exceptions) { 
+ MethodVisitor mv; 
+ mv = cv.visitMethod(access, name, desc, signature, exceptions); 
+ if (mv != null) { 
+ mv = new RemoveNopAdapter(mv); 
+ } 
+ return mv; 
+ } 
+} 
+```
+换言之，类适配器只是构造一个方法适配器（封装链中下一个类访问器返回的方法访问器），
+并返回这个适配器。其效果就是构造了一个类似于类适配器链的方法适配器链
+
+![](https://raw.githubusercontent.com/binarycoder777/personal-pic/main/pic/20240320164307.png)
+
+但注意，这种相似性并非强制的：完全有可能构造一个与类适配器链不相似的方法适配器链。
+每种方法甚至还可以有一个不同的方法适配器链。例如，类适配器可以选择仅删除方法中的 NOP，
+而不移除构造器中的该指令。可以执行如下：
+```java
+mv = cv.visitMethod(access, name, desc, signature, exceptions); 
+if (mv != null && !name.equals("<init>")) { 
+ mv = new RemoveNopAdapter(mv); 
+} 
+...
+```
+在这种情况下，构造器的适配器链更短一些。与之相反，构造器的适配器链也可以更长一些，
+在 visitMethod 内部创建几个链接在一起的适配器。方法适配器链的拓扑结构甚至都可以不
+同于类适配器。例如，类适配器可能是线性的，而方法适配器链具有分支：
+```java
+ String desc, String signature, String[] exceptions) { 
+ MethodVisitor mv1, mv2; 
+ mv1 = cv.visitMethod(access, name, desc, signature, exceptions); 
+ mv2 = cv.visitMethod(access, "_" + name, desc, signature, exceptions); 
+ return new MultiMethodAdapter(mv1, mv2); 
+}
+```
+
+#### 无状态转换
+假设我们需要测量一个程序中的每个类所花费的时间。我们需要在每个类中添加一个静态计
+时器字段，并需要将这个类中每个方法的执行时间添加到这个计时器字段中。换句话说，有这样
+一个类 C：
+```java
+public class C { 
+ public void m() throws Exception { 
+ Thread.sleep(100); 
+ } 
+}
+```
+我们希望将它转换为：
+```java
+public class C { 
+ public static long timer; 
+ public void m() throws Exception { 
+ timer -= System.currentTimeMillis(); 
+ Thread.sleep(100); 
+ timer += System.currentTimeMillis(); 
+ } 
+}
+```
+为了了解可以如何在 ASM 中实现它，可以编译这两个类，并针对这两个版本比较
+TraceClassVisitor 的输出（或者是使用默认的 Textifier 后端，或者是使用 ASMifier
+后端）。使用默认后端时，得到下面的差异之处（以粗体表示）：
+
+**GETSTATIC C.timer : J** 
+
+**INVOKESTATIC java/lang/System.currentTimeMillis()J**
+
+**LSUB**
+
+**PUTSTATIC C.timer : J**
+
+LDC 100 
+
+INVOKESTATIC java/lang/Thread.sleep(J)V 
+
+**GETSTATIC C.timer : J**
+
+**INVOKESTATIC java/lang/System.currentTimeMillis()J**
+
+**LADD**
+
+**PUTSTATIC C.timer : J**
+
+RETURN 
+
+MAXSTACK = 4 
+
+MAXLOCALS = 1
+
+可以看到，我们必须在方法的开头增加四条指令，在返回指令之前添加四条其他指令。还需
+要更新操作数栈的最大尺寸。此方法代码的开头部分用 visitCode 方法访问。因此，可以通过
+重写方法适配器的这一方法，添加前四条指令：
+```java
+public void visitCode() { 
+ mv.visitCode(); 
+ mv.visitFieldInsn(GETSTATIC, owner, "timer", "J"); 
+ mv.visitMethodInsn(INVOKESTATIC, "java/lang/System", 
+ "currentTimeMillis", "()J"); 
+ mv.visitInsn(LSUB); 
+ mv.visitFieldInsn(PUTSTATIC, owner, "timer", "J"); 
+}
+```
+其中的 owner 必须被设定为所转换类的名字。现在必须在任意 RETURN 之前添加其他四条
+指令，还要在任何 xRETURN 或 ATHROW 之前添加，它们都是终止该方法执行过程的指令。这些
+指令没有任何参数，因此在 visitInsn 方法中访问。于是，可以重写这一方法，以增加指令：
+```java
+public void visitInsn(int opcode) { 
+ if ((opcode >= IRETURN && opcode <= RETURN) || opcode == ATHROW) { 
+ mv.visitFieldInsn(GETSTATIC, owner, "timer", "J"); 
+ mv.visitMethodInsn(INVOKESTATIC, "java/lang/System", 
+ "currentTimeMillis", "()J"); 
+ mv.visitInsn(LADD); 
+ mv.visitFieldInsn(PUTSTATIC, owner, "timer", "J"); 
+ } 
+ mv.visitInsn(opcode); 
+}
+```
+
+最后，必须更新操作数栈的最大大小。我们添加的指令压入两个 long 值，因此需要操作数栈中的四个槽。在此方法的开头，操作数栈初始为空，所以我们知道在开头添加的四条指令需要
+一个大小为 4 的栈。还知道所插入的代码不会改变栈的状态（因为它弹出的值的数目与压入的数
+目相同）。因此，如果原代码需要一个大小为 s 的栈，那转换后的方法所需栈的最大大小为 max(4, 
+s)。遗憾的是，我们还在返回指令前面添加了四条指令，我们并不知道操作数栈恰在执行这些指
+令之前时的大小。只知道它小于或等于 s。因此，我们只能说，在返回指令之前添加的代码可能
+要求操作数栈的大小达到 s+4。这种最糟情景在实际中很少发生：使用常见编译器时，RETURN
+之前的操作数栈仅包含返回值，即，它的大小最多为 0、1 或 2。但如果希望处理所有可能情景，
+那就需要考虑最糟情景。必须重写 visitMaxs 方法如下：
+``` java
+public void visitMaxs(int maxStack, int maxLocals) { 
+ mv.visitMaxs(maxStack + 4, maxLocals); 
+}
+```
+
+当然，也可以不需要为最大栈大小操心，而是依赖 COMPUTE_MAXS 选项，此外，它会计算
+最优值，而不是最差情景中的值。但对于这种简单的转换，以人工更新 maxStack 并不需要花
+费太多精力。
+
+现在就出现一个很有意义的问题：栈映射帧怎么样呢？原代码不包含任何帧，转换后的代码
+也没有包含，但这是因为我们用作示例的特定代码造成的吗？是否在某些情况下必须更新帧呢？
+答案是否定的，因为 1)插入的代码并没有改变操作数栈，2) 插入代码中没有包含跳转指令，3) 原
+代码的跳转指令（或者更正式地说，是控制流图）没有被修改。这意味着原帧没有发生变化，而
+且不需要为插入代码存储新帧，所以压缩后的原帧也没有发生变化。
+
+现在可以将所有元素一起放入相关联的 ClassVisitor 和 MethodVisitor 子类中：
+```java
+public class AddTimerAdapter extends ClassVisitor { 
+ private String owner; 
+ private boolean isInterface; 
+ public AddTimerAdapter(ClassVisitor cv) { 
+ super(ASM4, cv); 
+ } 
+ @Override public void visit(int version, int access, String name, 
+ String signature, String superName, String[] interfaces) { 
+ cv.visit(version, access, name, signature, superName, interfaces); 
+ owner = name; 
+ isInterface = (access & ACC_INTERFACE) != 0; 
+ } 
+ @Override public MethodVisitor visitMethod(int access, String name, 
+ String desc, String signature, String[] exceptions) { 
+ MethodVisitor mv = cv.visitMethod(access, name, desc, signature, 
+ exceptions); 
+ if (!isInterface && mv != null && !name.equals("<init>")) { 
+ mv = new AddTimerMethodAdapter(mv); 
+ } 
+ return mv; 
+ } 
+ @Override public void visitEnd() { 
+ if (!isInterface) { 
+ FieldVisitor fv = cv.visitField(ACC_PUBLIC + ACC_STATIC, "timer", 
+ "J", null, null); 
+ if (fv != null) {
+    fv.visitEnd(); 
+ } 
+ } 
+ cv.visitEnd(); 
+ } 
+ class AddTimerMethodAdapter extends MethodVisitor { 
+ public AddTimerMethodAdapter(MethodVisitor mv) { 
+ super(ASM4, mv); 
+ } 
+ @Override public void visitCode() { 
+ mv.visitCode(); 
+ mv.visitFieldInsn(GETSTATIC, owner, "timer", "J"); 
+ mv.visitMethodInsn(INVOKESTATIC, "java/lang/System", 
+ "currentTimeMillis", "()J"); 
+ mv.visitInsn(LSUB); 
+ mv.visitFieldInsn(PUTSTATIC, owner, "timer", "J"); 
+ } 
+ @Override public void visitInsn(int opcode) { 
+ if ((opcode >= IRETURN && opcode <= RETURN) || opcode == ATHROW) { 
+ mv.visitFieldInsn(GETSTATIC, owner, "timer", "J"); 
+ mv.visitMethodInsn(INVOKESTATIC, "java/lang/System", 
+ "currentTimeMillis", "()J"); 
+ mv.visitInsn(LADD); 
+ mv.visitFieldInsn(PUTSTATIC, owner, "timer", "J"); 
+ } 
+ mv.visitInsn(opcode); 
+ } 
+ @Override public void visitMaxs(int maxStack, int maxLocals) { 
+ mv.visitMaxs(maxStack + 4, maxLocals); 
+ } 
+ } 
+} 
+```
+这个类适配器用于实例化方法适配器（构造器除外），还用于添加计时器字段，并将被转换
+的类的名字存储在一个可以由方法适配器访问的字段中。
+
+#### 有状态转换
+
+更复杂的转换需要记忆在当前指令之前已访问指令的状态。例如，考虑这样一个转换，它将
+删除所有出现的 ICONST_0 IADD 序列，这个序列的操作就是加入 0，没有什么实际效果。显然，
+在访问一条 IADD 指令时，只有当上一条被访问的指令是 ICONST_0 时，才必须删除该指令。
+这就要求在方法适配器中存储状态。因此，这种转换被称为有状态转换。
+
+让我们更仔细地研究一下这个例子。在访问 ICONST_0 时，只有当下一条指令是 IADD 时
+才必须将其删除。问题是，下一条指令还是未知的。解决方法是将是否删除它的决定推迟到下一
+条指令：如果下一指令是 IADD，则删除两条指令，否则，发出 ICONST_0 和当前指令。
+
+要实现一些删除或替代某一指令序列的转换，比较方便的做法是引入一个 MethodVisitor
+子类，它的 visitXxx Insn 方法调用一个公用的 visitInsn()方法：
+```java
+public abstract class PatternMethodAdapter extends MethodVisitor { 
+ protected final static int SEEN_NOTHING = 0; 
+ protected int state; 
+ public PatternMethodAdapter(int api, MethodVisitor mv) { 
+ super(api, mv); 
+ } 
+ @Overrid public void visitInsn(int opcode) { 
+ visitInsn(); 
+ mv.visitInsn(opcode); 
+ } 
+ @Override public void visitIntInsn(int opcode, int operand) { 
+ visitInsn(); 
+ mv.visitIntInsn(opcode, operand); 
+ } 
+ ... 
+ protected abstract void visitInsn(); 
+}
+```
+然后，上述转换可实现如下：
+```java
+public class RemoveAddZeroAdapter extends PatternMethodAdapter { 
+ private static int SEEN_ICONST_0 = 1; 
+ public RemoveAddZeroAdapter(MethodVisitor mv) { 
+ super(ASM4, mv); 
+ } 
+ @Override public void visitInsn(int opcode) { 
+ if (state == SEEN_ICONST_0) { 
+ if (opcode == IADD) { 
+ state = SEEN_NOTHING; 
+ return; 
+ } 
+ } 
+ visitInsn(); 
+ if (opcode == ICONST_0) { 
+ state = SEEN_ICONST_0; 
+ return; 
+ } 
+ mv.visitInsn(opcode); 
+ } 
+ @Override protected void visitInsn() { 
+ if (state == SEEN_ICONST_0) { 
+ mv.visitInsn(ICONST_0); 
+ } 
+ state = SEEN_NOTHING; 
+ } 
+}
+```
+
+visitInsn(int)方法首先判断是否已经检测到该序列。在这种情况下，它重新初始化
+state，并立即返回，其效果就是删除该序列。在其他情况下，它会调用公用的 visitInsn 方
+法，如果 ICONST_0 是最后一条被访问序列，它就会发出该指令。于是，如果当前指令是
+ICONST_0，它会记住这个事实并返回，延迟关于这一指令的决定。在所有其他情况下，当前指
+令都被转发到下一访问器。
+
+**标记和帧**
+
+对标记和帧的访问是恰在它们的相关指令之前进行。换句话说，尽管它们本身并不是指令，但它们是与指令同时受到访问的。这对于检测指令序列的转换会有影响，但
+这一影响实际上是一种优势。事实上，如果删除的指令之一是一条跳转指令的目标，会发生什么情况呢？如果某一指令可能跳转到 ICONST_0，这意味着有一个指定这一指令的标记。在删除
+了这两条指令后，这个标记将指向跟在被删除 IADD 之后的指令，这正是我们希望的。但如
+果某一指令可能跳转到 IADD，我们就不能删除这个指令序列（不能确保在这一跳转之前，
+已经在栈中压入了一个 0）。幸好，在这种情况下，ICONST_0 和 IADD 之间必然有一个标
+记，可以很轻松地检测到它。
+
+这一推理过程对于栈映射帧是一样的：如果访问介于两条指令之间的一个栈映射帧，那就不
+能删除它们。要处理这两种情况，可以将标记和帧看作是模型匹配算法中的指令。这一点可以在
+PatternMethodAdapter 中完成（注意，visitMaxs 也会调用公用的 visitInsn 方法；它
+用于处理的情景是：方法的末尾是必须被检测序列的一个前缀）：
+
+``` java
+public abstract class PatternMethodAdapter extends MethodVisitor { 
+ ... 
+ @Override public void visitFrame(int type, int nLocal, Object[] local, 
+ int nStack, Object[] stack) { 
+ visitInsn(); 
+ mv.visitFrame(type, nLocal, local, nStack, stack); 
+ } 
+ @Override public void visitLabel(Label label) { 
+ visitInsn(); 
+ mv.visitLabel(label); 
+ } 
+ @Override public void visitMaxs(int maxStack, int maxLocals) { 
+ visitInsn(); 
+ mv.visitMaxs(maxStack, maxLocals); 
+ } 
+}
+```
+
+考虑一个转换，它会删除对字段
+进行自我赋值的操作，这种操作通常是因为键入错误，比如 f = f;，或者是在字节代码中，ALOAD 
+0 ALOAD 0 GETFIELD f PUTFIELD f。在实现这一转换之前，最好是将状态机设计为能够
+识别这一序列
+
+![](https://raw.githubusercontent.com/binarycoder777/personal-pic/main/pic/20240320170055.png)
+
+每个转换都标有一个条件（当前指令的值）和一个操作（必须发出的指令序列，以粗体表示）。
+例如，如果当前指令不是 ALOAD 0，则由 S1 转换到 S0。在这种情况下，导致进入这一状态的
+ALOAD 0 将被发出。注意从 S2 到其自身的转换：在发现三个或三个以上的连续 ALOAD 0 时会
+发生这一情况。在这种情况下，将停留在已经访问两个 ALOAD 0 的状态中，并发出第三个 ALOAD 
+0。找到状态机之后，相应方法适配器的编写就简单了。（8 种 Switch 情景对应于图中的 8 种转换）：
+```java
+class RemoveGetFieldPutFieldAdapter extends PatternMethodAdapter { 
+ private final static int SEEN_ALOAD_0 = 1; 
+ private final static int SEEN_ALOAD_0ALOAD_0 = 2; 
+ private final static int SEEN_ALOAD_0ALOAD_0GETFIELD = 3; 
+ private String fieldOwner; 
+ private String fieldName; 
+ private String fieldDesc; 
+ public RemoveGetFieldPutFieldAdapter(MethodVisitor mv) { 
+ super(mv); 
+ } 
+ @Override 
+ public void visitVarInsn(int opcode, int var) { 
+ switch (state) { 
+ case SEEN_NOTHING: // S0 -> S1 
+ if (opcode == ALOAD && var == 0) { 
+ state = SEEN_ALOAD_0; 
+ return; 
+ } 
+ break; 
+ case SEEN_ALOAD_0: // S1 -> S2 
+ if (opcode == ALOAD && var == 0) { 
+ state = SEEN_ALOAD_0ALOAD_0; 
+ return; 
+ } 
+ case SEEN_ALOAD_0ALOAD_0: // S2 -> S2 
+ if (opcode == ALOAD && var == 0) { 
+ mv.visitVarInsn(ALOAD, 0); 
+ return; 
+ } 
+ break; 
+ } 
+ visitInsn(); 
+ mv.visitVarInsn(opcode, var); 
+ } 
+ @Override 
+ public void visitFieldInsn(int opcode, String owner, String name, 
+ String desc) { 
+ switch (state) { 
+ case SEEN_ALOAD_0ALOAD_0: // S2 -> S3 
+ if (opcode == GETFIELD) { 
+ state = SEEN_ALOAD_0ALOAD_0GETFIELD; 
+ fieldOwner = owner; 
+ fieldName = name; 
+ fieldDesc = desc; 
+ return; 
+ } 
+ break; 
+ case SEEN_ALOAD_0ALOAD_0GETFIELD: // S3 -> S0 
+ if (opcode == PUTFIELD && name.equals(fieldName)) { 
+ state = SEEN_NOTHING; 
+ return; 
+ }
+  
+ visitInsn(); 
+ mv.visitFieldInsn(opcode, owner, name, desc); 
+ } 
+ @Override protected void visitInsn() { 
+ switch (state) { 
+ case SEEN_ALOAD_0: // S1 -> S0 
+ mv.visitVarInsn(ALOAD, 0); 
+ break; 
+ case SEEN_ALOAD_0ALOAD_0: // S2 -> S0 
+ mv.visitVarInsn(ALOAD, 0); 
+ mv.visitVarInsn(ALOAD, 0); 
+ break; 
+ case SEEN_ALOAD_0ALOAD_0GETFIELD: // S3 -> S0 
+ mv.visitVarInsn(ALOAD, 0); 
+ mv.visitVarInsn(ALOAD, 0); 
+ mv.visitFieldInsn(GETFIELD, fieldOwner, fieldName, fieldDesc); 
+ break; 
+ } 
+ state = SEEN_NOTHING; 
+ } 
+}
+```
+
+## 工具
+
+org.objectweb.asm.commons 包中包含了一些预定义的方法适配器，可用于定义我们
+自己的适配器。
+
+### 基本工具
+
+**1. Type** 
+
+许多字节代码指令，比如 xLOAD、xADD 或 xRETURN 依赖于将它们应用于哪种类型。Type
+类ᨀ供了一个 getOpcode 方法，可用于为这些指令获取与一给定类型相对应的操作码。这一方
+法的参数是一个 int 类型的操作码，针对哪种类型调用该方法，则返回该哪种类型的操作码。
+例如 t.getOpcode(IMUL)，若 t 等于 Type.FLOAT_TYPE，则返回 FMUL。
+
+**2. TraceClassVisitor**
+
+可以将它用来跟踪在一个转换链中任意点处所生成或所转换方法的内容。例如：
+``` bash
+java -classpath asm.jar:asm-util.jar \ 
+ org.objectweb.asm.util.TraceClassVisitor \ 
+ java.lang.Void 
+```
+将输出：
+```java
+// class version 49.0 (49) 
+// access flags 49 
+public final class java/lang/Void { 
+ // access flags 25 
+ // signature Ljava/lang/Class<Ljava/lang/Void;>; 
+ // declaration: java.lang.Class<java.lang.Void> 
+ public final static Ljava/lang/Class; TYPE 
+ // access flags 2 
+ private <init>()V 
+ ALOAD 0 
+ INVOKESPECIAL java/lang/Object.<init> ()V 
+ RETURN 
+ MAXSTACK = 1 
+ MAXLOCALS = 1 
+ // access flags 8 
+ static <clinit>()V 
+ LDC "void" 
+ INVOKESTATIC java/lang/Class.getPrimitiveClass (...)... 
+ PUTSTATIC java/lang/Void.TYPE : Ljava/lang/Class; 
+ RETURN 
+ MAXSTACK = 1 
+ MAXLOCALS = 0 
+}
+```
+它说明如何生成一个静态块 static { ... }，也就是用<clinit>方法（用于 CLass
+INITializer）。注意，如果希望跟踪某一个方法在链中某一点处的内容，而不是跟踪类的所
+有内容，可以用 TraceMethodVisitor 代替 TraceClassVisitor（在这种情况下，必须显
+式指定后端；这里使用了一个 Textifier）：
+```java
+public MethodVisitor visitMethod(int access, String name, 
+ String desc, String signature, String[] exceptions) { 
+ MethodVisitor mv = cv.visitMethod(access, name, desc, signature, 
+ exceptions); 
+ if (debug && mv != null && ...) { // 如果必须跟踪此方法
+ Printer p = new Textifier(ASM4) { 
+ @Override public void visitMethodEnd() { 
+ print(aPrintWriter); // 在其被访问后输出它
+ } 
+ }; 
+ mv = new TraceMethodVisitor(mv, p); 
+ } 
+ return new MyMethodAdapter(mv); 
+} 
+```
+这一代码输出该方法经 MyMethodAdapter 转换过后的结果。
+
+**3. CheckClassAdapter**
+
+，它检查 ClassVisitor 方法的调用顺序是否适当，参数是
+否有效，所做的工作与 MethodVisitor 方法相同。因此，可用于检查 MethodVisitor API
+在一个转换链中任意点的使用是否正常。和 TraceMethodVisitor 类似，可以用CheckMethodAdapter 类来检查一个方法，而不是检查它的整个类：
+```java
+ String desc, String signature, String[] exceptions) { 
+ MethodVisitor mv = cv.visitMethod(access, name, desc, signature, 
+ exceptions); 
+ if (debug && mv != null && ...) { // 如果必须检查这个方法
+ mv = new CheckMethodAdapter(mv); 
+ } 
+ return new MyMethodAdapter(mv); 
+} 
+```
+这一代码验证 MyMethodAdapter 正确地使用了 MethodVisitor API。但要注意，这一
+适配器并没有验证字节代码是正确的：例如，它没有检测出 ISTORE 1 ALOAD 1 是无效的。
+实际上，如果使用 CheckMethodAdapter 的其他构造器（见 Javadoc），并且在 visitMaxs
+中ᨀ供有效的 maxStack 和 maxLocals 参数，那这种错误是可以被检测出来的。
+
+#### AnalyzerAdapter
+这个方法适配器根据 visitFrame 中访问的帧，计算每条指令之前的栈映射帧。visitFrame 仅在方法中的一些特定指令前调用，一方面是为了节省空间，
+另一方面也是因为“其他帧可以轻松快速地由这些帧推导得出”。这就是这个适配器所做的工作。
+当然，它仅对那些包含预计算栈映射帧的类有效，也就是对于用 Java 6 或更高版本编译的有效（或
+者用一个使用 COMPUTE_FRAMES 选项的 ASM 适配器升级到 Java 6）。
+
+#### LocalVariablesSorter
+
+这个方法适配器将一个方法中使用的局部变量按照它们在这个方法中的出现顺序重新进行
+编号。例如，在一个有两个参数的方法中，第一个被读取或写入且索引大于或等于 3 的局部变量
+（前三个局部变量对应于 this 及两个方法参数，因此不会发生变化）被赋予索引 3，第二个被赋
+予索引 4，以此类推。在向一个方法中插入新的局部变量时，这个适配器很有用。没有这个适配器，就需要在所有已有局部变量之后添加新的局部变量，但遗憾的是，在 visitMaxs 中，要直
+到方法的末尾处才能知道这些局部变量的编号。
+
+#### AdviceAdapter
+
+这个方法适配器是一个抽象类，可用于在一个方法的开头以及恰在任意 RETURN 或 ATHROW
+指令之前插入代码。它的主要好处就是对于构造器也是有效的，在构造器中，不能将代码恰好插
+入到构造器的开头，而是插在对超构造器的调用之后。事实上，这个适配器的大多数代码都专门
+用于检测对这个超构造器的调用。
 
