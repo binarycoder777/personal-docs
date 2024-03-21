@@ -688,9 +688,9 @@ INVOKESPECIAL java/lang/Object <init> ()V
 RETURN
 ```
 第一条指令将 this 压入操作数栈中。第二条指令从栈中弹出这个值，并调用在 Object
-对象中定义的<init>方法。这对应于 super()调用，也就是对超类 Object 构造器的调用。
+对象中定义的< init >方法。这对应于 super()调用，也就是对超类 Object 构造器的调用。
 在这里可以看到，在已编译类和源类中对构造器的命名是不同的：在编译类中，它们总是被命名
-为<init>，而在源类中，它们的名字与定义它们的类同名。最后一条指令返回调用者。
+为< init >，而在源类中，它们的名字与定义它们的类同名。最后一条指令返回调用者。
 
 
 ### 异常处理器
@@ -1341,7 +1341,7 @@ org.objectweb.asm.commons 包中包含了一些预定义的方法适配器，可
 **1. Type** 
 
 许多字节代码指令，比如 xLOAD、xADD 或 xRETURN 依赖于将它们应用于哪种类型。Type
-类ᨀ供了一个 getOpcode 方法，可用于为这些指令获取与一给定类型相对应的操作码。这一方
+类提供了一个 getOpcode 方法，可用于为这些指令获取与一给定类型相对应的操作码。这一方
 法的参数是一个 int 类型的操作码，针对哪种类型调用该方法，则返回该哪种类型的操作码。
 例如 t.getOpcode(IMUL)，若 t 等于 Type.FLOAT_TYPE，则返回 FMUL。
 
@@ -1379,7 +1379,7 @@ public final class java/lang/Void {
  MAXLOCALS = 0 
 }
 ```
-它说明如何生成一个静态块 static { ... }，也就是用<clinit>方法（用于 CLass
+它说明如何生成一个静态块 static { ... }，也就是用 < clinit >方法（用于 CLass
 INITializer）。注意，如果希望跟踪某一个方法在链中某一点处的内容，而不是跟踪类的所
 有内容，可以用 TraceMethodVisitor 代替 TraceClassVisitor（在这种情况下，必须显
 式指定后端；这里使用了一个 Textifier）：
@@ -1419,7 +1419,7 @@ public MethodVisitor visitMethod(int access, String name,
 这一代码验证 MyMethodAdapter 正确地使用了 MethodVisitor API。但要注意，这一
 适配器并没有验证字节代码是正确的：例如，它没有检测出 ISTORE 1 ALOAD 1 是无效的。
 实际上，如果使用 CheckMethodAdapter 的其他构造器（见 Javadoc），并且在 visitMaxs
-中ᨀ供有效的 maxStack 和 maxLocals 参数，那这种错误是可以被检测出来的。
+中提供有效的 maxStack 和 maxLocals 参数，那这种错误是可以被检测出来的。
 
 #### AnalyzerAdapter
 这个方法适配器根据 visitFrame 中访问的帧，计算每条指令之前的栈映射帧。visitFrame 仅在方法中的一些特定指令前调用，一方面是为了节省空间，
@@ -1442,3 +1442,664 @@ public MethodVisitor visitMethod(int access, String name,
 入到构造器的开头，而是插在对超构造器的调用之后。事实上，这个适配器的大多数代码都专门
 用于检测对这个超构造器的调用。
 
+## 元数据
+
+### 泛型
+
+诸如 List< E >之类的泛型类，以及使用它们的类，包含了有关它们所声明或使用的泛型的
+信息。这一信息不是由字节代码指令在运行时使用，但可通过反射 API 访问。它还可以供编译器使用，以进行分离编译。
+
+出于后向兼容的原因，有关泛型的信息没有存储在类型或方法᧿述符中（它们的定义远早于
+Java 5 中对泛型的引入），而是保存在称为类型、方法和类签名的类似构造中。在涉及泛型时，
+除了描述符之外，这些签名也会存储在类、字段和方法声明中（泛型不会影响方法的字节代码：
+编译器用它们执行静态类型检查，但会在必要时重新引入类型转换，就像这些方法未被使用一样
+进行编译）
+
+与类型和方法᧿述符不同，类型签名的语法非常复杂，这也是因为泛型的递归本质造成的（一
+个泛型可以将另一泛型作为参数——例如，考虑 List<List<E>>）。其语法由以下规则给出（有
+关这些规则的完整᧿述，请参阅《Java 虚拟机规范》）：
+
+``` bash
+TypeSignature: Z | C | B | S | I | F | J | D | FieldTypeSignature 
+FieldTypeSignature: ClassTypeSignature | [ TypeSignature | TypeVar 
+ClassTypeSignature: L Id ( / Id )* TypeArgs? ( . Id TypeArgs? )* ; 
+TypeArgs: < TypeArg+ > 
+TypeArg: * | ( + | - )? FieldTypeSignature 
+TypeVar: T Id ;
+```
+
+第一条规则表明，类型签名或者是一个基元类型᧿述符，或者是一个字段类型签名。第二条
+规则将一个字段类型签名定义为一个类类型签名、数组类型签名或类型变量。第三条规则定义类
+类型签名：它们是类类型描述符，在主类名之后或者内部类名之后的尖括号中可能带有类型参数（以点为前缀）。其他规则定义了类型参数和类型变量。注意，一个类型参数可能是一个完整的
+字段类型签名，带有它自己的类型参数：因此，类型签名可能非常复杂
+
+Java 类型和相应的类型签名
+
+```
+List<E>
+Ljava/util/List<TE;>; 
+List<?>
+Ljava/util/List<*>; 
+List<? extends Number>
+Ljava/util/List<+Ljava/lang/Number;>; 
+List<? super Integer>
+Ljava/util/List<-Ljava/lang/Integer;>; 
+List<List<String>[]>
+Ljava/util/List<[Ljava/util/List<Ljava/lang/String;>;>; 
+HashMap<K, V>.HashIterator<K>
+Ljava/util/HashMap<TK;TV;>.HashIterator<TK;>;
+```
+
+方法签名扩展了方法᧿述符，就像类型签名扩展了类型描述符。方法签名᧿述了方法参数的
+类型签名及其返回类型的签名。与方法᧿述符不同的是，它还包含了该方法所抛出异常的签名，前面带有^前缀，还可以在尖括号之间包含可选的形式类型参数：
+``` 
+MethodTypeSignature: 
+ TypeParams? ( TypeSignature* ) ( TypeSignature | V ) Exception* 
+Exception: ^ClassTypeSignature | ^TypeVar 
+TypeParams: < TypeParam+ > 
+TypeParam: Id : FieldTypeSignature? ( : FieldTypeSignature )*
+```
+比如以下泛型静态方法的方法签名，它以类型变量 T 为参数：
+```java
+static <T> Class<? extends T> m (int n) 
+```
+它是以下方法签名：
+```bash
+<T:Ljava/lang/Object;>(I)Ljava/lang/Class<+TT;>;
+```
+最后要说的是类签名，不要将它与类类型签名相混淆，它被定义为其超类的类型签名，后面
+跟有所实现接口的类型签名，以及可选的形式类型参数：
+```
+ClassSignature: TypeParams? ClassTypeSignature ClassTypeSignature*
+```
+例如，一个被声明为 C< E > extends List< E > 的类的类签名就是
+```
+<E:Ljava/lang/Object;>Ljava/util/List<TE;>;。
+```
+
+#### 接口与组件
+和᧿述符的情况一样，也出于相同的效果原因，ASM API 公开签名的形式与
+它们在编译类中的存储形式相同（签名主要出现在 ClassVisitor 类的 visit、visitField
+和 visitMethod 方法中，分别作为可选类、类型或方法签名参数）。幸好它还在org.objectweb.asm.signature 包中ᨀ供了一些基于 SignatureVisitor 抽象类的工
+具，用于生成和转换签名
+``` java
+public abstract class SignatureVisitor { 
+ public final static char EXTENDS = ’+’; 
+ public final static char SUPER = ’-’; 
+ public final static char INSTANCEOF = ’=’; 
+ public SignatureVisitor(int api); 
+ public void visitFormalTypeParameter(String name); 
+ public SignatureVisitor visitClassBound(); 
+ public SignatureVisitor visitInterfaceBound(); 
+ public SignatureVisitor visitSuperclass(); 
+ public SignatureVisitor visitInterface(); 
+ public SignatureVisitor visitParameterType(); 
+ public SignatureVisitor visitReturnType(); 
+ public SignatureVisitor visitExceptionType(); 
+ public void visitBaseType(char descriptor); 
+ public void visitTypeVariable(String name); 
+ public SignatureVisitor visitArrayType(); 
+ public void visitClassType(String name); 
+ public void visitInnerClassType(String name); 
+ public void visitTypeArgument(); 
+ public SignatureVisitor visitTypeArgument(char wildcard); 
+ public void visitEnd(); 
+}
+```
+这个抽象类用于访问类型签名、方法签名和类签名。用于类型签名的方法以粗体显示，必须
+按以下顺序调用，它反映了前面的语法规则（注意，其中两个返回了 SignatureVisitor：这
+是因为类型签名的递归定义导致的）：
+```
+visitBaseType | visitArrayType | visitTypeVariable | 
+( visitClassType visitTypeArgument* 
+ ( visitInnerClassType visitTypeArgument* )* visitEnd ) ) 
+```
+用于访问方法签名的方法如下：
+```
+( visitFormalTypeParameter visitClassBound? visitInterfaceBound* )* 
+visitParameterType* visitReturnType visitExceptionType* 
+```
+最后，用于访问类签名的方法为：
+```
+( visitFormalTypeParameter visitClassBound? visitInterfaceBound* )* 
+visitSuperClass visitInterface*
+```
+
+这些方法大多返回一个 SignatureVisitor：它是准备用来访问类型签名的。注意，不同
+于 ClassVisitor 返回的 MethodVisitors ， SignatureVisitor 返回的
+SignatureVisitors 不得为 null，而且必须顺序使用：事实上，在完全访问一个嵌套签名之前，不得访问父访问器的任何方法。
+
+和类的情况一样，ASM API 基于这个 API 提供了两个组件：SignatureReader 组件分析
+一个签名，并针对一个给定的签名访问器调用适当的访问方法；SignatureWriter 组件基于它接收到的方法调用生成一个签名。
+
+利用与类和方法相同的原理，这两个类可用于生成和转换签名。例如，假定我们希望对出现
+在某些签名中的类名进行重命名。这一效果可以用以下签名适配器完成，除 visitClassType
+和 visitInnerClassType 方法之外，它将自己接收到的所有其他方法调用都不加修改地加以
+转发（这里假设 sv 方法总是返回 this，SignatureWriter 就属于这种情况）：
+```java
+public class RenameSignatureAdapter extends SignatureVisitor { 
+ private SignatureVisitor sv; 
+ private Map<String, String> renaming; 
+ private String oldName; 
+ public RenameSignatureAdapter(SignatureVisitor sv, 
+ Map<String, String> renaming) { 
+ super(ASM4); 
+ this.sv = sv; 
+ this.renaming = renaming; 
+ } 
+ public void visitFormalTypeParameter(String name) { 
+ sv.visitFormalTypeParameter(name); 
+ } 
+ public SignatureVisitor visitClassBound() { 
+ sv.visitClassBound(); 
+ return this; 
+ } 
+ public SignatureVisitor visitInterfaceBound() { 
+ sv.visitInterfaceBound(); 
+ return this; 
+ } 
+ ... 
+ public void visitClassType(String name) { 
+ oldName = name; 
+ String newName = renaming.get(oldName); 
+ sv.visitClassType(newName == null ? name : newName); 
+ } 
+ public void visitInnerClassType(String name) { 
+ oldName = oldName + "." + name; 
+ String newName = renaming.get(oldName); 
+ sv.visitInnerClassType(newName == null ? name : newName); 
+ } 
+ public void visitTypeArgument() { 
+ sv.visitTypeArgument(); 
+ } 
+ public SignatureVisitor visitTypeArgument(char wildcard) { 
+ sv.visitTypeArgument(wildcard); 
+ return this; 
+ } 
+ public void visitEnd() { 
+ sv.visitEnd(); 
+ } 
+}
+```
+因此，以下代码的结果为
+``` java
+"LA<TK;TV;>.B<TK;>;"：
+String s = "Ljava/util/HashMap<TK;TV;>.HashIterator<TK;>;"; 
+Map<String, String> renaming = new HashMap<String, String>(); 
+renaming.put("java/util/HashMap", "A"); 
+renaming.put("java/util/HashMap.HashIterator", "B"); 
+SignatureWriter sw = new SignatureWriter(); 
+SignatureVisitor sa = new RenameSignatureAdapter(sw, renaming); 
+SignatureReader sr = new SignatureReader(s); 
+sr.acceptType(sa); 
+sw.toString();
+```
+
+#### 工具
+
+TraceClassVisitor 和ASMifier类以内部形式打印类文件中包含的签名。
+利用它们，可以通过以下方式找出与一个给定泛型相对应的签名：编写一个具有某一泛型的 Java
+类，编译它，并用这些命令行工具来找出对应的签名。
+
+### 注释
+
+类、字段、方法和方法参数注释，比如@Deprecated 或@Override，只要它们的保留策
+略不是 RetentionPolicy.SOURCE，它们就会被存储在编译后的类中。这一信息不是在运行
+时供字节代码指令使用，但是，如果保留策略是 RetentionPolicy.RUNTIME，则可以通过
+反射 API 访问它。它还可以供编译器使用。
+
+#### 结构
+源代码中的注释可以具有各种不同形式，比如 @Deprecated 、
+@Retention(RetentionPolicy.CLASS)或@Task(desc="refactor", id=1)。但在内
+部，所有注释的形式都是相同的，由一种注释类型和一组名称/值对规定，其中的取值仅限于如
+下几种：
+
+- 基元，String 或 Class 值
+- 枚举值
+- 注释值
+- 上述值的数组
+
+注意，一个注释中可以包含其他注释，甚至可以包含注释数组。因此，注释可能非常复杂。
+
+#### 接口与组件
+用于生成和转换注释的 ASM API 是基于 AnnotationVisitor 抽象类的
+
+``` java
+public abstract class AnnotationVisitor { 
+ public AnnotationVisitor(int api); 
+ public AnnotationVisitor(int api, AnnotationVisitor av); 
+ public void visit(String name, Object value); 
+ public void visitEnum(String name, String desc, String value); 
+ public AnnotationVisitor visitAnnotation(String name, String desc); 
+ public AnnotationVisitor visitArray(String name); 
+ public void visitEnd(); 
+}
+```
+这个类的方法用于访问一个注释的名称/值对（注释类型在访问这一类型的方法中访问，即visitAnnotation 方法）。第一个方法用于基元、String 和 Class 值（后者用 Type 对象表
+示），其他方法用于枚举、注释和数组值。可以按任意顺序调用它们，visitEnd 除外：
+```
+( visit | visitEnum | visitAnnotation | visitArray )* visitEnd 
+```
+注意，两个方法返回 AnnotationVisitor：这是因为注释可以包含其他注释。另外，与
+ClassVisitor 返回的 MethodVisitor 不同，这两个方法返回的 AnnotationVisitors
+必须顺序使用：事实上，在完全访问一个嵌套注释之前，不能调用父访问器的任何方法。
+
+还要注意，visitArray 方法返回一个 AnnotationVisitor，以访问数组的元素。但是，
+由于数组的元素未被命名，因此，name 参数被 visitArray 返回的访问器的方法忽略，可以
+设定为 null。
+
+**1. 添加、删除和检测注释**
+
+与字段和方法的情景一样，可以通过在 visitAnnotation 方法中返回 null 来删除注释：
+``` java
+public class RemoveAnnotationAdapter extends ClassVisitor { 
+ private String annDesc; 
+ public RemoveAnnotationAdapter(ClassVisitor cv, String annDesc) { 
+ super(ASM4, cv); 
+ this.annDesc = annDesc; 
+ } 
+ @Override 
+ public AnnotationVisitor visitAnnotation(String desc, boolean vis) { 
+ if (desc.equals(annDesc)) { 
+ return null; 
+ } 
+ return cv.visitAnnotation(desc, vis); 
+ } 
+}
+```
+类注释的添加要更难一些，因为存在一些限制条件：必须调用 ClassVisitor 类的方法。
+事实上，所有可以跟在 visitAnnotation 之后的方法都必须重写，以检测什么时候已经访问
+了所有注释（因为 visitCode 方法的原因，方法注释的添加更容易一些）：
+``` java
+public class AddAnnotationAdapter extends ClassVisitor { 
+ private String annotationDesc; 
+ private boolean isAnnotationPresent; 
+ public AddAnnotationAdapter(ClassVisitor cv, String annotationDesc) { 
+ super(ASM4, cv); 
+ this.annotationDesc = annotationDesc; 
+ } 
+ @Override public void visit(int version, int access, String name, 
+ String signature, String superName, String[] interfaces) { 
+ cv.visit(v, access, name, signature, superName, interfaces); 
+ } 
+ @Override public AnnotationVisitor visitAnnotation(String desc, 
+ boolean visible) { 
+ if (visible && desc.equals(annotationDesc)) { 
+ isAnnotationPresent = true; 
+ } 
+ return cv.visitAnnotation(desc, visible); 
+ } 
+ @Override public void visitInnerClass(String name, String outerName, 
+ String innerName, int access) { 
+ addAnnotation(); 
+ cv.visitInnerClass(name, outerName, innerName, access);
+  } 
+ @Override 
+ public FieldVisitor visitField(int access, String name, String desc, 
+ String signature, Object value) { 
+ addAnnotation(); 
+ return cv.visitField(access, name, desc, signature, value); 
+ } 
+ @Override 
+ public MethodVisitor visitMethod(int access, String name, 
+ String desc, String signature, String[] exceptions) { 
+ addAnnotation(); 
+ return cv.visitMethod(access, name, desc, signature, exceptions); 
+ } 
+ @Override public void visitEnd() { 
+ addAnnotation(); 
+ cv.visitEnd(); 
+ } 
+ private void addAnnotation() { 
+ if (!isAnnotationPresent) { 
+ AnnotationVisitor av = cv.visitAnnotation(annotationDesc, true); 
+ if (av != null) { 
+ av.visitEnd(); 
+ } 
+ isAnnotationPresent = true; 
+ } 
+ } 
+}
+```
+注意，如果类版本低于 1.5，这个适配器将其更新至该版本。这是必要地，因为对于版本低
+于 1.5 的类，JVM 会忽略其中的注释。
+
+注释在类和方法适配器中的最后一种应用情景，也可能是最常见的应用情景，就是以注释实
+现转换的参数化。例如，你可能仅对于那些具有@Persistent 注释的字段来转换字段的访问，
+仅对于那些拥有@Log 注释的方法添加记录代码，如此等等。所有这些应用情景都可以很轻松地
+实现，因为注释是必须首先访问的：必须在字段和方法之前访问类注释，必须在代码之前访问方
+法和参数注释。因此，只需在检测到所需注释时设定一个标志，然后在后面的转换中使用，就像
+上面的例子用 isAnnotationPresent 标志所做的事情。
+
+#### 工具
+TraceClassVisitor, CheckClassAdapter 和 ASMifier 类也支持注释
+（就像对于方法一样，还可能使用 TraceAnnotationVisitor 或
+CheckAnnotationAdapter，在各个注释的级别工作，而不是在类级别工作）。它们可用于查
+看如何生成某个特定注释。例如，使用以下代码：
+``` bash
+java -classpath asm.jar:asm-util.jar \1 
+ org.objectweb.asm.util.ASMifier \ 
+ java.lang.Deprecated
+ ```
+ 将输出如下代码（经过微小的重构）：
+ ```java
+package asm.java.lang; 
+import org.objectweb.asm.*; 
+public class DeprecatedDump implements Opcodes {
+     public static byte[] dump() throws Exception { 
+ ClassWriter cw = new ClassWriter(0); 
+ AnnotationVisitor av; 
+ cw.visit(V1_5, ACC_PUBLIC + ACC_ANNOTATION + ACC_ABSTRACT 
+ + ACC_INTERFACE, "java/lang/Deprecated", null, 
+ "java/lang/Object", 
+ new String[] { "java/lang/annotation/Annotation" }); 
+ { 
+ av = cw.visitAnnotation("Ljava/lang/annotation/Documented;", 
+ true); 
+ av.visitEnd(); 
+ } 
+ { 
+ av = cw.visitAnnotation("Ljava/lang/annotation/Retention;", true); 
+ av.visitEnum("value", "Ljava/lang/annotation/RetentionPolicy;", 
+ "RUNTIME"); 
+ av.visitEnd(); 
+ } 
+ cw.visitEnd(); 
+ return cw.toByteArray(); 
+ } 
+}
+```
+此代码说明如何用 ACC_ANNOTATION 标志创建一个注释类，并说明如何创建两个类注释，
+一个没有值，一个具有枚举值。方法注释和参数注释可以采用 MethodVisitor 类中定义的
+visitAnnotation 和 visitParameterAnnotation 方法以类似方式创建。
+
+### 调试
+以 javac -g 编译的类中包含了其源文件的名字、源代码行编号与字节代码指令之间的
+映射、源代码中局部变量名与字节代码中局部变量槽之间的映射。当这一可选信息可用时，
+会在调试器中和异常栈轨迹中使用它们。
+
+#### 结构
+源代码行编号与字节代码指令之间的映射存储为一个由（line number, label）对组成的列表
+中，放在方法的已编译代码部分中。例如，如果 l1、l2 和 l3 是按此顺序出现的三个标记，则下面各对：
+```
+(n1, l1) 
+(n2, l2) 
+(n3, l3) 
+```
+意味着 l1 和 l2 之间的指令来自行 n1，l2 和 l3 之间的指令来自 n2，l3 之后的指令来自行 n3。注意，一个给定行号可以出现在几个对中。这是因为，对于出现在一个源代码行中的表达式，其在字节代码中的相应指令可能不是连续的。例如，for (init; cond; incr) statement;通常是按以下顺序编译的：
+```
+init statement incr cond
+```
+源代码中局部变量名与字节代码中局部变量槽之间的映射，以(name, type descriptor, type 
+signature, start, end, index)等多元组列表的形式存储在该方法的已编译代码节中。这样一个多元组
+的含义是：在两个标记 start 和 end 之间，槽 index 中的局部变量对应于源代码中的局部变量，其
+名字和类型由多元组的前三个元素组出。注意，编译器可以使用相同的局部变量槽来存储具有不
+同作用范围的不同源局部变量。反之，同一个源代码局部变量可能被编译为一个具有非连续作用
+范围的局部变量槽。例如，有可能存在一种类似如下的情景：
+```
+l1: 
+... // 这里的槽 1 包含局部变量 i 
+l2: 
+... // 这里的槽 1 包含局部变量 j 
+l3: 
+... // 这里的槽 1 再次包含局部变量 i 
+end: 
+```
+相应的多元组为：
+```
+("i", "I", null, l1, l2, 1) 
+("j", "I", null, l2, l3, 1) 
+("i", "I", null, l3, end, 1)
+```
+
+#### 接口和组件
+调试信息用 ClassVisitor 和 MethodVisitor 类的三个方法访问：
+
+- 源文件名用 ClassVisitor 类的 visitSource 方法访问；
+- 源代码行号与字节代码指令之间的映射用 MethodVisitor 类的 visitLineNumber
+方法访问，每次访问一对；
+- 源代码中局部变量名与字节代码中局部变量槽之间的映射用 MethodVisitor 类的
+visitLocalVariable 方法访问，每次访问一个多元组。
+
+visitLineNumber 方法必须在已经访问了作为参数传送的标记之后进行调用。在实践中，
+就是在访问这一标记后立即调用它，从而可以非常容易地知道一个方法访问器中当前指令的源代码行：
+``` java
+public class MyAdapter extends MethodVisitor { 
+ int currentLine; 
+ public MyAdapter(MethodVisitor mv) { 
+ super(ASM4, mv); 
+ } 
+ @Override 
+ public void visitLineNumber(int line, Label start) { 
+ mv.visitLineNumber(line, start); 
+ currentLine = line; 
+ } 
+ ... 
+}
+```
+类似地，visitLocalVariable 方法方法必须在已经访问了作为参数传送的标记之后调
+用。下面给出一些方法调用示例，它们对应于上一节给出的名称值对和多元组：
+```java
+visitLineNumber(n1, l1); 
+visitLineNumber(n2, l2); 
+visitLineNumber(n3, l3); 
+visitLocalVariable("i", "I", null, l1, l2, 1); 
+visitLocalVariable("j", "I", null, l2, l3, 1); 
+visitLocalVariable("i", "I", null, l3, end, 1);
+```
+
+**忽略调试信息**
+为了访问行号和局部变量名，ClassReader 类可能需要引入“人为”Label 对象，也就
+是说，跳转指令并不需要它们，它们只是为了表示调试信息。为避免这种误判，可以在 ClassReader.accept 方法中使用 SKIP_DEBUG 选项。有了这
+一选项，类读取器不会访问调试信息，不会为它创建人为标记。当然，调试信息会从类中删除，因此，只有在不会为应用程序造成问题时才能使用这一选项。
+
+#### 工具
+和泛型与注释的情景一样，可以使用 TraceClassVisitor、CheckClassAdapter 和
+ASMifier 类来了解如何使用调试信息。
+
+
+## 后向兼容
+
+过去已经在类文件格式中引入了新的元素，未来还将继续添加新元素（例如，用于模块化、
+Java 类型的注释，等等）。到 ASM 3.x，这样的每一次变化都会导致 ASM API 中的后向不兼容变
+化，这不是件好事情。为解决这些问题，ASM 4.0 中已经引入了一种新机制。它的目的是确保未
+来所有 ASM 版本都将与之前直到 ASM 4.0 的任意版本保持后向兼容，即使向类文件格式中引入
+了新的功能时也能保持这种兼容性。这意味着，从 4.0 开始，为一个 ASM 版本编写的类生成器、
+类分析器或类适配器，将可以在任何未来 ASM 版本中使用。但是，仅靠 ASM 自身是不能确保
+这一性质的。它需要用户在编写代码时遵循一些简单的准则。
+
+> ASM 4.0 中引入的后向兼容机制要求将 ClassVisitor 、 FieldVisitor 、
+MethodVisitor 等由接口变为抽象类，具有一个以 ASM 版本为参数的构造器。如果你的代码是为 ASM 3.x 实现的，可以将其升级至 ASM 4.0：将代码分析器和适配器中的 implements 用 extends 替换，并在它们的构造器中指定一个 ASM 版本。此外，ClassAdapter 和 MethodAdapter 还被合并到ClassVisitor 和 MethodVisitor 中。要转换代码，只需用 ClassVisitor 代 替ClassAdapter，用 MethodVisitor 代替 MethodAdapter。另外，如果定义了自定义的FieldAdapter 或 AnnotationAdapter 类，现在可以用 FieldVisitor 和AnnotationVisitor 代替它们。
+
+#### 后向兼容约定
+
+首先，研究一下新的类文件特征如何影响代码生成器、分析器和适配器是非常重要的。也就
+是说，在不受任何实现和二进制兼容问题影响时，在引入这些新特征之前设计的类生成器、分析
+器或适配器在进行这些修改之后还是否有效？换言之，如果有一个在引入这些新功能之前设计的
+转换链，假定这些新功功直接被忽略，原封不动地通过转换链，那这个转换链还是否依然有效？
+事实上，类生成器、分析器和适配器受到的影响是不同的：
+
+- 类生成器不受影响：它们生成具有某一固定类版本的代码，这些生成的类在未来的 JVM
+版本中依然有效，因为 JVM 确定了后向二进制兼容。
+- 类分析器可能受到影响，也可能不受影响。例如，有一段用于分析字节代码指令的代码，
+它是为 Java 4 编写的，它也许能够正常处理 Java 5 类，尽管 Java 5 中引入了注释。但同一段代码也许不再能处理 Java 7 类，因为它不能忽略新的动态调用指令。
+- 类适配器可能受到影响，也可能不受影响。死代码清除工具不会因为引入注释而受到影
+响，甚至不会受到新的动态调用指令的影响。但另一方面，这两种新特性可能都会影
+响到为类进行重命名的工具。
+
+这表明，新的类文件特性可能会对已有的类分析器或适配器产生不可预测的影响。如果新的
+特性直接被忽略，原封不动地通过一个分析链或转换链，这个链在某些情况下可以运行，不产生
+错误，并给出有效结果，而在某些情况下，也可以运行，不产生错误，但却给出无效结果，而在
+另外一些情况下，可能会在执行期间失败。第二种情景的问题尤其严重，因为它会在用户不知晓
+的情况下破坏分析链或转换链的语义，从而导致难以找出 Bug。为解决这一问题，我们认为最好
+不要忽略新特性，而是只要在分析链或转换链中遇到未知特性，就产生一条错误。这种错误发出
+信号：这个链也许能够处理新的类格式，也许不能，链的编写者必须分析具体情景，并在必要时进行更新。
+
+所有上述内容引出了后向兼容性约定的如下定义：
+
+- ASM 版本 X 是为版本号低于小等于 x 的 Java 类编写的。它不能生成版本号 y>x 的类，如果在 ClassReader.accept 中，以一个版本号大于 x 的类作为输入，它必须失败。
+
+- 对于为 ASM X 编写且遵循了以下所述规则的代码，当输入类的版本不超过 x，对于 ASM
+未来任意大于 X 的版本 Y，该代码都能不加修改地正常工作。
+
+- 对于为 ASM X 编写且遵循了以下所述规则的代码，当输入类的声明版本为 y，但仅使
+用了在不晚于版本 x 中定义的功能，则在使用 ASM Y 或任意未来版本时，该代码能够
+不加修改地正常工作。
+
+- 对于为 ASM X 编写且遵循了以下所述规则的代码，当输入类使用了在版本号为 y>x 的
+类中定义的功能时，对于 ASM X 或任意其他未来版本，该代码都必须失败。
+注意，最后三点与类生成器无关，因为它没有类输入。
+
+#### 一个例子
+
+假定将向 Java 8 类中添
+加两个新的假设属性，一个用于存储类的作者，另一个用于存储它的许可。还假设这些新的属性
+在 ASM 5.0 中通过 ClassVisitor 的两个新方法公开，一个是：
+```java
+void visitLicense(String license);
+```
+用于访问许可，还有一个是 visitSource 的新版本，用于在访问源文件名和调试信息的同时
+访问作者
+```java
+@Deprecated void visitSource(String source, String debug);
+```
+作者和许可属性是可选的，即对 visitLicense 的调用并非强制的，在一个 visitSource
+调用中，author 可能是 null
+
+### 规则
+在使用 ASM API 时，要想确保你的代码在所有未来 ASM 版本中都有
+效（其意义见上述约定），就必须遵循这些规则。
+
+首先，如果编写一个类生成器，那不需要遵循任何规则。例如，如果正在为 ASM 4.0 编写
+一个类生成器，它可能包含一个类似于 visitSource(mySource, myDebug)的调用，当然
+不包含对 visitLicense 的调用。如果不加修改地用 ASM 5.0 运行它，它将会调用过时的
+visitSource 方法，但 ASM 5.0 ClassWriter 将会在内部将它重定向到
+visitSource(null, mySource, myDebug)，生成所期望的结果（但其效率要稍低于直接
+将代码升级为调用这个新方法）。同理，缺少对 visitLicense 的调用也不会造成问题（所生
+成的类版本也没有变化，人们并不指望这个版本的类中会有一个许可属性）。
+
+另一方面，如果编写一个类分析器或类适配器，也就是说，如果重写 ClassVisitor 类（或
+者任何其他类似的类，比如 FieldVisitor 或 MethodVisitor），就必须遵循一些规则，如
+下所述。
+
+#### 基本规则
+这里考虑一个类的简单情况：直接扩展 ClassVisitor。
+在这种情况下，只有一条规则：
+规则 1：要为 ASM X 编写一个 ClassVisitor 子类，就以这个版本号为参数，调用
+ClassVisitor 构造器，在这个版本的 ClassVisitor 类中，绝对不要重写或调用弃用的方
+法（或者将在之后版本引入的方法）。
+``` java
+class MyClassAdapter extends ClassVisitor { 
+ public MyClassAdapter(ClassVisitor cv) { 
+ super(ASM4, cv); 
+ } 
+ ... 
+ public void visitSource(String source, String debug) { // optional 
+ ... 
+ super.visitSource(source, debug); // optional 
+ } 
+}
+```
+一旦针对 ASM5.0 升级之后，必须删除 visitSource(String, String)，这个类看起
+来必须类似于如下所示：
+```java
+class MyClassAdapter extends ClassVisitor {
+     public MyClassAdapter(ClassVisitor cv) { 
+ super(ASM5, cv); 
+ } 
+ ... 
+ public void visitSource(String author, 
+ String source, String debug) { // optional 
+ ... 
+ super.visitSource(author, source, debug); // optional 
+ } 
+ public void visitLicense(String license) { // optional 
+ ... 
+ super.visitLicense(license); // optional 
+ } 
+}
+```
+它是如何工作的呢？在 ASM 4.0 中，ClassVisitor 的内部实现如下：
+```java
+ int api; 
+ ClassVisitor cv; 
+ public ClassVisitor(int api, ClassVisitor cv) { 
+ this.api = api; 
+ this.cv = cv; 
+ } 
+ ... 
+ public void visitSource(String source, String debug) { 
+ if (cv != null) cv.visitSource(source, debug); 
+ } 
+}
+```
+ ASM 5.0 中，这一代码变为：
+ ```java
+public abstract class ClassVisitor { 
+ ... 
+ public void visitSource(String source, String debug) { 
+ if (api < ASM5) { 
+ if (cv != null) cv.visitSource(source, debug); 
+ } else { 
+ visitSource(null, source, debug); 
+ } 
+ } 
+ public void visitSource(Sring author, String source, String debug) { 
+ if (api < ASM5) { 
+ if (author == null) { 
+ visitSource(source, debug); 
+ } else { 
+ throw new RuntimeException(); 
+ } 
+ } else { 
+ if (cv != null) cv.visitSource(author, source, debug); 
+ } 
+ } 
+ public void visitLicense(String license) { 
+ if (api < ASM5) throw new RuntimeException(); 
+ if (cv != null) cv.visitSource(source, debug); 
+ } 
+}
+```
+如果 MyClassAdapter 4.0 扩展了 ClassVisitor 4.0，那一切都将如预期中一样正常工
+作。如果升级到 ASM 5.0，但没有修改代码，MyClassAdapter 4.0 现在将扩展 ClassVisitor
+5.0。但api字段仍将是ASM4 < ASM5，容易看出，在这种情况下，在调用visitSource(String,String)时，ClassVisitor 5.0 的行为特性类似于 ClassVisitor 4.0。此外，如果用一个
+null 作者一访问新的 visitSource 方法，该调用将被重定向至旧版本。最后，如果在输入类
+中找到非 null 作者或许可，执行过程将会失败，与约定中的规定一致（或者是在新的
+visitSource 方法中，或者是在 visitLicense 中）。
+
+如果升级到 ASM 5.0，并同时升级代码，现在将拥有扩展了 ClassVisitor 5.0 的
+MyClassAdapter 5.0。api 字段现在是 ASM5，visitLicense 和新的 visitSource 方法
+的行为就是直接将调用委托给下一个访问者 cv。此外，旧的 visitSource 方法现在将调用重
+定向至新的 visitSource 方法，这样可以确保：如果在转换链中，在我们自己的类适配器之
+前使用了一个旧类适配器，那 MyClassAdapter 5.0 不会错过这个访问事件
+
+ClassReader 将总是调用每个访问方法的最新版本。因此，如果随 ASM 4.0 使用
+MyClassAdapter 4.0，或者随 ASM 5.0 使用 MyClassAdapter 5.0，将不会产生重定向。只
+有在随 ASM 5.0 使用 MyClassAdapter 4.0 时，才会在 ClassVisitor 中发生重定向（在
+新 visitSource 方法的第 3 行）。因此，尽管旧代码在新 ASM 版本中仍能正常使用，但它的
+运行速度要慢一些。将其升级为使用新的 API，将恢复其性能。
+
+#### 继承规则
+上述规则对于 ClassVisitor 或任意其他类似类的直接子类都足够了。对于间接子类，也
+就是说，如果定义了一个扩展 ClassVisitor 的子类 A1，而它本身又由 A2 扩展，……它本身
+又由 An 扩展，则必须为同一 ASM 版本编写所有这些子类。事实上，在一个继承链中混用不同
+版本将导致同时重写同一方法的几个版本，比如 visitSource(String,String)和
+visitSource(String,String,String)，它们的行为可能不同，导致错误或不可预测的
+结果。如果这些类的来源不同，每个来源被独立升级、单独发布，那几乎不可能保证这一性
+质。这就引出第二条规则：
+```
+规则 2：不要使用访问器的继承，而要使用委托（即访问器链）。一种好的做法是让你
+的访问器类在默认情况为 final 的，以确保这一特性。
+```
+事实上，这一规则有两个例外：
+
+- 如果能够完全由自己控制继承链，并同时发布层次结构中的所有类，那就可以使用访问
+器的继承。但必须确保层次结构中的所有类都是为同一 ASM 版本编写的。仍然要让层
+次结构的叶类是 final 的。
+
+- 如果除了叶类之外，没有其他类重写任何访问方法（例如，如果只是为了引入方便的方
+法而在 ClassVisitor 和具体访问类之间使用了中间类），那就可以使用“访问器”的继
+承。仍然要让层次结构的叶类是 final 的（除非它们也没有重写任何访问方法；在这种
+情况下，提供一个以 ASM 版本为参数的构造器，使子类可以指定它们是为哪个版本编
+写的）。
