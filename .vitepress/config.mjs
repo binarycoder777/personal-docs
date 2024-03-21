@@ -297,6 +297,14 @@ export default defineConfig({
                 {
                   text: 'CGO编程(二)',
                   link: '/docs/book/Go语言系列/Go语言高级编程/CGO编程(二).md'
+                },
+                {
+                  text: 'Go汇编语言(一)',
+                  link: '/docs/book/Go语言系列/Go语言高级编程/Go汇编语言(一).md'
+                },
+                {
+                  text:'Go汇编语言(二)',
+                  link: '/docs/book/Go语言系列/Go语言高级编程/Go汇编语言(二).md'
                 }
               ]
             }
