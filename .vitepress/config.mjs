@@ -131,6 +131,18 @@ export default defineConfig({
                 {
                   text: '读和写字节码',
                   link: '/docs/book/Java字节码编程/javassist手册/读和写字节码.md'
+                },
+                {
+                  text:'ClassPool',
+                  link:'/docs/book/Java字节码编程/javassist手册/ClassPool.md'
+                },
+                {
+                  text:'Class loader',
+                  link:'/docs/book/Java字节码编程/javassist手册/Class loader.md'
+                },
+                {
+                  text:'自省和自定义',
+                  link:'/docs/book/Java字节码编程/javassist手册/自省和自定义.md'
                 }
               ]
             }
