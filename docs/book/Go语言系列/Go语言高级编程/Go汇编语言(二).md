@@ -546,3 +546,544 @@ uintptr(unsafe.Pointer(C.myadd)),
 人asmCallCAdd函数。在这个例子中，汇编函数假设调用的C语言函数需要的栈很
 小，可以直接复用Go函数中多余的空间。如果C语言函数可能需要较大的栈，可以
 尝试像CGO那样切换到系统线程的栈上运行。
+
+
+###  AVX指令
+从Go1.11开始，Go汇编语言引入了AVX512指令的支持。AVX指令集是属于Intel家 的SIMD指令集中的一部分。AVX512的最大特点是数据有512位宽度，可以一次计 算8个64位数或者是等大小的数据。因此AVX指令可以用于优化矩阵或图像等并行 度很高的算法。不过并不是每个X86体系的CPU都支持了AVX指令，因此首要的任 务是如何判断CPU支持了哪些高级指令。
+
+
+在Go语言标准库的 internal/cpu 包提供了CPU是否支持某些高级指令的基本信 息，但是只有标准库才能引用这个包（因为internal路径的限制）。该包底层是通过 X86提供的CPUID指令来识别处理器的详细信息。最简便的方法是直接 将 internal/cpu 包克隆一份。不过这个包为了避免复杂的依赖没有使用init函数 自动初始化，因此需要根据情况手工调整代码执行doinit函数初始化。
+
+internal/cpu 包针对X86处理器提供了以下特性检测：
+
+```go
+package cpu var X86 x86 
+// The booleans in x86 contain the correspondingly named cpuid f eature bit. 
+// HasAVX and HasAVX2 are only set if the OS does support XMM an d YMM registers 
+// in addition to the cpuid feature bit being set. 
+// The struct is padded to avoid false sharing. 
+type x86 struct { 
+    HasAES bool 
+    HasADX bool 
+    HasAVX bool 
+    HasAVX2 bool 
+    HasBMI1 bool 
+    HasBMI2 bool 
+    HasERMS bool 
+    HasFMA bool 
+    HasOSXSAVE bool 
+    HasPCLMULQDQ bool 
+    HasPOPCNT bool 
+    HasSSE2 bool 
+    HasSSE3 bool 
+    HasSSSE3 bool 
+    HasSSE41 bool 
+    HasSSE42 bool 
+}
+```
+因此我们可以用以下的代码测试运行时的CPU是否支持AVX2指令集：
+```go
+import ( cpu "path/to/cpu" )func main() { if cpu.X86.HasAVX2 { 
+    // support AVX2 
+    } 
+}
+```
+AVX512是比较新的指令集，只有高端的CPU才会提供支持。为了主流的CPU也能 运行代码测试，我们选择AVX2指令来构造例子。AVX2指令每次可以处理32字节的 数据，可以用来提升数据复制的工作的效率。
+
+下面的例子是用AVX2指令复制数据，每次复制数据32字节倍数大小的数据：
+```go
+// func CopySlice_AVX2(dst, src []byte, len int) 
+TEXT ·CopySlice_AVX2(SB), NOSPLIT, $0 
+    MOVQ dst_data+0(FP), DI 
+    MOVQ src_data+24(FP), SI 
+    MOVQ len+32(FP), BX 
+    MOVQ $0, AX 
+LOOP:VMOVDQU 0(SI)(AX*1), Y0 
+    VMOVDQU Y0, 0(DI)(AX*1) 
+    ADDQ $32, AX 
+    CMPQ AX, BX 
+    JL LOOP 
+    RET
+```
+其中VMOVDQU指令先将 0(SI)(AX*1) 地址开始的32字节数据复制到Y0寄存器 中，然后再复制到 0(DI)(AX*1) 对应的目标内存中。VMOVDQU指令操作的数据 地址可以不用对齐。
+
+AVX2共有16个Y寄存器，每个寄存器有256bit位。如果要复制的数据很多，可以多 个寄存器同时复制，这样可以利用更高效的流水特性优化性能。
+
+## 例子：Goroutine ID
+在操作系统中，每个进程都会有一个唯一的进程编号，每个线程也有自己唯一的线 程编号。同样在Go语言中，每个Goroutine也有自己唯一的Go程编号，这个编号在 panic等场景下经常遇到。虽然Goroutine有内在的编号，但是Go语言却刻意没有提 供获取该编号的接口
+
+### 故意设计没有goid
+根据官方的相关资料显示，Go语言刻意没有提供goid的原因是为了避免被滥用。因 为大部分用户在轻松拿到goid之后，在之后的编程中会不自觉地编写出强依赖goid 的代码。强依赖goid将导致这些代码不好移植，同时也会导致并发模型复杂化。同 时，Go语言中可能同时存在海量的Goroutine，但是每个Goroutine何时被销毁并不 好实时监控，这也会导致依赖goid的资源无法很好地自动回收（需要手工回收）。 不过如果你是Go汇编语言用户，则完全可以忽略这些借口。
+
+### 纯Go方式获取goid
+为了便于理解，我们先尝试用纯Go的方式获取goid。使用纯Go的方式获取goid的 方式虽然性能较低，但是代码有着很好的移植性，同时也可以用于测试验证其它方 式获取的goid是否正确。
+
+每个Go语言用户应该都知道panic函数。调用panic函数将导致Goroutine异常，如 果panic在传递到Goroutine的根函数还没有被recover函数处理掉，那么运行时将打 印相关的异常和栈信息并退出Goroutine。
+
+下面我们构造一个简单的例子，通过panic来输出goid：
+```go
+package main func main() { panic("goid") }
+```
+
+运行后将输出以下信息：
+```bash
+panic: goid goroutine 1 [running]: main.main() /path/to/main.go:4 +0x40
+```
+我们可以猜测Panic输出信息 goroutine 1 [running] 中的1就是goid。但是如何 才能在程序中获取panic的输出信息呢？其实上述信息只是当前函数调用栈帧的文字 化描述，runtime.Stack函数提供了获取该信息的功能。
+
+我们基于runtime.Stack函数重新构造一个例子，通过输出当前栈帧的信息来输出 goid：
+```go
+package main import "runtime" 
+func main() { 
+    var buf = make([]byte, 64) 
+    var stk = buf[:runtime.Stack(buf, false)]
+    print(string(stk)) 
+}
+```
+运行后将输出以下信息： 
+```bash
+goroutine 1 [running]: main.main() /path/to/main.g
+```
+因此从runtime.Stack获取的字符串中就可以很容易解析出goid信息：
+```go
+func GetGoid() int64 { 
+    var (
+        buf [64]byte 
+        n = runtime.Stack(buf[:], false) 
+        stk = strings.TrimPrefix(string(buf[:n]), "goroutine ") )
+        idField := strings.Fields(stk)[0] id, err := strconv.Atoi(idField) 
+        if err != nil {
+            panic(fmt.Errorf("can not get goroutine id: %v", err)) 
+        }
+        return int64(id) }
+```
+GetGoid函数的细节我们不再赘述。需要补充说明的是 runtime.Stack 函数不仅 仅可以获取当前Goroutine的栈信息，还可以获取全部Goroutine的栈信息（通过第 二个参数控制）。同时在Go语言内部的 net/http2.curGoroutineID 函数正是采用类 似方式获取的goid。
+
+
+### 从g结构体获取goid
+根据官方的Go汇编语言文档，每个运行的Goroutine结构的g指针保存在当前运行 Goroutine的系统线程的局部存储TLS中。可以先获取TLS线程局部存储，然后再从 TLS中获取g结构的指针，最后从g结构中取出goid。
+
+下面是参考runtime包中定义的get_tls宏获取g指针：
+
+```bash
+get_tls(CX)
+MOVQ g(CX), AX // Move g into AX.
+```
+其中get_tls是一个宏函数，在 runtime/go_tls.h 头文件中定义。 对于AMD64平台，get_tls宏函数定义如下：
+```bash
+#ifdef GOARCH_amd64 
+#define get_tls(r) MOVQ TLS, r 
+#define g(r) 0(r)(TLS*1) 
+#endif
+```
+将get_tls宏函数展开之后，获取g指针的代码如下：
+```bash
+MOVQ TLS, CX 
+MOVQ 0(CX)(TLS*1), AX
+```
+其实TLS类似线程局部存储的地址，地址对应的内存里的数据才是g指针。我们还可 以更直接一点:
+```bash
+MOVQ (TLS), AX
+```
+基于上述方法可以包装一个getg函数，用于获取g指针：
+```bash
+// func getg() unsafe.Pointer 
+TEXT ·getg(SB), NOSPLIT, $0-8 
+    MOVQ (TLS), AX 
+    MOVQ AX, ret+0(FP) 
+RET
+```
+然后在Go代码中通过goid成员在g结构体中的偏移量来获取goid的值：
+```go
+const g_goid_offset = 152 
+// Go1.10 
+func GetGroutineId() int64 { 
+    g := getg() 
+    p := (*int64)(unsafe.Pointer(uintptr(g) + g_goid_offset)) 
+    return *p 
+}
+```
+其中 g_goid_offset 是 goid 成员的偏移量，g 结构参考 runtime/runtime2.go
+
+在Go1.10版本，goid的偏移量是152字节。因此上述代码只能正确运行在goid偏移 量也是152字节的Go版本中。根据汤普森大神的神谕，枚举和暴力穷举是解决一切 疑难杂症的万金油。我们也可以将goid的偏移保存到表格中，然后根据Go版本号查 询goid的偏移量。
+
+下面是改进后的代码：
+```go
+var offsetDictMap = map[string]int64{ 
+    "go1.10": 152, 
+    "go1.9": 152, 
+    "go1.8": 192, 
+    }
+var g_goid_offset = func() int64 { 
+    goversion := runtime.Version() 
+    for key, off := range offsetDictMap { 
+        if goversion == key || strings.HasPrefix(goversion, key) { 
+            return off 
+            } 
+        }
+        panic("unsupport go verion:"+goversion) 
+    }()
+```
+现在的goid偏移量已经终于可以自动适配已经发布的Go语言版本。
+
+### 获取g结构体对应的接口对象
+
+枚举和暴力穷举虽然够直接，但是对于正在开发中的未发布的Go版本支持并不好， 我们无法提前知晓开发中的某个版本的goid成员的偏移量。
+
+如果是在runtime包内部，我们可以通过 unsafe.OffsetOf(g.goid) 直接获取成 员的偏移量。也可以通过反射获取g结构体的类型，然后通过类型查询某个成员的 偏移量。因为g结构体是一个内部类型，Go代码无法从外部包获取g结构体的类型 信息。但是在Go汇编语言中，我们是可以看到全部的符号的，因此理论上我们也可 以获取g结构体的类型信息。
+
+在任意的类型被定义之后，Go语言都会为该类型生成对应的类型信息。比如g结构 体会生成一个 type·runtime·g 标识符表示g结构体的值类型信息，同时还有一 个 type·*runtime·g 标识符表示指针类型的信息。如果g结构体带有方法，那么 同时还会生成 go.itab.runtime.g 和 go.itab.*runtime.g 类型信息，用于表 示带方法的类型信息。
+
+如果我们能够拿到表示g结构体类型的 type·runtime·g 和g指针，那么就可以构 造g对象的接口。下面是改进的getg函数，返回g指针对象的接口：
+```bash
+// func getg() interface{}
+TEXT ·getg(SB), NOSPLIT, $32-16 
+// get runtime.g 
+MOVQ (TLS), AX 
+// get runtime.g type 
+MOVQ $type·runtime·g(SB), BX 
+// convert (*g) to interface{} 
+MOVQ AX, 8(SP) 
+MOVQ BX, 0(SP) 
+CALL runtime·convT2E(SB) 
+MOVQ 16(SP), AX 
+MOVQ 24(SP), BX 
+// return interface{} 
+MOVQ AX, ret+0(FP) 
+MOVQ BX, ret+8(FP) 
+RET
+```
+其中AX寄存器对应g指针，BX寄存器对应g结构体的类型。然后通过 runtime·convT2E函数将类型转为接口。因为我们使用的不是g结构体指针类型，因 此返回的接口表示的g结构体值类型。理论上我们也可以构造g指针类型的接口，但 是因为Go汇编语言的限制，我们无法使用 type·*runtime·g 标识符。 基于g返回的接口，就可以容易获取goid了：
+```go
+func GetGoid() int64 { 
+    g := getg() 
+    gid := reflect.ValueOf(g).FieldByName("goid").Int() 
+    return goid 
+}
+```
+
+上述代码通过反射直接获取goid，理论上只要反射的接口和goid成员的名字不发生 变化，代码都可以正常运行。经过实际测试，以上的代码可以在Go1.8、Go1.9和 Go1.10版本中正确运行。乐观推测，如果g结构体类型的名字不发生变化，Go语言 反射的机制也不发生变化，那么未来Go语言版本应该也是可以运行的。
+
+反射虽然具备一定的灵活性，但是反射的性能一直是被大家诟病的地方。一个改进 的思路是通过反射获取goid的偏移量，然后通过g指针和偏移量获取goid，这样反射 只需要在初始化阶段执行一次。
+
+```go
+var g_goid_offset uintptr = func() uintptr { g := GetGroutine() 
+if f, ok := reflect.TypeOf(g).FieldByName("goid"); ok { 
+    return f.Offset 
+}
+panic("can not find g.goid field") 
+}()
+```
+有了正确的goid偏移量之后，采用前面讲过的方式获取goid： 
+```go
+func GetGroutineId() int64 { 
+    g := getg() 
+    p := (*int64)(unsafe.Pointer(uintptr(g) + g_goid_offset)) 
+    return *p 
+}
+```
+至此我们获取goid的实现思路已经足够完善了，不过汇编的代码依然有严重的安全隐患。
+
+虽然getg函数是用NOSPLIT标志声明的禁止栈分裂的函数类型，但是getg内部又调 用了更为复杂的runtime·convT2E函数。runtime·convT2E函数如果遇到栈空间不足，可能触发栈分裂的操作。而栈分裂时，GC将要挪动栈上所有函数的参数和返 回值和局部变量中的栈指针。但是我们的getg函数并没有提供局部变量的指针信息。
+
+下面是改进后的getg函数的完整实现：
+```bash
+// func getg() interface{} 
+TEXT ·getg(SB), NOSPLIT, $32-16 NO_LOCAL_POINTERS 
+MOVQ $0, ret_type+0(FP) 
+MOVQ $0, ret_data+8(FP) GO_RESULTS_INITIALIZED 
+// get runtime.g 
+MOVQ (TLS), AX 
+// get runtime.g type 
+MOVQ $type·runtime·g(SB), BX 
+// convert (*g) to interface{} 
+MOVQ AX, 8(SP) 
+MOVQ BX, 0(SP) 
+CALL runtime·convT2E(SB) 
+MOVQ 16(SP), AX 
+MOVQ 24(SP), BX 
+// return interface{} 
+MOVQ AX, ret_type+0(FP) 
+MOVQ BX, ret_data+8(FP) 
+RET
+```
+其中NO_LOCAL_POINTERS表示函数没有局部指针变量。同时对返回的接口进行 零值初始化，初始化完成后通过GO_RESULTS_INITIALIZED告知GC。这样可以在 保证栈分裂时，GC能够正确处理返回值和局部变量中的指针。
+
+###  goid的应用: 局部存储
+
+有了goid之后，构造Goroutine局部存储就非常容易了。我们可以定义一个gls包提 供goid的特性：
+```go
+package gls 
+    var gls struct { 
+    m map[int64]map[interface{}]interface{} sync.Mutex 
+    }
+    func init() { 
+        gls.m = make(map[int64]map[interface{}]interface{}) 
+    }
+```
+gls包变量简单包装了map，同时通过 sync.Mutex 互斥量支持并发访问。 然后定义一个getMap内部函数，用于获取每个Goroutine字节的map：
+```go
+func getMap() map[interface{}]interface{} { gls.Lock() 
+defer gls.Unlock() 
+goid := GetGoid() 
+if m, _ := gls.m[goid]; m != nil { 
+    return m 
+}
+m := make(map[interface{}]interface{}) 
+gls.m[goid] = m 
+return m 
+}
+```
+获取到Goroutine私有的map之后，就是正常的增、删、改操作接口了：
+```go
+func Get(key interface{}) interface{} {         
+    return getMap()[key] 
+}
+func Put(key interface{}, v interface{}) {      
+    getMap()[key] = v 
+}
+func Delete(key interface{}) { 
+    delete(getMap(), key) 
+}
+
+```
+最后我们再提供一个Clean函数，用于释放Goroutine对应的map资源：
+```go
+func Clean() { 
+    gls.Lock() 
+    defer gls.Unlock() 
+    delete(gls.m, GetGoid()) 
+}
+```
+这样一个极简的Goroutine局部存储gls对象就完成了。 下面是使用局部存储简单的例子：
+```go
+import ( gls "path/to/gls" )
+func main() { 
+    var wg sync.WaitGroup 
+    for i := 0; i < 5; i++ { 
+        wg.Add(1) 
+        go func(idx int) { 
+            defer wg.Done() 
+            defer gls.Clean() 
+            defer func() { 
+                fmt.Printf("%d: number = %d\n", idx, gls.Get("nu mber"))   
+            }() 
+        gls.Put("number", idx+100) }(i) 
+    }
+    wg.Wait() 
+}
+```
+通过Goroutine局部存储，不同层次函数之间可以共享存储资源。同时为了避免资源 泄漏，需要在Goroutine的根函数中，通过defer语句调用gls.Clean()函数释放资源。
+
+## Delve调试器
+目前Go语言支持GDB、LLDB和Delve几种调试器。其中GDB是最早支持的调试工 具，LLDB是macOS系统推荐的标准调试工具。但是GDB和LLDB对Go语言的专有 特性都缺乏很大支持，而只有Delve是专门为Go语言设计开发的调试工具。而且 Delve本身也是采用Go语言开发，对Windows平台也提供了一样的支持。
+
+### Delve入门
+首先根据官方的文档正确安装Delve调试器。我们会先构造一个简单的Go语言代 码，用于熟悉下Delve的简单用法。
+
+创建main.go文件，main函数先通过循初始化一个切片，然后输出切片的内容：
+```go
+package main 
+import ( "fmt" )
+func main() { 
+    nums := make([]int, 5) 
+    for i := 0; i < len(nums); i++ { 
+        nums[i] = i * i 
+    }
+    fmt.Println(nums) 
+}
+```
+命令行进入包所在目录，然后输入 dlv debug 命令进入调试：
+```bash
+$ dlv debug Type 'help' for list of commands. (dlv)
+```
+输入help命令可以查看到Delve提供的调试命令列表：
+```
+(dlv) help The following commands are available: args ------------------------ Print function arguments. break (alias: b) ------------ Sets a breakpoint. breakpoints (alias: bp) ----- Print out info for active brea kpoints. clear ----------------------- Deletes breakpoint. clearall -------------------- Deletes multiple breakpoints. condition (alias: cond) ----- Set breakpoint condition. config ---------------------- Changes configuration paramete rs. continue (alias: c) --------- Run until breakpoint or progra m termination. disassemble (alias: disass) - Disassembler. down ------------------------ Move the current frame down. exit (alias: quit | q) ------ Exit the debugger. frame ----------------------- Set the current frame, or exec ute command... funcs ----------------------- Print list of functions. goroutine ------------------- Shows or changes current gorou tinegoroutines ------------------ List program goroutines. help (alias: h) ------------- Prints the help message. list (alias: ls | l) -------- Show source code. locals ---------------------- Print local variables. next (alias: n) ------------- Step over to next source line. on -------------------------- Executes a command when a brea kpoint is hit. print (alias: p) ------------ Evaluate an expression. regs ------------------------ Print contents of CPU register s. restart (alias: r) ---------- Restart process. set ------------------------- Changes the value of a variabl e. source ---------------------- Executes a file containing a l ist of delve... sources --------------------- Print list of source files. stack (alias: bt) ----------- Print stack trace.step (alias: s) ------------- Single step through program. step-instruction (alias: si) Single step a single cpu instr uction. stepout --------------------- Step out of the current functi on. thread (alias: tr) ---------- Switch to the specified thread . threads --------------------- Print out info for every trace d thread. trace (alias: t) ------------ Set tracepoint. types ----------------------- Print list of types up -------------------------- Move the current frame up. vars ------------------------ Print package variables. whatis ---------------------- Prints type of an expression. Type help followed by a command for full documentation. (dlv)
+```
+每个Go程序的入口是main.main函数，我们可以用break在此设置一个断点：
+```bash
+(dlv) break main.main 
+Breakpoint 1 set at 0x10ae9b8 for main.main() ./main.go:7
+```
+然后通过breakpoints查看已经设置的所有断点：
+```bash
+(dlv) breakpoints Breakpoint 
+unrecovered-panic at 0x102a380 for runtime.startpanic () /usr/local/go/src/runtime/panic.go:588 (0) print runtime.curg._panic.arg Breakpoint 1 at 0x10ae9b8 for main.main() ./main.go:7 (0)
+```
+我们发现除了我们自己设置的main.main函数断点外，Delve内部已经为panic异常 函数设置了一个断点。
+
+通过vars命令可以查看全部包级的变量。因为最终的目标程序可能含有大量的全局 变量，我们可以通过一个正则参数选择想查看的全局变量：
+
+```bash
+(dlv) vars main 
+main.initdone· = 2 runtime.main_init_done = chan bool 0/0 runtime.mainStarted = true (dlv)
+```
+然后就可以通过continue命令让程序运行到下一个断点处：
+```bash
+(dlv) continue > main.main() 
+./main.go:7 (hits goroutine(1):1 total:1) (PC: 0x1 0ae9b8)
+    2:
+    3: import ( 
+    4: "fmt" 
+    5: ) 
+    6: 
+    => 7: func main() { 
+    8: nums := make([]int, 5) 
+    9: for i := 0; i < len(nums); i++ { 
+    10: nums[i] = i * i 
+    11: } 
+    12: fmt.Println(nums) 
+(dlv)
+```
+输入next命令单步执行进入main函数内部：
+```bash
+(dlv) next > main.main() 
+./main.go:8 (PC: 0x10ae9cf) 
+    3: import ( 
+    4: "fmt" 
+    5: ) 
+    6:
+    7: func main() { 
+    => 8: nums := make([]int, 5) 
+    9: for i := 0; i < len(nums); i++ { 
+    10: nums[i] = i * i 
+    11: } 
+    12: fmt.Println(nums) 
+    13: } 
+(dlv)
+```
+进入函数之后可以通过args和locals命令查看函数的参数和局部变量：
+```bash
+(dlv) args 
+(no args) 
+(dlv) locals 
+nums = []int len: 842350763880, cap: 17491881, nil
+```
+因为main函数没有参数，因此args命令没有任何输出。而locals命令则输出了局部 变量nums切片的值：此时切片还未完成初始化，切片的底层指针为nil，长度和容 量都是一个随机数值。 再次输入next命令单步执行后就可以查看到nums切片初始化之后的结果了：
+```bash
+(dlv) locals 
+nums = []int len: 5, cap: 5, [...] i = 17601536
+```
+此时因为调试器已经到了for语句行，因此局部变量出现了还未初始化的循环迭代变 量i。
+
+下面我们通过组合使用break和condition命令，在循环内部设置一个条件断点，当 循环变量i等于3时断点生效：
+```bash
+(dlv) break main.go:10 
+Breakpoint 2 set at 0x10aea33 for main.main() ./main.go:10 
+(dlv) condition 2 i==3 
+(dlv)
+```
+然后通过continue执行到刚设置的条件断点，并且输出局部变量。我们发现当循环变量i等于3时，nums切片的前3个元素已经正确初始化。
+
+我们还可以通过stack查看当前执行函数的栈帧信息：
+```bash
+(dlv) stack 
+0 0x00000000010aea33 in main.main at ./main.go:10 
+1 0x000000000102bd60 in runtime.main at /usr/local/go/src/runtime/proc.go:198 
+2 0x0000000001053bd1 in runtime.goexit at /usr/local/go/src/runtime/asm_amd64.s:2361 (dlv)
+```
+或者通过goroutine和goroutines命令查看当前Goroutine相关的信息。最后完成调试工作后输入quit命令退出调试器。至此我们已经掌握了Delve调试器器 的简单用法。
+
+### 调试汇编程序
+用Delve调试Go汇编程序的过程比调试Go语言程序更加简单。调试汇编程序时，我 们需要时刻关注寄存器的状态，如果涉及函数调用或局部变量或参数还需要重点关 注栈寄存器SP的状态。
+
+为了编译演示，我们重新实现一个更简单的main函数：
+```go
+package main 
+func main() { 
+    asmSayHello() 
+} 
+func asmSayHello()
+```
+在main函数中调用汇编语言实现的asmSayHello函数输出一个字符串。 asmSayHello函数在main_amd64.s文件中实现：
+```bash
+#include "textflag.h" 
+#include "funcdata.h" 
+// "Hello World!\n" 
+DATA text<>+0(SB)/8,$"Hello Wo" 
+DATA text<>+8(SB)/8,$"rld!\n" 
+GLOBL text<>(SB),NOPTR,$16 
+// func asmSayHello() 
+TEXT ·asmSayHello(SB), $16-0 NO_LOCAL_POINTERS 
+MOVQ $text<>+0(SB), AX 
+MOVQ AX, (SP) 
+MOVQ $16, 8(SP) 
+CALL runtime·printstring(SB) 
+RET
+```
+参考前面的调试流程，在执行到main函数断点时，可以disassemble反汇编命令查 看main函数对应的汇编代码。
+```bash
+(dlv) break main.main Breakpoint 1 set at 0x105011f for main.main() ./main.go:3 (dlv) continue > main.main() ./main.go:3 (hits goroutine(1):1 total:1) (PC: 0x1 05011f) 1: package main 2: =>3: func main() { asmSayHello() } 4:5: func asmSayHello() (dlv) disassemble TEXT main.main(SB) /path/to/pkg/main.go main.go:3 0x1050110 65488b0c25a0080000 mov rcx, qword ptr g [0x8a0] main.go:3 0x1050119 483b6110 cmp rsp, qword ptr [r +0x10] main.go:3 0x105011d 761a jbe 0x1050139 =>main.go:3 0x105011f* 4883ec08 sub rsp, 0x8 main.go:3 0x1050123 48892c24 mov qword ptr [rsp], r bpmain.go:3 0x1050127 488d2c24 lea rbp, ptr [rsp] main.go:3 0x105012b e880000000 call $main.asmSayHello main.go:3 0x1050130 488b2c24 mov rbp, qword ptr [rs p]main.go:3 0x1050134 4883c408 add rsp, 0x8 main.go:3 0x1050138 c3 ret main.go:3 0x1050139 e87288ffff call $runtime.morestac k_noctxt main.go:3 0x105013e ebd0 jmp $main.main (dlv)
+```
+虽然main函数内部只有一行函数调用语句，但是却生成了很多汇编指令。在函数的 开头通过比较rsp寄存器判断栈空间是否不足，如果不足则跳转到0x1050139地址调 用runtime.morestack函数进行栈扩容，然后跳回到main函数开始位置重新进行栈空 间测试。而在asmSayHello函数调用之前，先扩展rsp空间用于临时存储rbp寄存器 的状态，在函数返回后通过栈恢复rbp的值并回收临时栈空间。通过对比Go语言代 码和对应的汇编代码，我们可以加深对Go汇编语言的理解。
+
+从汇编语言角度深刻Go语言各种特性的工作机制对调试工作也是一个很大的帮助。 如果希望在汇编指令层面调试Go代码，Delve还提供了一个step-instruction单步执 行汇编指令的命令。
+
+现在我们依然用break命令在asmSayHello函数设置断点，并且输入continue命令让 调试器执行到断点位置停下：
+```bash
+(dlv) break main.asmSayHello 
+Breakpoint 2 set at 0x10501bf for main.asmSayHello() ./main_amd6 4.s:10 
+(dlv) continue 
+> main.asmSayHello() ./main_amd64.s:10 (hits goroutine(1):1 tota l:1) (PC: 0x10501bf) 
+5: DATA text<>+0(SB)/8,$"Hello Wo" 
+6: DATA text<>+8(SB)/8,$"rld!\n" 
+7: GLOBL text<>(SB),NOPTR,$16 
+8:
+9: // func asmSayHello() 
+=> 10: TEXT ·asmSayHello(SB), $16-0 
+11: NO_LOCAL_POINTERS 
+12: MOVQ $text<>+0(SB), AX 
+13: MOVQ AX, (SP) 
+14: MOVQ $16, 8(SP) 
+15: CALL runtime·printstring(SB) 
+(dlv)
+```
+此时我们可以通过regs查看全部的寄存器状态：
+```bash
+(dlv) regs 
+rax = 0x0000000001050110 
+rbx = 0x0000000000000000 
+rcx = 0x000000c420000300 
+rdx = 0x0000000001070be0 
+rdi = 0x000000c42007c020 
+rsi = 0x0000000000000001 
+rbp = 0x000000c420049f78 
+rsp = 0x000000c420049f70 
+r8 = 0x7fffffffffffffff 
+r9 = 0xffffffffffffffff 
+r10 = 0x0000000000000100 
+r11 = 0x0000000000000286 
+r12 = 0x000000c41fffff7c 
+r13 = 0x0000000000000000 
+r14 = 0x0000000000000178 
+r15 = 0x0000000000000004 
+rip = 0x00000000010501bf 
+rflags = 0x0000000000000206 ... 
+(dlv)
+```
+因为AMD64的各种寄存器非常多，项目的信息中刻意省略了非通用的寄存器。如果 再单步执行到13行时，可以发现AX寄存器值的变化。
+```bash
+(dlv) regs 
+rax = 0x00000000010a4060 
+rbx = 0x0000000000000000 
+rcx = 0x000000c420000300 ...
+(dlv)
+```
+因此我们可以推断汇编程序内部定义的 text<> 数据的地址为 0x00000000010a4060。我们可以用过print命令来查看该内存内的数据：
+```bash
+(dlv) print *(*[5]byte)(uintptr(0x00000000010a4060)) 
+[5]uint8 [72,101,108,108,111] 
+(dlv)
+```
+我们可以发现输出的 [5]uint8 [72,101,108,108,111] 刚好是对应“Hello”字符 串。通过类似的方法，我们可以通过查看SP对应的栈指针位置，然后查看栈中局部 变量的值。 至此我们就掌握了Go汇编程序的简单调试技术。
+
+
+## 补充说明
+如果是纯粹学习汇编语言，则可以从《深入理解程序设计：使用Linux汇编语言》开 始，该书讲述了如何以C语言的思维变现汇编程序。如果是学习X86汇编，则可以 从《汇编语言：基于x86处理器》一开始，然后再结合《现代x86汇编语言程序设 计》学习AVX等高级汇编指令的使用。
+
+Go汇编语言的官方文档非常匮乏。其中“A Quick Guide to Go's Assembler”是唯一 的一篇系统讲述Go汇编语言的官方文章，该文章中又引入了另外两篇Plan9的文 档：A Manual for the Plan 9 assembler 和 Plan 9 C Compilers。Plan9的两篇文档 分别讲述了汇编语言以及和汇编有关联的C语言编译器的细节。看过这几篇文档之 后会对Go汇编语言有了一些模糊的概念，剩下的就是在实战中通过代码学习了。
+
+Go语言的编译器和汇编器都带了一个 -S 参数，可以查看生成的最终目标代码。 通过对比目标代码和原始的Go语言或Go汇编语言代码的差异可以加深对底层实现 的理解。同时Go语言连接器的实现代码也包含了很多相关的信息。Go汇编语言是 依托Go语言的语言，因此理解Go语言的工作原理是也是必要的。比较重要的部分 是Go语言runtime和reflect包的实现原理。如果读者了解CGO技术，那么对Go汇编 语言的学习也是一个巨大的帮助。最后是要了解syscall包是如何实现系统调用的。
+
+得益于Go语言的设计，Go汇编语言的优势也非常明显：跨操作系统、不同CPU之 间的用法也非常相似、支持C语言预处理器、支持模块。同时Go汇编语言也存在很 多不足：它不是一个独立的语言，底层需要依赖Go语言甚至操作系统；很多高级特 性很难通过手工汇编完成。虽然Go语言官方尽量保持Go汇编语言简单，但是汇编 语言是一个比较大的话题，大到足以写一本Go汇编语言的教程。本章的目的是让大 家对Go汇编语言简单入门，在看到底层汇编代码的时候不会一头雾水，在某些遇到 性能受限制的场合能够通过Go汇编突破限制。
