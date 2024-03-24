@@ -317,6 +317,10 @@ export default defineConfig({
                 {
                   text:'Go汇编语言(二)',
                   link: '/docs/book/Go语言系列/Go语言高级编程/Go汇编语言(二).md'
+                }，
+                {
+                  text:'RPC和Protobuf',
+                  link: '/docs/book/Go语言系列/Go语言高级编程/RPC和Protobuf.md'
                 }
               ]
             }
