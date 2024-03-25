@@ -83,6 +83,12 @@ export const NAV_DATA: NavData[] = [
         title: 'Medium',
         desc: '一个轻量级内容发行的平台，允许单一用户或多人协作，将自己创作的内容以主题的形式结集为专辑（Collection）',
         link:'https://medium.com/tag/programming'
+      },
+      {
+        icon:'',
+        title:'Protobuf 终极教程',
+        desc: 'Protocol Buffer (简称Protobuf) 是Google出品的性能优异、跨语言、跨平台的序列化库。',
+        link: 'https://colobu.com/2019/10/03/protobuf-ultimate-tutorial-in-go/'
       }
     ]
   },

@@ -16,9 +16,7 @@ BufferedInputStream fin
     = new BufferedInputStream(new FileInputStream("Point.class"));
 ClassFile cf = new ClassFile(new DataInputStream(fin));
 ```
-上面面的代码片段从Point.class创建了一个ClassFile对象。ClassFile对象可以被写回一个类文件。ClassFile中的write()将类文件的内容写入给定的DataOutputStream。
-
-您可以从头开始创建一个新的类文件。例如,
+上面面的代码片段从Point.class创建了一个ClassFile对象。ClassFile对象可以被写回一个类文件。ClassFile中的write()将类文件的内容写入给定的DataOutputStream。您可以从头开始创建一个新的类文件。例如,
 ```java
 ClassFile cf = new ClassFile(false, "test.Foo", null);
 cf.setInterfaces(new String[] { "java.lang.Cloneable" });
