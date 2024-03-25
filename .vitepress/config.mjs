@@ -143,6 +143,18 @@ export default defineConfig({
                 {
                   text:'自省和自定义',
                   link:'/docs/book/Java字节码编程/javassist手册/自省和自定义.md'
+                },
+                {
+                  text:'字节码级别API',
+                  link:'/docs/book/Java字节码编程/javassist手册/字节码级别API.md'
+                },
+                {
+                  text:'泛型',
+                  link:'/docs/book/Java字节码编程/javassist手册/泛型.md'
+                },
+                {
+                  text:'其他',
+                  link:'/docs/book/Java字节码编程/javassist手册/其他.md'
                 }
               ]
             }
