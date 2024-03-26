@@ -333,6 +333,9 @@ export default defineConfig({
                 {
                   text:'RPC和Protobuf',
                   link: '/docs/book/Go语言系列/Go语言高级编程/RPC和Protobuf.md'
+                },{
+                  text:'go 和 Web',
+                  link: '/docs/book/Go语言系列/Go语言高级编程/go 和 Web.md'
                 }
               ]
             }
