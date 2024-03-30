@@ -893,4 +893,454 @@ num, err := o.QueryTable("cardgroup").Filter("Cards__Card__Name"
 ```
 
 
+很多ORM都提供了这种Filter类型的查询方式，不过在某些ORM背后可能隐藏了非 常难以察觉的细节，比如生成的SQL语句会自动 limit 1000 。
 
+也许喜欢ORM的读者读到这里会反驳了，你是没有认真阅读文档就瞎写。是的，尽 管这些ORM工具在文档里说明了All查询在不显式地指定Limit的话会自动limit 1000，但对于很多没有阅读过文档或者看过ORM源码的人，这依然是一个非常难 以察觉的“魔鬼”细节。喜欢强类型语言的人一般都不喜欢语言隐式地去做什么事 情，例如各种语言在赋值操作时进行的隐式类型转换然后又在转换中丢失了精度的 勾当，一定让你非常的头疼。所以一个程序库背地里做的事情还是越少越好，如果 一定要做，那也一定要在显眼的地方做。比如上面的例子，去掉这种默认的自作聪 明的行为，或者要求用户强制传入limit参数都是更好的选择。 除了limit的问题，我们再看一遍这个下面的查询：
+```go
+num, err := o.QueryTable("cardgroup").Filter("Cards__Card__Name" , cardName).All(&cardgroups)
+```
+你可以看得出来这个Filter是有表join的操作么？当然了，有深入使用经验的用户还 是会觉得这是在吹毛求疵。但这样的分析想证明的是，ORM想从设计上隐去太多的 细节。而方便的代价是其背后的运行完全失控。这样的项目在经过几任维护人员之 后，将变得面目全非，难以维护。
+
+当然，我们不能否认ORM的进步意义，它的设计初衷就是为了让数据的操作和存储 的具体实现相剥离。但是在上了规模的公司的人们渐渐达成了一个共识，由于隐藏 重要的细节，ORM可能是失败的设计。其所隐藏的重要细节对于上了规模的系统开 发来说至关重要。
+
+相比ORM来说，SQL Builder在SQL和项目可维护性之间取得了比较好的平衡。首 先sql builder不像ORM那样屏蔽了过多的细节，其次从开发的角度来讲，SQL Builder进行简单封装后也可以非常高效地完成开发，举个例子：
+```go
+where := map[string]interface{} { 
+    "order_id > ?" : 0, 
+    "customer_id != ?" : 0, 
+}
+limit := []int{0,100}
+orderBy := []string{"id asc", "create_time desc"} 
+orders := orderModel.GetList(where, limit, orderBy)
+```
+写SQL Builder的相关代码，或者读懂都不费劲。把这些代码脑内转换为sql也不会 太费劲。所以通过代码就可以对这个查询是否命中数据库索引，是否走了覆盖索 引，是否能够用上联合索引进行分析了。
+
+说白了SQL Builder是sql在代码里的一种特殊方言，如果你们没有DBA但研发有自 己分析和优化sql的能力，或者你们公司的DBA对于学习这样一些sql的方言没有异 议。那么使用SQL Builder是一个比较好的选择，不会导致什么问题。
+
+另外在一些本来也不需要DBA介入的场景内，使用SQL Builder也是可以的，例如 你要做一套运维系统，且将MySQL当作了系统中的一个组件，系统的QPS不高， 查询不复杂等等。
+
+一旦你做的是高并发的OLTP在线系统，且想在人员充足分工明确的前提下最大程 度控制系统的风险，使用SQL Builder就不合适了。
+
+### 脆弱的数据库
+
+无论是ORM还是SQL Builder都有一个致命的缺点，就是没有办法进行系统上线的 事前sql审核。虽然很多ORM和SQL Builder也提供了运行期打印sql的功能，但只在 查询的时候才能进行输出。而SQL Builder和ORM本身提供的功能太过灵活。使得 你不可能通过测试枚举出所有可能在线上执行的sql。例如你可能用SQL Builder写 出下面这样的代码：
+```go
+where := map[string]interface{} { 
+    "product_id = ?" : 10, 
+    "user_id = ?" : 1232 , 
+}
+if order_id != 0 { 
+    where["order_id = ?"] = order_id 
+}
+res, err := historyModel.GetList(where, limit, orderBy)
+```
+你的系统里有大量类似上述样例的 if 的话，就难以通过测试用例来覆盖到所有可 能的sql组合了。这样的系统只要发布，就已经孕育了初期的巨大风险。
+
+对于现在7乘24服务的互联网公司来说，服务不可用是非常重大的问题。存储层的 技术栈虽经历了多年的发展，在整个系统中依然是最为脆弱的一环。系统宕机对于 24小时对外提供服务的公司来说，意味着直接的经济损失。个中风险不可忽视。
+
+从行业分工的角度来讲，现今的互联网公司都有专职的DBA。大多数DBA并不一定 有写代码的能力，去阅读SQL Builder的相关“拼SQL”代码多多少少还是会有一点障 碍。从DBA角度出发，还是希望能够有专门的事前SQL审核机制，并能让其低成本 地获取到系统的所有SQL内容，而不是去阅读业务研发编写的SQL Builder的相关代 码。
+
+所以现如今，大型的互联网公司核心线上业务都会在代码中把SQL放在显眼的位置 提供给DBA评审，举一个例子：
+```go
+const ( getAllByProductIDAndCustomerID = `select * from p_orders whe re product_id in (:product_id) and customer_id=:customer_id` )
+
+// GetAllByProductIDAndCustomerID 
+// @param driver_id 
+// @param rate_date 
+// @return []Order, error 
+func GetAllByProductIDAndCustomerID(ctx context.Context, product IDs []uint64, customerID uint64) ([]Order, error) { 
+    var orderList []
+    Order params := map[string]interface{}{ 
+        "product_id" : productIDs, 
+        "customer_id": customerID, 
+    }
+    // getAllByProductIDAndCustomerID 是 const 类型的 sql 字符串 
+    sql, args, err := sqlutil.Named(getAllByProductIDAndCustomer ID, params) 
+    if err != nil { return nil, err }
+    err = dao.QueryList(ctx, sqldbInstance, sql, args, &orderLis t) 
+    if err != nil { return nil, err }
+    return orderList, err 
+}
+```
+像这样的代码，在上线之前把DAO层的变更集的const部分直接拿给DBA来进行审 核，就比较方便了。代码中的 sqlutil.Named 是类似于 sqlx 中的 Named 函数，同 时支持 where 表达式中的比较操作符和 in。这里为了说明简便，函数写得稍微复杂一些，仔细思考一下的话查询的导出函数还 可以进一步进行简化。请读者朋友们自行尝试。
+
+## Ratelimit 服务流量限制
+计算机程序可依据其瓶颈分为磁盘IO瓶颈型，CPU计算瓶颈型，网络带宽瓶颈型， 分布式场景下有时候也会外部系统而导致自身瓶颈。
+
+Web系统打交道最多的是网络，无论是接收，解析用户请求，访问存储，还是把响 应数据返回给用户，都是要走网络的。在没有 epoll/kqueue 之类的系统提供的 IO多路复用接口之前，多个核心的现代计算机最头痛的是C10k问题，C10k问题会 导致计算机没有办法充分利用CPU来处理更多的用户连接，进而没有办法通过优化 程序提升CPU利用率来处理更多的请求。
+
+自从Linux实现了 epoll ，FreeBSD实现了 kqueue ，这个问题基本解决了，我 们可以借助内核提供的API轻松解决当年的C10k问题，也就是说如今如果你的程序 主要是和网络打交道，那么瓶颈一定在用户程序而不在操作系统内核。
+
+随着时代的发展，编程语言对这些系统调用又进一步进行了封装，如今做应用层开 发，几乎不会在程序中看到 epoll 之类的字眼，大多数时候我们就只要聚焦在业 务逻辑上就好。Go 的 net 库针对不同平台封装了不同的syscall API， http 库又 是构建在 net 库之上，所以在Go语言中我们可以借助标准库，很轻松地写出高性 能的 http 服务，下面是一个简单的 hello world 服务的代码：
+```go
+package main 
+import ( 
+"io" 
+"log" 
+"net/http" 
+)
+func sayhello(wr http.ResponseWriter, r *http.Request) { 
+    wr.WriteHeader(200) 
+    io.WriteString(wr, "hello world") 
+}
+func main() { 
+    http.HandleFunc("/", sayhello) 
+    err := http.ListenAndServe(":9090", nil) 
+    if err != nil { log.Fatal("ListenAndServe:", err) } 
+}
+```
+这里的 hello world 服务没有任何业务逻辑。真实环境的程序要复杂得多，有些 程序偏网络IO瓶颈，例如一些CDN服务、Proxy服务；有些程序偏CPU/GPU瓶颈， 例如登陆校验服务、图像处理服务；有些程序瓶颈偏磁盘，例如专门的存储系统， 数据库。不同的程序瓶颈会体现在不同的地方，这里提到的这些功能单一的服务相 对来说还算容易分析。如果碰到业务逻辑复杂代码量巨大的模块，其瓶颈并不是三 下五除二可以推测出来的，还是需要从压力测试中得到更为精确的结论。
+
+对于IO/Network瓶颈类的程序，其表现是网卡/磁盘IO会先于CPU打满，这种情况 即使优化CPU的使用也不能提高整个系统的吞吐量，只能提高磁盘的读写速度，增 加内存大小，提升网卡的带宽来提升整体性能。而CPU瓶颈类的程序，则是在存储 和网卡未打满之前CPU占用率先到达100%，CPU忙于各种计算任务，IO设备相对 则较闲。
+
+无论哪种类型的服务，在资源使用到极限的时候都会导致请求堆积，超时，系统 hang死，最终伤害到终端用户。对于分布式的Web服务来说，瓶颈还不一定总在系 统内部，也有可能在外部。非计算密集型的系统往往会在关系型数据库环节失守， 而这时候Web模块本身还远远未达到瓶颈。不管我们的服务瓶颈在哪里，最终要做的事情都是一样的，那就是流量限制。
+
+### 常见的流量限制手段
+
+流量限制的手段有很多，最常见的：漏桶、令牌桶两种：
+1. 漏桶是指我们有一个一直装满了水的桶，每过固定的一段时间即向外漏一滴 水。如果你接到了这滴水，那么你就可以继续服务请求，如果没有接到，那么 就需要等待下一滴水。 
+2. 令牌桶则是指匀速向桶中添加令牌，服务请求时需要从桶中获取令牌，令牌的 数目可以按照需要消耗的资源进行相应的调整。如果没有令牌，可以选择等 待，或者放弃。
+
+这两种方法看起来很像，不过还是有区别的。漏桶流出的速率固定，而令牌桶只要 在桶中有令牌，那就可以拿。也就是说令牌桶是允许一定程度的并发的，比如同一 个时刻，有100个用户请求，只要令牌桶中有100个令牌，那么这100个请求全都会 放过去。令牌桶在桶中没有令牌的情况下也会退化为漏桶模型。
+
+实际应用中令牌桶应用较为广泛，开源界流行的限流器大多数都是基于令牌桶思想 的。并且在此基础上进行了一定程度的扩充，比 如 github.com/juju/ratelimit 提供了几种不同特色的令牌桶填充方式：
+```go
+func NewBucket(fillInterval time.Duration, capacity int64) *Buck et
+```
+默认的令牌桶， fillInterval 指每过多长时间向桶里放一个令 牌， capacity 是桶的容量，超过桶容量的部分会被直接丢弃。桶初始是满的。
+```go
+func NewBucketWithQuantum(fillInterval time.Duration, capacity, quantum int64) *Bucket
+```
+和普通的 NewBucket() 的区别是，每次向桶中放令牌时，是放 quantum 个令 牌，而不是一个令牌。
+```go
+func NewBucketWithRate(rate float64, capacity int64) *Bucket
+```
+这个就有点特殊了，会按照提供的比例，每秒钟填充令牌数。例如 capacity 是 100，而 rate 是0.1，那么每秒会填充10个令牌。 从桶中获取令牌也提供了几个API：
+```go
+func (tb *Bucket) Take(count int64) time.Duration {} 
+func (tb *Bucket) TakeAvailable(count int64) int64 {} 
+func (tb *Bucket) TakeMaxDuration(count int64, maxWait time.Dura tion) ( time.Duration, bool, ) {} func (tb *Bucket) Wait(count int64) {} 
+func (tb *Bucket) WaitMaxDuration(count int64, maxWait time.Dura tion) bool {}
+```
+名称和功能都比较直观，这里就不再赘述了。相比于开源界更为有名的Google的 Java工具库Guava中提供的ratelimiter，这个库不支持令牌桶预热，且无法修改初 始的令牌容量，所以可能个别极端情况下的需求无法满足。但在明白令牌桶的基本 原理之后，如果没办法满足需求，相信你也可以很快对其进行修改并支持自己的业 务场景。
+
+### 原理
+从功能上来看，令牌桶模型就是对全局计数的加减法操作过程，但使用计数需要我 们自己加读写锁，有小小的思想负担。如果我们对Go语言已经比较熟悉的话，很容 易想到可以用buffered channel来完成简单的加令牌取令牌操作：
+```go
+var tokenBucket = make(chan struct{}, capacity)
+```
+每过一段时间向 tokenBucket 中添加 token ，如果 bucket 已经满了，那么直 接放弃：
+```go
+fillToken := func() { 
+    ticker := time.NewTicker(fillInterval) 
+    for {
+        select { 
+            case <-ticker.C: 
+            select { 
+                case tokenBucket <- struct{}{}: 
+                default: 
+            }
+            fmt.Println("current token cnt:", len(tokenBucket), time.Now()) 
+        } 
+    } 
+}
+
+```
+把代码组合起来：
+```go
+package main 
+import ( "fmt" "time" )
+func main() {
+    var fillInterval = time.Millisecond * 10 
+    var capacity = 100 
+    var tokenBucket = make(chan struct{}, capacity)
+    fillToken := func() { 
+    ticker := time.NewTicker(fillInterval) 
+    for {
+        select { 
+                case <-ticker.C: 
+                select { 
+                    case tokenBucket <- struct{}{}: 
+                    default: 
+                }
+                fmt.Println("current token cnt:", len(tokenBucket), time.Now()) 
+            } 
+        } 
+    }
+    go fillToken() 
+    time.Sleep(time.Hour)
+}
+```
+上面的令牌桶的取令牌操作实现起来也比较简单，简化问题，我们这里只取一个令 牌：
+```go
+func TakeAvailable(block bool) bool{ 
+    var takenResult bool 
+    if block { 
+        select { 
+            case <-tokenBucket: 
+            takenResult = true 
+        } 
+    } 
+    else { 
+        select { 
+            case <-tokenBucket: 
+            takenResult = true 
+            default: takenResult = false 
+        } 
+    }
+    return takenResult 
+}
+```
+一些公司自己造的限流的轮子就是用上面这种方式来实现的，不过如果开源版 ratelimit 也如此的话，那我们也没什么可说的了。现实并不是这样的。
+
+我们来思考一下，令牌桶每隔一段固定的时间向桶中放令牌，如果我们记下上一次 放令牌的时间为 t1，和当时的令牌数k1，放令牌的时间间隔为ti，每次向令牌桶中 放x个令牌，令牌桶容量为cap。现在如果有人来调用 TakeAvailable 来取n个令 牌，我们将这个时刻记为t2。在t2时刻，令牌桶中理论上应该有多少令牌呢？伪代 码如下：
+```go
+cur = k1 + ((t2 - t1)/ti) * x 
+cur = cur > cap ? cap : cur
+```
+我们用两个时间点的时间差，再结合其它的参数，理论上在取令牌之前就完全可以 知道桶里有多少令牌了。那劳心费力地像本小节前面向channel里填充token的操 作，理论上是没有必要的。只要在每次 Take 的时候，再对令牌桶中的token数进 行简单计算，就可以得到正确的令牌数。是不是很像 惰性求值 的感觉？
+
+在得到正确的令牌数之后，再进行实际的 Take 操作就好，这个 Take 操作只需 要对令牌数进行简单的减法即可，记得加锁以保证并发安 全。 github.com/juju/ratelimit 这个库就是这样做的。
+
+### 服务瓶颈和 QoS
+前面我们说了很多CPU瓶颈、IO瓶颈之类的概念，这种性能瓶颈从大多数公司都有 的监控系统中可以比较快速地定位出来，如果一个系统遇到了性能问题，那监控图 的反应一般都是最快的。
+
+虽然性能指标很重要，但对用户提供服务时还应考虑服务整体的QoS。QoS全称是 Quality of Service，顾名思义是服务质量。QoS包含有可用性、吞吐量、时延、时 延变化和丢失等指标。一般来讲我们可以通过优化系统，来提高Web服务的CPU利 用率，从而提高整个系统的吞吐量。但吞吐量提高的同时，用户体验是有可能变差 的。用户角度比较敏感的除了可用性之外，还有时延。虽然你的系统吞吐量高，但 半天刷不开页面，想必会造成大量的用户流失。所以在大公司的Web服务性能指标 中，除了平均响应时延之外，还会把响应时间的95分位，99分位也拿出来作为性能 标准。平均响应在提高CPU利用率没受到太大影响时，可能95分位、99分位的响应 时间大幅度攀升了，那么这时候就要考虑提高这些CPU利用率所付出的代价是否值 得了。
+
+在线系统的机器一般都会保持CPU有一定的余裕。
+
+## layout 常见大型 Web 项目分层
+流行的Web框架大多数是MVC框架，MVC这个概念最早由Trygve Reenskaug在 1978年提出，为了能够对GUI类型的应用进行方便扩展，将程序划分为：
+1. 控制器（Controller）- 负责转发请求，对请求进行处理。 
+2. 视图（View） - 界面设计人员进行图形界面设计。 
+3. 模型（Model） - 程序员编写程序应有的功能（实现算法等等）、数据库专家 进行数据管理和数据库设计（可以实现具体的功能）。
+
+随着时代的发展，前端也变成了越来越复杂的工程，为了更好地工程化，现在更为 流行的一般是前后分离的架构。可以认为前后分离是把V层从MVC中抽离单独成为 项目。这样一个后端项目一般就只剩下 M和C层了。前后端之间通过ajax来交互， 有时候要解决跨域的问题，但也已经有了较为成熟的方案。这里就不作详细描述。
+
+## 接口和表驱动开发
+在Web项目中经常会遇到外部依赖环境的变化，比如：
+1. 公司的老存储系统年久失修，现在已经没有人维护了，新的系统上线也没有考 虑平滑迁移，但最后通牒已下，要求N天之内迁移完毕。
+2. 平台部门的老用户系统年久失修，现在已经没有人维护了，真是悲伤的故事。 新系统上线没有考虑兼容老接口，但最后通牒已下，要求N个月之内迁移完 毕。
+3. 公司的老消息队列人走茶凉，年久失修，新来的技术精英们没有考虑向前兼 容，但最后通牒已下，要求半年之内迁移完毕。
+
+嗯，所以你看到了，我们的外部依赖总是为了自己爽而不断地做升级，且不想做向 前兼容，然后来给我们下最后通牒。如果我们的部门工作饱和，领导强势，那么有 时候也可以倒逼依赖方来做兼容。但世事不一定如人愿，即使我们的领导强势，读 者朋友的领导也还是可能认怂的。 我们可以思考一下怎么缓解这个问题。
+
+### 业务系统的发展过程
+
+互联网公司只要可以活过三年，工程方面面临的首要问题就是代码膨胀。系统的代 码膨胀之后，可以将系统中与业务本身流程无关的部分做拆解和异步化。什么算是 业务无关呢，比如一些统计、反作弊、营销发券、价格计算、用户状态更新等等需 求。这些需求往往依赖于主流程的数据，但又只是挂在主流程上的旁支，自成体 系。
+
+这时候我们就可以把这些旁支拆解出去，作为独立的系统来部署、开发以及维护。 这些旁支流程的时延如若非常敏感，比如用户在界面上点了按钮，需要立刻返回 （价格计算、支付），那么需要与主流程系统进行RPC通信，并且在通信失败时， 要将结果直接返回给用户。如果时延不敏感，比如抽奖系统，结果稍后公布的这 种，或者非实时的统计类系统，那么就没有必要在主流程里为每一套系统做一套 RPC流程。我们只要将下游需要的数据打包成一条消息，传入消息队列，之后的事 情与主流程一概无关（当然，与用户的后续交互流程还是要做的）。
+
+通过拆解和异步化虽然解决了一部分问题，但并不能解决所有问题。随着业务发 展，单一职责的模块也会变得越来越复杂，这是必然的趋势。一件事情本身变的复 杂的话，这时候拆解和异步化就不灵了。我们还是要对事情本身进行一定程度的封 装抽象。
+
+### 使用函数封装业务流程
+最基本的封装过程，我们把相似的行为放在一起，然后打包成一个一个的函数，让 自己杂乱无章的代码变成下面这个样子：
+```go
+func BusinessProcess(ctx context.Context, params Params) (resp, error){
+     ValidateLogin() 
+     ValidateParams() 
+     AntispamCheck()
+      GetPrice() 
+      CreateOrder() 
+      UpdateUserStatus() 
+      NotifyDownstreamSystems() 
+}
+```
+不管是多么复杂的业务，系统内的逻辑都是可以分解为 step1 -> step2 -> step3 ... 这样的流程的。每一个步骤内部也会有复杂的流程，比如：
+```go
+func CreateOrder() { 
+ValidateDistrict() 
+// 判断是否是地区限定商品 
+ValidateVIPProduct() 
+// 检查是否是只提供给 vip 的商品 
+GetUserInfo() 
+// 从用户系统获取更详细的用户信息
+ GetProductDesc() 
+ // 从商品系统中获取商品在该时间点的详细信息 
+ DecrementStorage() 
+ // 扣减库存 
+ CreateOrderSnapshot() 
+ // 创建订单快照 
+ return CreateSuccess 
+}
+```
+在阅读业务流程代码时，我们只要阅读其函数名就能知晓在该流程中完成了哪些操 作，如果需要修改细节，那么就继续深入到每一个业务步骤去看具体的流程。写得 稀烂的业务流程代码则会将所有过程都堆积在少数的几个函数中，从而导致几百甚 至上千行的函数。这种意大利面条式的代码阅读和维护都会非常痛苦。在开发的过 程中，一旦有条件应该立即进行类似上面这种方式的简单封装。
+
+### 使用接口来做抽象
+业务发展的早期，是不适宜引入接口（interface）的，很多时候业务流程变化很 大，过早引入接口会使业务系统本身增加很多不必要的分层，从而导致每次修改几 乎都要全盘否定之前的工作。
+
+当业务发展到一定阶段，主流程稳定之后，就可以适当地使用接口来进行抽象了。 这里的稳定，是指主流程的大部分业务步骤已经确定，即使再进行修改，也不会进 行大规模的变动，而只是小修小补，或者只是增加或删除少量业务步骤。
+
+如果我们在开发过程中，已经对业务步骤进行了良好的封装，这时候进行接口抽象 化就会变的非常容易，伪代码：
+```go
+// OrderCreator 创建订单流程 
+type OrderCreator interface { 
+    ValidateDistrict() 
+    // 判断是否是地区限定商品 
+    ValidateVIPProduct() 
+    // 检查是否是只提供给 vip 的商品 
+    GetUserInfo() 
+    // 从用户系统获取更详细的用户信息 
+    GetProductDesc() 
+    // 从商品系统中获取商品在该时间点的详细信息 
+    DecrementStorage() 
+    // 扣减库存
+     CreateOrderSnapshot() 
+     // 创建订单快照 
+}
+```
+我们只要把之前写过的步骤函数签名都提到一个接口中，就可以完成抽象了。 在进行抽象之前，我们应该想明白的一点是，引入接口对我们的系统本身是否有意 义，这是要按照场景去进行分析的。假如我们的系统只服务一条产品线，并且内部 的代码只是针对很具体的场景进行定制化开发，那么引入接口是不会带来任何收益的。
+
+如果我们正在做的是平台系统，需要由平台来定义统一的业务流程和业务规范，那 么基于接口的抽象就是有意义的。
+
+平台需要服务多条业务线，但数据定义需要统一，所以希望都能走平台定义的流 程。作为平台方，我们可以定义一套类似上文的接口，然后要求接入方的业务必须 将这些接口都实现。如果接口中有其不需要的步骤，那么只要返回 nil ，或者忽 略就好。
+
+在业务进行迭代时，平台的代码是不用修改的，这样我们便把这些接入业务当成了 平台代码的插件（plugin）引入进来了。如果没有接口的话，我们会怎么做？
+
+```go
+import ( "sample.com/travelorder" "sample.com/marketorder" )
+func CreateOrder() { 
+    switch businessType { 
+        case TravelBusiness: travelorder.CreateOrder() 
+        case MarketBusiness: marketorder.CreateOrderForMarket() 
+        default: return errors.New("not supported business") 
+        } 
+    }
+func ValidateUser() { 
+    switch businessType { 
+        case TravelBusiness: travelorder.ValidateUserVIP() 
+        case MarketBusiness: marketorder.ValidateUserRegistered() 
+        default: return errors.New("not supported business") 
+    } 
+}
+// ... 
+switch ... 
+switch ... 
+switch ...
+```
+没错，就是无穷无尽的 switch ，和没完没了的垃圾代码。引入了接口之后，我们 的 switch 只需要在业务入口做一次。
+```go
+type BusinessInstance interface { 
+    ValidateLogin() 
+    ValidateParams() 
+    AntispamCheck() 
+    GetPrice() 
+    CreateOrder() 
+    UpdateUserStatus()
+    NotifyDownstreamSystems() 
+}
+func entry() { 
+    var bi BusinessInstance 
+    switch businessType { 
+        case TravelBusiness: bi = travelorder.New() 
+        case MarketBusiness: bi = marketorder.New() 
+        default: return errors.New("not supported business") 
+    } 
+}
+
+func BusinessProcess(bi BusinessInstance) { 
+    bi.ValidateLogin() 
+    bi.ValidateParams() 
+    bi.AntispamCheck() 
+    bi.GetPrice() 
+    bi.CreateOrder() 
+    bi.UpdateUserStatus() 
+    bi.NotifyDownstreamSystems() 
+}
+```
+
+### 接口的优缺点
+Go被人称道的最多的地方是其接口设计的正交性，模块之间不需要知晓相互的存 在，A模块定义接口，B模块实现这个接口就可以。如果接口中没有A模块中定义的 数据类型，那B模块中甚至都不用 import A 。比如标准库中的 io.Writer ：
+```go
+type Writer interface { Write(p []byte) (n int, err error) }
+```
+我们可以在自己的模块中实现 io.Writer 接口：
+```go
+type MyType struct {} 
+func (m MyType) Write(p []byte) (n int, err error) { return 0, nil }
+```
+那么我们就可以把我们自己的 MyType 传给任何使用 io.Writer 作为参数的函数 来使用了，比如：
+```go
+package log 
+func SetOutput(w io.Writer) { output = w }
+```
+然后：
+```go
+package my-business 
+import "xy.com/log" 
+func init() { 
+    log.SetOutput(MyType) 
+}
+```
+在 MyType 定义的地方，不需要 import "io" 就可以直接实现 io.Writer 接 口，我们还可以随意地组合很多函数，以实现各种类型的接口，同时接口实现方和 接口定义方都不用建立import产生的依赖关系。因此很多人认为Go的这种正交是一 种很优秀的设计。
+
+在 MyType 定义的地方，不需要 import "io" 就可以直接实现 io.Writer 接 口，我们还可以随意地组合很多函数，以实现各种类型的接口，同时接口实现方和 接口定义方都不用建立import产生的依赖关系。因此很多人认为Go的这种正交是一 种很优秀的设计。
+
+
+虽有不便，接口带给我们的好处也是不言而喻的：一是依赖反转，这是接口在大多 数语言中对软件项目所能产生的影响，在Go的正交接口的设计场景下甚至可以去除 依赖；二是由编译器来帮助我们在编译期就能检查到类似“未完全实现接口”这样的 错误，如果业务未实现某个流程，但又将其实例作为接口强行来使用的话。
+
+### 表驱动开发
+熟悉开源lint工具的同学应该见到过圈复杂度的说法，在函数中如果 有 if 和 switch 的话，会使函数的圈复杂度上升，所以有强迫症的同学即使在 入口一个函数中有 switch ，还是想要干掉这个 switch ，有没有什么办法呢？ 当然有，用表驱动的方式来存储我们需要实例：
+```go
+func entry() { 
+    var bi BusinessInstance 
+    switch businessType { 
+        case TravelBusiness: bi = travelorder.New() 
+        case MarketBusiness: bi = marketorder.New() 
+        default: return errors.New("not supported business") 
+    } 
+}
+```
+可以修改为：
+```go
+var businessInstanceMap = map[int]BusinessInstance { 
+    TravelBusiness : travelorder.New(), 
+    MarketBusiness : marketorder.New(), 
+}
+func entry() { bi := businessInstanceMap[businessType] }
+```
+表驱动的设计方式，很多设计模式相关的书籍并没有把它作为一种设计模式来讲， 但我认为这依然是一种非常重要的帮助我们来简化代码的手段。在日常的开发工作 中可以多多思考，哪些不必要的 switch case 可以用一个字典和一行代码就可以 轻松搞定。 当然，表驱动也不是缺点，因为需要对输入 key 计算哈希，在性能敏感的场合， 需要多加斟酌。
+
+## 灰度发布和 A/B test
+中型的互联网公司往往有着以百万计的用户，而大型互联网公司的系统则可能要服 务千万级甚至亿级的用户需求。大型系统的请求流入往往是源源不断的，任何风吹 草动，都一定会有最终用户感受得到。例如你的系统在上线途中会拒绝一些上游过 来的请求，而这时候依赖你的系统没有做任何容错，那么这个错误就会一直向上抛 出，直到触达最终用户。形成一次对用户切切实实的伤害。这种伤害可能是在用户 的APP上弹出一个让用户摸不着头脑的诡异字符串，用户只要刷新一下页面就可以 忘记这件事。但也可能会让正在心急如焚地和几万竞争对手同时抢夺秒杀商品的用 户，因为代码上的小问题，丧失掉了先发优势，与自己蹲了几个月的心仪产品失之 交臂。对用户的伤害有多大，取决于你的系统对于你的用户来说有多重要。 不管怎么说，在大型系统中容错是重要的，能够让系统按百分比，分批次到达最终 用户，也是很重要的。虽然当今的互联网公司系统，名义上会说自己上线前都经过 了充分慎重严格的测试，但就算它们真得做到了，代码的bug总是在所难免的。即 使代码没有bug，分布式服务之间的协作也是可能出现“逻辑”上的非技术问题的。
+
+
+这时候，灰度发布就显得非常重要了，灰度发布也称为金丝雀发布，传说17世纪的 英国矿井工人发现金丝雀对瓦斯气体非常敏感，瓦斯达到一定浓度时，金丝雀即会 死亡，但金丝雀的致死量瓦斯对人并不致死，因此金丝雀被用来当成他们的瓦斯检 测工具。互联网系统的灰度发布一般通过两种方式实现：
+
+1. 通过分批次部署实现灰度发布 
+2. 通过业务规则进行灰度发布
+
+在对系统的旧功能进行升级迭代时，第一种方式用的比较多。新功能上线时，第二 种方式用的比较多。当然，对比较重要的老功能进行较大幅度的修改时，一般也会 选择按业务规则来进行发布，因为直接全量开放给所有用户风险实在太大。
+
+### 通过分批次部署实现灰度发布
+假如服务部署在15个实例（可能是物理机，也可能是容器）上，我们把这15个实例 分为四组，按照先后顺序，分别有1-2-4-8台机器，保证每次扩展时大概都是二倍的 关系。
+
+为什么要用2倍？这样能够保证我们不管有多少台机器，都不会把组划分得太多。 例如1024台机器，也就只需要1-2-4-8-16-32-64-128-256-512部署十次就可以全部 部署完毕。
+
+这样我们上线最开始影响到的用户在整体用户中占的比例也不大，比如1000台机器 的服务，我们上线后如果出现问题，也只影响1/1000的用户。如果10组完全平均 分，那一上线立刻就会影响1/10的用户，1/10的业务出问题，那可能对于公司来说 就已经是一场不可挽回的事故了。
+
+在上线时，最有效的观察手法是查看程序的错误日志，如果较明显的逻辑错误，一 般错误日志的滚动速度都会有肉眼可见的增加。这些错误也可以通过metrics一类的 系统上报给公司内的监控系统，所以在上线过程中，也可以通过观察监控曲线，来 判断是否有异常发生。 如果有异常情况，首先要做的自然就是回滚了。
+
+### 通过业务规则进行灰度发布
+常见的灰度策略有多种，较为简单的需求，例如我们的策略是要按照千分比来发 布，那么我们可以用用户id、手机号、用户设备信息，等等，来生成一个简单的哈 希值，然后再求模，用伪代码表示一下：
+```go
+// pass 3/1000 
+func passed() bool { 
+    key := hashFunctions(userID) % 1000 
+    if key <= 2 { 
+        return true 
+    }
+    return false 
+}
+```
+### 可选规则
+常见的灰度发布系统会有下列规则提供选择： 
+1. 按城市发布 
+2. 按概率发布 
+3.  按百分比发布 
+4.  按白名单发布 
+5.  按业务线发布 
+6.  按UA发布(APP、Web、PC) 
+7.  按分发渠道发布
+   
+因为和公司的业务相关，所以城市、业务线、UA、分发渠道这些都可能会被直接编 码在系统里，不过功能其实大同小异。 按白名单发布比较简单，功能上线时，可能我们希望只有公司内部的员工和测试人 员可以访问到新功能，会直接把账号、邮箱写入到白名单，拒绝其它任何账号的访 问。
