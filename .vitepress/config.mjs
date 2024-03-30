@@ -122,6 +122,10 @@ export default defineConfig({
                   text: 'Core API(Classes)',
                   link: 'docs/book/Java字节码编程/ASM用户手册/Core API(Classes).md'
                 },
+                {
+                  text: 'Tree API',
+                  link: 'docs/book/Java字节码编程/ASM用户手册/Tree API.md'
+                }
               ]
             },
             {
