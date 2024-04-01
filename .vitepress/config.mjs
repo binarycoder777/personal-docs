@@ -101,7 +101,17 @@ export default defineConfig({
                   link: '/docs/article/2024/3月/JNI-在Java中调用C代码.md'
                 }
               ]
-            }
+            },
+            {
+              text: '4月',
+              collapsed:true,
+              items: [
+                {
+                  text:'内容安全策略(CSP)：每个Web开发人员必须了解的内容',
+                  link:'/docs/article/2024/4月/内容安全策略(CSP)：每个Web开发人员必须了解的内容.md'
+                }
+              ]
+            },
           ]
         }
       ],
