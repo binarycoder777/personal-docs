@@ -109,6 +109,14 @@ export default defineConfig({
                 {
                   text:'内容安全策略(CSP)：每个Web开发人员必须了解的内容',
                   link:'/docs/article/2024/4月/内容安全策略(CSP)：每个Web开发人员必须了解的内容.md'
+                },
+                {
+                  text:'跨站请求伪造 (CSRF) 攻击：它是什么、如何工作以及如何预防',
+                  link:'docs/article/2024/4月/跨站请求伪造 (CSRF) 攻击：它是什么、如何工作以及如何预防.md'
+                },
+                {
+                  text: 'Elasticsearch 模式下的开源',
+                  link: '/docs/article/2024/4月/Elasticsearch 模式下的开源.md'
                 }
               ]
             },
@@ -227,6 +235,14 @@ export default defineConfig({
                 {
                   text: '索引恢复流程分析',
                   link: '/docs/book/ElasticSearch系列/ElasticSearch源码解析与优化实战/索引恢复流程分析.md'
+                },
+                {
+                  text: 'gateway模块分析',
+                  link: '/docs/book/ElasticSearch系列/ElasticSearch源码解析与优化实战/gateway模块分析.md'
+                },
+                {
+                  text: 'allocation模块分析',
+                  link: '/docs/book/ElasticSearch系列/ElasticSearch源码解析与优化实战/allocation模块分析.md'
                 }
               ]
             }

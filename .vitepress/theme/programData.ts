@@ -104,6 +104,17 @@ export const NAV_DATA: NavData[] = [
     ]
   },
   {
+    title: '人工智能资源',
+    items: [
+      {      
+        icon: '',
+        title: '动手实战人工智能 AI By Doing',
+        desc: '一本中文电子书，通过实例介绍一些AI算法',
+        link: 'https://aibydoing.com/intro'
+    }
+    ]
+  },
+  {
     title:'开拓视野',
     items: [
       {
