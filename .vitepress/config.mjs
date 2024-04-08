@@ -117,6 +117,10 @@ export default defineConfig({
                 {
                   text: 'Elasticsearch 模式下的开源',
                   link: '/docs/article/2024/4月/Elasticsearch 模式下的开源.md'
+                },
+                {
+                  text: '利特尔定律与后端开发',
+                  link: '/docs/article/2024/4月/利特尔定律与后端开发.md'
                 }
               ]
             },
@@ -243,6 +247,26 @@ export default defineConfig({
                 {
                   text: 'allocation模块分析',
                   link: '/docs/book/ElasticSearch系列/ElasticSearch源码解析与优化实战/allocation模块分析.md'
+                },
+                {
+                  text: 'ThreadPool模块分析',
+                  link: '/docs/book/ElasticSearch系列/ElasticSearch源码解析与优化实战/ThreadPool模块分析.md'
+                },
+                {
+                  text: 'Shrink原理分析',
+                  link: '/docs/book/ElasticSearch系列/ElasticSearch源码解析与优化实战/Shrink原理分析.md'
+                },
+                {
+                  text: '写入速度优化',
+                  link: '/docs/book/ElasticSearch系列/ElasticSearch源码解析与优化实战/写入速度优化.md'
+                },
+                {
+                  text: '搜索速度的优化',
+                  link: '/docs/book/ElasticSearch系列/ElasticSearch源码解析与优化实战/搜索速度的优化.md'
+                },
+                {
+                  text: '磁盘使用量优化',
+                  link: '/docs/book/ElasticSearch系列/ElasticSearch源码解析与优化实战/磁盘使用量优化.md'
                 }
               ]
             }
