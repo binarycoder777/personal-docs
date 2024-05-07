@@ -129,6 +129,12 @@ export const NAV_DATA: NavData[] = [
         desc: '供想要学习如何运行开源项目并为开源项目做出贡献的个人、社区和公司使用',
         link: 'https://opensource.guide/',
       },
+      {
+        icon: 'https://besticon-demo.herokuapp.com/icon?url=https://opensource.guide/&size=80..120..200',
+        title: '1000userguide',
+        desc: '整理了300多个免费推广渠道，包括网站、论坛、网址导航、产品目录等，帮助独立开发者推广产品。',
+        link: 'https://1000userguide.com/',
+      },
     ]
   },
   {
