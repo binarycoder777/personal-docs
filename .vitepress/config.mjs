@@ -124,6 +124,16 @@ export default defineConfig({
                 }
               ]
             },
+            {
+              text: '5月',
+              collapsed:true,
+              items: [
+                {
+                  text:'项目管理：十大领域，五大过程，44个定义',
+                  link:'/docs/article/2024/5月/项目管理：十大领域，五大过程，44个定义.md'
+                }
+              ]
+            },
           ]
         }
       ],
