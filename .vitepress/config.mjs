@@ -143,6 +143,40 @@ export default defineConfig({
       ],
       '/docs/book/': [
         {
+          text: '系统设计',
+          collapsed: true,
+          items: [
+            {
+              text:'Designing Data-Intensive Applications 数据密集型应用系统设计',
+              collapsed: true,
+              items: [
+                {  
+                  text: '可靠性、可伸缩性和可维护性',
+                  link: '/docs/book/系统设计/Designing Data-Intensive Applications 数据密集型应用系统设计/可靠性、可伸缩性和可维护性.md'
+                },
+                {  
+                  text: '存储与检索',
+                  link: '/docs/book/系统设计/Designing Data-Intensive Applications 数据密集型应用系统设计/存储与检索.md'
+                },
+                {  
+                  text: '事务',
+                  link: '/docs/book/系统设计/Designing Data-Intensive Applications 数据密集型应用系统设计/事务.md'
+                }
+              ]
+            },
+            {
+              text:'中台架构与设计：基于DDD和微服务',
+              collapsed: true,
+              items: [
+                {  
+                  text: '认识中台',
+                  link: '/docs/book/系统设计/中台架构与设计：基于DDD和微服务/认识中台.md'
+                }
+              ]
+            }
+          ]
+        },
+        {
           text: '字节码编程',
           collapsed: true,
           items: [
