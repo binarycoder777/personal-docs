@@ -135,6 +135,10 @@ export default defineConfig({
                 {
                   text:'最新版高级项目管理（第四版）十大知识域和49个过程',
                   link:'/docs/article/2024/5月/最新版高级项目管理（第四版）十大知识域和49个过程.md'
+                },
+                {
+                  text:'给年轻时的自己最忠诚的建议',
+                  link:'/docs/article/2024/5月/给年轻时的自己最忠诚的建议.md'
                 }
               ]
             },
