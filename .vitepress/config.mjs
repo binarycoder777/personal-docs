@@ -175,6 +175,10 @@ export default defineConfig({
                 {  
                   text: '认识中台',
                   link: '/docs/book/系统设计/中台架构与设计：基于DDD和微服务/认识中台.md'
+                },
+                {
+                  text:'企业中台能力框架',
+                  link:'/docs/book/系统设计/中台架构与设计：基于DDD和微服务/企业中台能力框架.md'
                 }
               ]
             }
