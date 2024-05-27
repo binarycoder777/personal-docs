@@ -179,6 +179,14 @@ export default defineConfig({
                 {
                   text:'企业中台能力框架',
                   link:'/docs/book/系统设计/中台架构与设计：基于DDD和微服务/企业中台能力框架.md'
+                },
+                {
+                  text:'微服务设计为什么要选择DDD',
+                  link:'/docs/book/系统设计/中台架构与设计：基于DDD和微服务/微服务设计为什么要选择DDD.md'
+                },
+                {
+                  text:'DDD、微服务和中台之间的关系',
+                  link:'/docs/book/系统设计/中台架构与设计：基于DDD和微服务/DDD、微服务和中台之间的关系.md'
                 }
               ]
             }
