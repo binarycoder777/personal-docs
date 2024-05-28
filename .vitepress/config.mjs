@@ -151,7 +151,7 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
-              text:'Designing Data-Intensive Applications 数据密集型应用系统设计',
+              text:'数据密集型应用系统设计',
               collapsed: true,
               items: [
                 {  
@@ -169,7 +169,7 @@ export default defineConfig({
               ]
             },
             {
-              text:'中台架构与设计：基于DDD和微服务',
+              text:'中台架构与设计:基于DDD和微服务',
               collapsed: true,
               items: [
                 {  
@@ -187,6 +187,13 @@ export default defineConfig({
                 {
                   text:'DDD、微服务和中台之间的关系',
                   link:'/docs/book/系统设计/中台架构与设计：基于DDD和微服务/DDD、微服务和中台之间的关系.md'
+                },
+                {
+                  text:'领域和子域:有效分解问题域',
+                  link:'/docs/book/系统设计/中台架构与设计：基于DDD和微服务/领域和子域:有效分解问题域.md'
+                },{
+                  text:'限界上下文：定义领域边界的利器',
+                  link:'/docs/book/系统设计/中台架构与设计：基于DDD和微服务/限界上下文：定义领域边界的利器.md'
                 }
               ]
             }
