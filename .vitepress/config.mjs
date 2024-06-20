@@ -142,6 +142,16 @@ export default defineConfig({
                 }
               ]
             },
+            {
+              text: '6月',
+              collapsed:true,
+              items: [
+                {
+                  text:'认知负荷才是最重要的',
+                  link:'/docs/article/2024/6月/认知负荷才是最重要的.md'
+                }
+              ]
+            },
           ]
         }
       ],
