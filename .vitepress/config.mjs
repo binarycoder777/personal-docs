@@ -151,8 +151,12 @@ export default defineConfig({
                   link:'/docs/article/2024/6月/认知负荷才是最重要的.md'
                 },
                 {
-                  text:'你所读的内容就是你，即使你并不总是记得它',
+                  text:'你所读的内容就是你的，即使你并不总是记得它',
                   link:'/docs/article/2024/6月/你所读的内容就是你，即使你并不总是记得它.md'
+                },
+                {
+                  text:'斐波拉契哈希算法',
+                  link:'/docs/article/2024/6月/斐波拉契哈希算法.md'
                 }
               ]
             },
