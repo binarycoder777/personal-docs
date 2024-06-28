@@ -157,6 +157,10 @@ export default defineConfig({
                 {
                   text:'斐波拉契哈希算法',
                   link:'/docs/article/2024/6月/斐波拉契哈希算法.md'
+                },
+                {
+                  text:'CRDT（无冲突复制数据类型）',
+                  link:'/docs/article/2024/6月/CRDT（无冲突复制数据类型）.md'
                 }
               ]
             },
