@@ -38,8 +38,8 @@ export default defineConfig({
             link: "https://chat.openai.com/"
           },
           {
-            text: "MyLobeChat",
-            link: "https://lobe-chat-xi-dusky.vercel.app"
+            text: "个人周刊",
+            link: "https://binarycoder777.github.io"
           }
         ]
       }
@@ -496,6 +496,16 @@ export default defineConfig({
                 }
               ]
             }
+          ],
+        },
+        {
+          text: '其他',
+          collapsed: true,
+          items: [
+            {
+              text: '在世界尽头的咖啡馆',
+              link: '/docs/book/其他/在世界尽头的咖啡馆.md'
+            }      
           ],
         }
       ],
