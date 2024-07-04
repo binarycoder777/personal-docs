@@ -164,6 +164,16 @@ export default defineConfig({
                 }
               ]
             },
+            {
+              text: '7月',
+              collapsed:true,
+              items: [
+                {
+                  text:'Actor模型',
+                  link:'/docs/article/2024/7月/Actor模型.md'
+                }
+              ]
+            },
           ]
         }
       ],
