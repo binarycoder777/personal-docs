@@ -3,10 +3,6 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  head: [
-    // 添加 favicon.ico
-    ['link', { rel: 'icon', href: '/favicon.ico', type: 'image/x-icon' }],
-  ],
   // 部署配置
   ignoreDeadLinks: true,
   base: '/',
@@ -39,7 +35,7 @@ export default defineConfig({
           },
           {
             text: "个人周刊",
-            link: "https://binarycoder777.github.io"
+            link: "https://binarycoder777.github.io/zh-cn"
           }
         ]
       }
