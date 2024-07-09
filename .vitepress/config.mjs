@@ -167,6 +167,10 @@ export default defineConfig({
                 {
                   text:'Actor模型',
                   link:'/docs/article/2024/7月/Actor模型.md'
+                },
+                {
+                  text:'Spring中的任务调度',
+                  link:'/docs/article/2024/7月/Spring中的任务调度.md'
                 }
               ]
             },
