@@ -171,6 +171,10 @@ export default defineConfig({
                 {
                   text:'Spring中的任务调度',
                   link:'/docs/article/2024/7月/Spring中的任务调度.md'
+                },
+                {
+                  text:'世上有多少重要的事，想着想着就算了',
+                  link:'/docs/article/2024/7月/世上有多少重要的事，想着想着就算了.md',
                 }
               ]
             },
