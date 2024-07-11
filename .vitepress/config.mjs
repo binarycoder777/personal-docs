@@ -272,6 +272,25 @@ export default defineConfig({
                   link:'/docs/book/系统设计/中台架构与设计：基于DDD和微服务/分布式架构的关键设计.md'
                 }
               ]
+            },
+            {
+              text:'凤凰架构',
+              collapsed:true,
+              items:[
+
+              ]
+            },{
+              text:'领域驱动设计',
+              collapsed:true,
+              items:[
+
+              ]
+            },{
+              text:'实现领域驱动设计',
+              collapsed:true,
+              items:[
+
+              ]
             }
           ]
         },
@@ -540,6 +559,254 @@ export default defineConfig({
                 }
               ]
             }
+          ],
+        },
+        {
+          text: '服务器',
+          collapsed: true,
+          items: [
+            {
+              text: '深入剖析Tomcat',
+              collapsed:true,
+              items:[
+
+              ]
+            },    
+            {
+              text: '深入剖析Negix',
+              collapsed:true,
+              items:[
+
+              ]
+            },     
+          ],
+        },
+        {
+          text: '数据库',
+          collapsed: true,
+          items: [
+            {
+              text: 'MySQL是怎样运行的',
+              collapsed:true,
+              items:[
+                
+              ]
+            },  
+            {
+              text: 'MySQL技术内幕：innoDB存储引擎',
+              collapsed:true,
+              items:[
+                
+              ]
+            }, 
+            {
+              text: '高性能MySQL',
+              collapsed:true,
+              items:[
+                
+              ]
+            },  
+            {
+              text: 'MySQL45讲',
+              collapsed:true,
+              items:[
+                
+              ]
+            },
+            {
+              text: 'Redis设计与实现',
+              collapsed:true,
+              items:[
+                
+              ]
+            },
+            {
+              text: 'Redis开发与运维',
+              collapsed:true,
+              items:[
+                
+              ]
+            },            
+            {
+              text: '深入学习MongoDB',
+              collapsed:true,
+              items:[
+                
+              ]
+            },
+            {
+              text: 'PostgreSQL技术内幕：查询优化深度探索',
+              collapsed:true,
+              items:[
+                
+              ]
+            }, 
+            {
+              text: 'ClickHouse原理解析与应用实践',
+              collapsed:true,
+              items:[
+                
+              ]
+            },     
+          ],
+        },     
+        {
+          text: 'MQ',
+          collapsed: true,
+          items: [
+            {
+              text: '深入理解Kafka：核心设计与实践原理',
+              collapsed:true,
+              items:[
+
+              ]
+            },    
+            {
+              text: 'Apache Kafka源码剖析',
+              collapsed:true,
+              items:[
+
+              ]
+            },{
+              text:'RocketMQ技术内幕',
+              collapsed:true,
+              items:[
+
+              ]
+            },
+            ,{
+              text:'Apache RocketMQ 源码解析',
+              collapsed:true,
+              items:[
+                
+              ]
+            },
+          ],
+        },
+        {
+          text: 'RPC',
+          collapsed: true,
+          items: [
+            {
+              text: '深度剖析Apache Dubbo核心技术内幕',
+              collapsed:true,
+              items:[
+
+              ]
+            }      
+          ],
+        },
+        {
+          text: '网络编程',
+          collapsed: true,
+          items: [
+            {
+              text: 'Netty实战',
+              collapsed:true,
+              items:[
+                
+              ]
+            },
+            {
+              text: 'Netty权威指南',
+              collapsed:true,
+              items:[
+                
+              ]
+            }          
+          ],
+        },
+        {
+          text: '虚拟机',
+          collapsed: true,
+          items: [
+            {
+              text: '深入理解Java虚拟机：JVM高级特性与最佳实践',
+              collapsed:true,
+              items:[
+                
+              ]
+            },
+            {
+              text: '新一代垃圾回收器ZGC设计与实现',
+              collapsed:true,
+              items:[
+                
+              ]
+            },{
+              text:'Java虚拟机规范 Java SE 8版',
+              collapsed:true,
+              items:[
+
+              ]
+            }         
+          ],
+        },
+        {
+          text: '云原生',
+          collapsed: true,
+          items: [
+            {
+              text: 'k8s in action',
+              collapsed:true,
+              items:[
+                
+              ]
+            },
+            {
+              text: 'Docker源码分析(容器技术系列)',
+              collapsed:true,
+              items:[
+                
+              ]
+            }      
+          ],
+        },
+        {
+          text: '并发',
+          collapsed: true,
+          items: [
+            {
+              text: 'Java 并发编程的艺术',
+              collapsed:true,
+              items:[
+                
+              ]
+            },
+            {
+              text: 'Java 并发编程实战',
+              collapsed:true,
+              items:[
+                
+              ]
+            }     
+          ],
+        },
+        {
+          text: '框架',
+          collapsed: true,
+          items: [
+            {
+              text: 'Spring技术内幕',
+              collapsed:true,
+              items:[
+                
+              ]
+            },
+            {
+              text: 'SpringBoot技术内幕',
+              collapsed:true,
+              items:[
+                
+              ]
+            }, 
+            {
+              text: 'Mybatis技术内幕',
+              collapsed:true,
+              items:[
+                
+              ]
+            },      
           ],
         },
         {
