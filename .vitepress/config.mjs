@@ -36,6 +36,10 @@ export default defineConfig({
           {
             text: "个人周刊",
             link: "https://binarycoder777.github.io/zh-cn"
+          },
+          {
+            text:'Doraemon',
+            link:'https://www.coze.cn/store/bot/7390582775252238372?bot_id=true'
           }
         ]
       }

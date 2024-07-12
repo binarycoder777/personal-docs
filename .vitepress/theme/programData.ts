@@ -111,6 +111,11 @@ export const NAV_DATA: NavData[] = [
         title: '动手实战人工智能 AI By Doing',
         desc: '一本中文电子书，通过实例介绍一些AI算法',
         link: 'https://aibydoing.com/intro'
+    },{      
+      icon: 'https://lf-coze-web-cdn.coze.cn/obj/coze-web-cn/obric/coze/favicon.1970.png      ',
+      title: '扣子',
+      desc: '扣子是新一代AI 大模型智能体开发平台。整合了插件、长短期记忆、工作流、卡片等丰富能力',
+      link: 'https://www.coze.cn'
     }
     ]
   },
