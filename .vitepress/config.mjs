@@ -211,9 +211,37 @@ export default defineConfig({
                   link: '/docs/book/系统设计/Designing Data-Intensive Applications 数据密集型应用系统设计/编码与演化.md'
                 },
                 {  
+                  text: '分区',
+                  link: '/docs/book/系统设计/Designing Data-Intensive Applications 数据密集型应用系统设计/分区.md'
+                },
+                {  
+                  text: '复制',
+                  link: '/docs/book/系统设计/Designing Data-Intensive Applications 数据密集型应用系统设计/复制.md'
+                },
+                {  
                   text: '事务',
                   link: '/docs/book/系统设计/Designing Data-Intensive Applications 数据密集型应用系统设计/事务.md'
-                }
+                },
+                {  
+                  text: '分布式系统的麻烦',
+                  link: '/docs/book/系统设计/Designing Data-Intensive Applications 数据密集型应用系统设计/分布式系统的麻烦.md'
+                },
+                {  
+                  text: '一致性与共识',
+                  link: '/docs/book/系统设计/Designing Data-Intensive Applications 数据密集型应用系统设计/一致性与共识.md'
+                },
+                {  
+                  text: '批处理',
+                  link: '/docs/book/系统设计/Designing Data-Intensive Applications 数据密集型应用系统设计/批处理.md'
+                },
+                {  
+                  text: '流处理',
+                  link: '/docs/book/系统设计/Designing Data-Intensive Applications 数据密集型应用系统设计/流处理.md'
+                },
+                {  
+                  text: '数据系统的未来',
+                  link: '/docs/book/系统设计/Designing Data-Intensive Applications 数据密集型应用系统设计/数据系统的未来.md'
+                },
               ]
             },
             {
