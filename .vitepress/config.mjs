@@ -198,9 +198,17 @@ export default defineConfig({
                   text: '可靠性、可伸缩性和可维护性',
                   link: '/docs/book/系统设计/Designing Data-Intensive Applications 数据密集型应用系统设计/可靠性、可伸缩性和可维护性.md'
                 },
+                {
+                  text:'数据模型与查询语言',
+                  link:'/docs/book/系统设计/Designing Data-Intensive Applications 数据密集型应用系统设计/数据模型与查询语言.md'
+                },
                 {  
                   text: '存储与检索',
                   link: '/docs/book/系统设计/Designing Data-Intensive Applications 数据密集型应用系统设计/存储与检索.md'
+                },
+                {  
+                  text: '编码与演化',
+                  link: '/docs/book/系统设计/Designing Data-Intensive Applications 数据密集型应用系统设计/编码与演化.md'
                 },
                 {  
                   text: '事务',
