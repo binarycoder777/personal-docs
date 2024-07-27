@@ -30,6 +30,10 @@ export default defineConfig({
       {
         text: '其他', items: [
           {
+            text: "z-library",
+            link:"https://zh.z-lib.gs/book/7242296/e7f29b/%E7%BC%96%E7%A8%8B%E7%8F%A0%E7%8E%91%E7%AC%AC2%E7%89%88%E4%BF%AE%E8%AE%A2%E7%89%88.html?ts=1042"
+          },
+          {
             text: "ChatGPT",
             link: "https://chat.openai.com/"
           },
