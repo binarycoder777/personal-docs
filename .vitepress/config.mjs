@@ -44,6 +44,9 @@ export default defineConfig({
           {
             text:'Doraemon',
             link:'https://www.coze.cn/store/bot/7390582775252238372?bot_id=true'
+          },{
+            text:'力扣',
+            link:'https://leetcode.cn/'
           }
         ]
       }
