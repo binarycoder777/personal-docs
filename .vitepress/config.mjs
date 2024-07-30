@@ -185,15 +185,15 @@ export default defineConfig({
                 },
                 {
                   text:'世上有多少重要的事，想着想着就算了',
-                  link:'/docs/article/2024/7月/世上有多少重要的事，想着想着就算了.md',
+                  link:'/docs/article/2024/7月/世上有多少重要的事，想着想着就算了.md'
                 },
                 {
                   text:'虚拟线程',
-                  link:'/docs/article/2024/7月/虚拟线程.md',
+                  link:'/docs/article/2024/7月/虚拟线程.md'
                 },
                 {
                   text:'Java21虚拟线程-我的锁在哪',
-                  link:'/docs/article/2024/7月/Java21虚拟线程-我的锁在哪.md',
+                  link:'/docs/article/2024/7月/Java21虚拟线程-我的锁在哪.md'
                 }
               ]
             },
