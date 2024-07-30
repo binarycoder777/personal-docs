@@ -30,6 +30,10 @@ export default defineConfig({
       {
         text: '其他', items: [
           {
+            text: "z-library",
+            link:"https://zh.z-lib.gs/book/7242296/e7f29b/%E7%BC%96%E7%A8%8B%E7%8F%A0%E7%8E%91%E7%AC%AC2%E7%89%88%E4%BF%AE%E8%AE%A2%E7%89%88.html?ts=1042"
+          },
+          {
             text: "ChatGPT",
             link: "https://chat.openai.com/"
           },
@@ -40,6 +44,9 @@ export default defineConfig({
           {
             text:'Doraemon',
             link:'https://www.coze.cn/store/bot/7390582775252238372?bot_id=true'
+          },{
+            text:'力扣',
+            link:'https://leetcode.cn/'
           }
         ]
       }
@@ -206,14 +213,50 @@ export default defineConfig({
                   text: '可靠性、可伸缩性和可维护性',
                   link: '/docs/book/系统设计/Designing Data-Intensive Applications 数据密集型应用系统设计/可靠性、可伸缩性和可维护性.md'
                 },
+                {
+                  text:'数据模型与查询语言',
+                  link:'/docs/book/系统设计/Designing Data-Intensive Applications 数据密集型应用系统设计/数据模型与查询语言.md'
+                },
                 {  
                   text: '存储与检索',
                   link: '/docs/book/系统设计/Designing Data-Intensive Applications 数据密集型应用系统设计/存储与检索.md'
                 },
                 {  
+                  text: '编码与演化',
+                  link: '/docs/book/系统设计/Designing Data-Intensive Applications 数据密集型应用系统设计/编码与演化.md'
+                },
+                {  
+                  text: '分区',
+                  link: '/docs/book/系统设计/Designing Data-Intensive Applications 数据密集型应用系统设计/分区.md'
+                },
+                {  
+                  text: '复制',
+                  link: '/docs/book/系统设计/Designing Data-Intensive Applications 数据密集型应用系统设计/复制.md'
+                },
+                {  
                   text: '事务',
                   link: '/docs/book/系统设计/Designing Data-Intensive Applications 数据密集型应用系统设计/事务.md'
-                }
+                },
+                {  
+                  text: '分布式系统的麻烦',
+                  link: '/docs/book/系统设计/Designing Data-Intensive Applications 数据密集型应用系统设计/分布式系统的麻烦.md'
+                },
+                {  
+                  text: '一致性与共识',
+                  link: '/docs/book/系统设计/Designing Data-Intensive Applications 数据密集型应用系统设计/一致性与共识.md'
+                },
+                {  
+                  text: '批处理',
+                  link: '/docs/book/系统设计/Designing Data-Intensive Applications 数据密集型应用系统设计/批处理.md'
+                },
+                {  
+                  text: '流处理',
+                  link: '/docs/book/系统设计/Designing Data-Intensive Applications 数据密集型应用系统设计/流处理.md'
+                },
+                {  
+                  text: '数据系统的未来',
+                  link: '/docs/book/系统设计/Designing Data-Intensive Applications 数据密集型应用系统设计/数据系统的未来.md'
+                },
               ]
             },
             {
