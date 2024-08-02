@@ -26,12 +26,12 @@ export default defineConfig({
       { text: '编程导航', link: '/docs/program' },
       { text: '随思随笔', link: '/docs/article/' },
       { text: '技术秘籍', link: '/docs/book/' },
-      { text: '项目开发', link: '/docs/project/' },
+      { text: '关于我', link: '/docs/about' },
       {
         text: '其他', items: [
           {
             text: "z-library",
-            link:"https://zh.z-lib.gs/book/7242296/e7f29b/%E7%BC%96%E7%A8%8B%E7%8F%A0%E7%8E%91%E7%AC%AC2%E7%89%88%E4%BF%AE%E8%AE%A2%E7%89%88.html?ts=1042"
+            link:"https://zh.z-lib.gs/book/"
           },
           {
             text: "ChatGPT",
@@ -39,13 +39,13 @@ export default defineConfig({
           },
           {
             text: "个人周刊",
-            link: "https://binarycoder777.github.io/zh-cn"
+            link: "https://binarycoder777.com/zh-cn"
           },
           {
             text:'Doraemon',
             link:'https://www.coze.cn/store/bot/7390582775252238372?bot_id=true'
           },{
-            text:'力扣',
+            text:'LeetCode',
             link:'https://leetcode.cn/'
           }
         ]
