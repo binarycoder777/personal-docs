@@ -6,11 +6,35 @@ import { defineConfig } from 'vitepress'
 import { RssPlugin } from 'vitepress-plugin-rss'
 
 // 配置 RSS 插件选项
-const baseUrl = 'https://sugarat.top'
+const baseUrl = 'https://binarycoder777.cn'
 const RSS = {
   title: 'BinaryCoder777',
   baseUrl,
   copyright: 'Copyright (c) 2019-present, BinaryCoder777',
+  description: 'BinaryCoder777的个人博客',
+  language: 'zh-cn',
+  author: {
+    name: 'binarycoder777',
+    email: 'atao67276@gmail.com',
+    link: 'https://binarycoder777.cn'
+  },
+  icon: true,
+  authors: [
+    {
+      name: 'BinaryCoder777',
+      email: 'atao67276@gmail.com',
+      link: 'https://binarycoder777.cn'
+    },
+    {
+      name: 'BinaryCoder777',
+      email: '',
+      link: 'https://binarycoder777.cn'
+    }
+  ],
+  filename: 'feed.rss',
+  log: true,
+  ignoreHome: true,
+  ignorePublish: false,
 }
 
 
@@ -72,6 +96,7 @@ export default defineConfig({
     ],
     socialLinks: [
       { icon: 'github', link: 'https://github.com/binarycoder777' },
+      { icon: 'rss', link: 'https://binarycoder777.cn/feed.rss' },
     ],
 
     footer: {
