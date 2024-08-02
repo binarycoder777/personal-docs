@@ -1,5 +1,6 @@
 <template>
-    <div style="margin-top: 24px">
+    <div style="display: flex;justify-content: center;">
+      <div class="comment" style="margin-top: 24px;width: 80%;">
         <Giscus
             id="comments"
             repo="binarycoder777/personal-docs"
@@ -14,6 +15,7 @@
             :theme="isDark ? 'dark' : 'light'"
             :key="route.path"
         ></Giscus>
+    </div>
     </div>
 </template>
 
