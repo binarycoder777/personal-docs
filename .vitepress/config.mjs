@@ -1,8 +1,27 @@
 import { text } from 'stream/consumers'
 import { defineConfig } from 'vitepress'
 
+// RSS 订阅
+// vitepress/config.js
+import { RssPlugin } from 'vitepress-plugin-rss'
+
+// 配置 RSS 插件选项
+const baseUrl = 'https://sugarat.top'
+const RSS = {
+  title: 'BinaryCoder777',
+  baseUrl,
+  copyright: 'Copyright (c) 2019-present, BinaryCoder777',
+}
+
+
+
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+  vite: {
+    plugins: [
+      RssPlugin(RSS)
+    ]
+  },
   // 部署配置
   ignoreDeadLinks: true,
   base: '/',
@@ -26,24 +45,27 @@ export default defineConfig({
       { text: '编程导航', link: '/docs/program' },
       { text: '随思随笔', link: '/docs/article/' },
       { text: '技术秘籍', link: '/docs/book/' },
-      { text: '项目开发', link: '/docs/project/' },
+      { text: '关于我', link: '/docs/about' },
       {
         text: '其他', items: [
           {
-            text: "Z-Library",
-            link:"https://zh.z-lib.gs/book/7242296/e7f29b/%E7%BC%96%E7%A8%8B%E7%8F%A0%E7%8E%91%E7%AC%AC2%E7%89%88%E4%BF%AE%E8%AE%A2%E7%89%88.html?ts=1042"
+            text: "z-library",
+            link:"https://zh.z-lib.gs/book/"
           },
           {
             text: "ChatGPT",
             link: "https://chat.openai.com/"
           },
           {
-            text: "Personal-Weekly",
-            link: "https://binarycoder777.github.io/zh-cn"
+            text: "个人周刊",
+            link: "https://binarycoder777.com/zh-cn"
           },
           {
             text:'Doraemon',
             link:'https://www.coze.cn/store/bot/7390582775252238372?bot_id=true'
+          },{
+            text:'LeetCode',
+            link:'https://leetcode.cn/'
           }
         ]
       }
@@ -182,7 +204,15 @@ export default defineConfig({
                 },
                 {
                   text:'世上有多少重要的事，想着想着就算了',
-                  link:'/docs/article/2024/7月/世上有多少重要的事，想着想着就算了.md',
+                  link:'/docs/article/2024/7月/世上有多少重要的事，想着想着就算了.md'
+                },
+                {
+                  text:'虚拟线程',
+                  link:'/docs/article/2024/7月/虚拟线程.md'
+                },
+                {
+                  text:'Java21虚拟线程-我的锁在哪',
+                  link:'/docs/article/2024/7月/Java21虚拟线程-我的锁在哪.md'
                 }
               ]
             },

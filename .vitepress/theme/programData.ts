@@ -100,6 +100,12 @@ export const NAV_DATA: NavData[] = [
         title: '现代 JavaScript 教程',
         desc: '通过简单但足够详细的内容，为你讲解从基础到高阶的 JavaScript 相关知识。',
         link: 'https://zh.javascript.info/'
+      },
+      {
+        icon: '',
+        title: '表情符号备忘单',
+        desc: 'markdown及github支持的表情',
+        link: 'https://www.webfx.com/tools/emoji-cheat-sheet/'
       }
     ]
   },
