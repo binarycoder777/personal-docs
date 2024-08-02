@@ -1,8 +1,27 @@
 import { text } from 'stream/consumers'
 import { defineConfig } from 'vitepress'
 
+// RSS 订阅
+// vitepress/config.js
+import { RssPlugin } from 'vitepress-plugin-rss'
+
+// 配置 RSS 插件选项
+const baseUrl = 'https://sugarat.top'
+const RSS = {
+  title: 'BinaryCoder777',
+  baseUrl,
+  copyright: 'Copyright (c) 2019-present, BinaryCoder777',
+}
+
+
+
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+  vite: {
+    plugins: [
+      RssPlugin(RSS)
+    ]
+  },
   // 部署配置
   ignoreDeadLinks: true,
   base: '/',
