@@ -66,6 +66,12 @@ export const NAV_DATA: NavData[] = [
         title: '美团技术团队',
         desc: '美团发布总结的一些技术文章',
         link: 'https://tech.meituan.com/',
+      },
+      {
+        icon: 'https://dev.java/assets/images/java-logo-vector.png',
+        title: 'The Destination for Java Developers',
+        desc: '来自专家的数百个教程、新闻和视频，都在这里。',
+        link: 'https://dev.java/',
       }
     ]
   },
