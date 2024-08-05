@@ -245,7 +245,7 @@ export default defineConfig({
               collapsed:true,
               items: [
                 {
-                  text:'Actor模型',
+                  text:'Java中常见的IO任务',
                   link:'/docs/article/2024/8月/Java中常见的IO任务.md'
                 }
               ]
