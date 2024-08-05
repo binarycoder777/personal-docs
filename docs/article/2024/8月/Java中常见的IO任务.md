@@ -38,7 +38,7 @@ var path = Path.of("/usr/share/dict/words");
 List<String> lines = Files.readAllLines(path);
 ```
 
-如果文件很大，请延迟地将行处理为 Stream<String>：
+如果文件很大，请延迟地将行处理为 Stream< String >：
 
 ```java
 try (Stream<String> lines = Files.lines(path)) {
