@@ -259,6 +259,16 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
+              text:'编程珠玑',
+              collapsed:true,
+              items: [
+                {
+                  text:'开篇',
+                  link:'/docs/book/系统设计/编程珠玑/开篇.md'
+                }
+              ]
+            },
+            {
               text:'数据密集型应用系统设计',
               collapsed: true,
               items: [
