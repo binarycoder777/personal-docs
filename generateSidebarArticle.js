@@ -1,6 +1,23 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
+
+// 月份名称到数字的映射
+const monthMap = {
+  '1月': 1,
+  '2月': 2,
+  '3月': 3,
+  '4月': 4,
+  '5月': 5,
+  '6月': 6,
+  '7月': 7,
+  '8月': 8,
+  '9月': 9,
+  '10月': 10,
+  '11月': 11,
+  '12月': 12,
+};
+
 // const fs = require('fs');
 // const path = require('path');
 /**
@@ -9,7 +26,7 @@ import path from 'node:path';
  * @param {string} baseDir - 基础目录名称，用于生成相对路径
  * @returns {Array} 侧边栏项目列表
  */
-function getSidebarItems(dirPath, baseDir = '') {
+function getSidebarItems(dirPath, baseDir = '',deep = 0) {
   const files = fs.readdirSync(dirPath);
   const sidebarItems = [];
 
@@ -22,7 +39,7 @@ function getSidebarItems(dirPath, baseDir = '') {
       sidebarItems.push({
         text: file,
         collapsed: true,
-        items: getSidebarItems(fullPath, path.join(baseDir, file)),
+        items: getSidebarItems(fullPath, path.join(baseDir, file),deep+1),
       });
     } else if (file.endsWith('.md') && !file.startsWith("index")) {
       const name = path.basename(file, '.md');
@@ -32,8 +49,14 @@ function getSidebarItems(dirPath, baseDir = '') {
       };
       sidebarItems.push(item);
     }
+    if(deep == 1) {
+      sidebarItems.sort((a, b) => {
+        const aOrder = monthMap[a.text] || Infinity;
+        const bOrder = monthMap[b.text] || Infinity;
+        return aOrder - bOrder;
+      });
+    }
   });
-
   return sidebarItems;
 }
 
