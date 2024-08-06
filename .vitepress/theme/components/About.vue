@@ -11,8 +11,12 @@
           :style="{ transform: rotation }"
         />
       </div>
-      <h1 id="aboutSection" style="text-align: center">关于我</h1>
-      <br />
+      <!-- <h1 id="aboutSection" style="text-align: center">关于我</h1> -->
+      <h2 class="features-title" style="text-align: center">关于我</h2>
+      <p class="features-subtitle" style="text-align: center">
+        <!-- 🥚 | 🏀 | 💻 | 🎵 | 📚 -->
+      </p>
+      <!-- <br /> -->
       <p>
         👋
         一名软件开发工程师，专业领域涵盖了后端开发、数据库设计和系统架构，专注于将复杂的问题转化为简单而直观的设计。
@@ -56,13 +60,98 @@
       </div>
     </div>
     <div class="features-section">
-      <div class="language-stats">
-        <h2>Most Used Languages</h2>
-        <img
-          src="https://github-readme-stats.vercel.app/api/top-langs/?username=BinaryCoder777&layout=donut&langs_count=10"
-          alt="Most Used Languages"
-        />
-      </div>
+      <section class="timeline">
+        <div class="title-wrapper">
+          <div class="icon-box">
+            <svg t="1722936475509" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4302" width="32" height="32"><path d="M959.288674 828.030723c0 0-76.276221-61.033052-213.678614-61.033052-137.363508 0-213.677591 61.033052-213.677591 61.033052L531.93247 273.696546c0 0 64.400752-77.727269 215.798904-77.727269 151.362336 0 211.556277 77.727269 211.556277 77.727269L959.287651 828.030723z" fill="#F9BE00" p-id="4303"></path><path d="M492.102323 828.030723c0 0-76.350922-61.033052-213.677591-61.033052-137.364531 0-213.71443 61.033052-213.71443 61.033052L64.710302 273.696546c0 0 64.438615-77.727269 215.836767-77.727269 151.361313 0 211.555254 77.727269 211.555254 77.727269L492.102323 828.030723z" fill="#F9BE00" p-id="4304"></path></svg>
+          </div>
+          <div style="display: flex;flex-direction:column;justify-content: center;justify-items: center;margin-left:37%;">
+            <h2 class="features-title" style="text-align: center">成长经历</h2>
+      <!-- <p class="features-subtitle">对行动要有耐心，对结果要有信心...</p> -->
+          </div>
+        </div>
+
+        <ol class="timeline-list">
+          <li class="timeline-item">
+            <!-- <h4 class="h4 timeline-item-title">Creative director</h4> -->
+
+            <span>2001 - 2007</span>
+
+            <p class="timeline-text">
+              生命的起点，家庭环境为初生的我提供了安全与爱。世界从简单的怀抱中展开，成了我初识的舞台...
+            </p>
+          </li>
+
+          <li class="timeline-item">
+            <!-- <h4 class="h4 timeline-item-title">Art director</h4> -->
+
+            <span>2007 — 2023</span>
+
+            <p class="timeline-text">
+              求学生涯，学业是主要任务，课堂上知识的积累与课外的探索，逐步构建起对世界的理解与认知...
+            </p>
+          </li>
+
+          <li class="timeline-item">
+            <!-- <h4 class="h4 timeline-item-title">Web designer</h4> -->
+
+            <span>2023 — present</span>
+            <p class="timeline-text">
+              步入职场后，工作成为主要内容，面对各种挑战与机遇，梦想指引着每一步的坚定前行，生命的篇章仍在继续...
+            </p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="skill">
+        <h2 class="features-title" style="text-align: center">个人技能</h2>
+        <p class="features-subtitle">学习是一辈子的事儿，活到老，学到老...</p>
+        <ul class="skills-list content-card">
+          <li class="skills-item">
+            <div class="title-wrapper">
+              <h5 class="h5">Web design</h5>
+              <data value="80">80%</data>
+            </div>
+
+            <div class="skill-progress-bg">
+              <div class="skill-progress-fill" style="width: 80%"></div>
+            </div>
+          </li>
+
+          <li class="skills-item">
+            <div class="title-wrapper">
+              <h5 class="h5">Graphic design</h5>
+              <data value="70">70%</data>
+            </div>
+
+            <div class="skill-progress-bg">
+              <div class="skill-progress-fill" style="width: 70%"></div>
+            </div>
+          </li>
+
+          <li class="skills-item">
+            <div class="title-wrapper">
+              <h5 class="h5">Branding</h5>
+              <data value="90">90%</data>
+            </div>
+
+            <div class="skill-progress-bg">
+              <div class="skill-progress-fill" style="width: 90%"></div>
+            </div>
+          </li>
+
+          <li class="skills-item">
+            <div class="title-wrapper">
+              <h5 class="h5">WordPress</h5>
+              <data value="50">50%</data>
+            </div>
+
+            <div class="skill-progress-bg">
+              <div class="skill-progress-fill" style="width: 50%"></div>
+            </div>
+          </li>
+        </ul>
+      </section>
       <h2 class="features-title">当前正在做的...</h2>
       <p class="features-subtitle">
         探索创新的技术解决方案，让编程之旅更加有趣。
@@ -99,13 +188,121 @@
       </div>
     </div>
   </div>
-
-  
 </template>
 
 
 
 <style scoped>
+
+/**
+ * education and experience 
+ */
+
+ .timeline { margin-bottom: 30px; }
+
+.timeline .title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.timeline-list {
+  font-size: 14px;
+  margin-left: 45px;
+}
+
+.timeline-item { 
+  position: relative; 
+}
+
+.timeline-item:not(:last-child) { margin-bottom: 20px; }
+
+.timeline-item-title {
+  font-size: 14px;
+  line-height: 1.3;
+  margin-bottom: 7px;
+}
+
+.timeline-list span {
+  color:hsl(45, 54%, 58%);
+  font-weight: 1000;
+  line-height: 1.6;
+}
+
+.timeline-item:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  top: -25px;
+  left: -30px;
+  width: 1px;
+  height: calc(100% + 50px);
+  background: hsl(0, 0%, 22%);
+}
+
+.timeline-item::after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  left: -33px;
+  height: 6px;
+  width: 6px;
+  background: linear-gradient(
+    to right, 
+    hsl(45, 100%, 72%), 
+    hsl(35, 100%, 68%)
+  );
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px hsl(0, 0%, 22%);
+}
+
+.timeline-text {
+  /* color: hsl(0, 0%, 84%); */
+  font-weight: 300px;
+  line-height: 1.6;
+}
+
+
+/* 个人技能 */
+
+.skills-title {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+
+.skills-list {
+  padding: 20px;
+}
+
+.skills-item:not(:last-child) {
+  margin-bottom: 15px;
+}
+
+.skill .title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 8px;
+}
+
+.skill .title-wrapper data {
+  /* color: hsl(0, 0%, 84%); */
+  font-size: 13px;
+  font-weight: 300;
+}
+
+.skill-progress-bg {
+  background: hsl(0, 0%, 22%);
+  width: 100%;
+  height: 8px;
+  border-radius: 10px;
+}
+
+.skill-progress-fill {
+  background: linear-gradient(to right, hsl(45, 100%, 72%), hsl(35, 100%, 68%));
+  height: 100%;
+  border-radius: inherit;
+}
 
 .container {
   position: relative;
@@ -254,13 +451,13 @@
 }
 
 .features-title {
-  margin-top: 10%;
+  margin-top: 5%;
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
 }
 
 .features-subtitle {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   color: #666;
 }
 
