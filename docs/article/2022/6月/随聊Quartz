@@ -1,0 +1,44 @@
+title: 随聊Quartz
+author: John Doe
+date: 2022-03-08 21:25:06
+tags:
+---
+Quartz是Open Symphony开发的一款开源的任务调度框架。相对于jdk的Timer之类的简单任务调度程序来说，Quartz拥有更为全面的功能支出。
+
+1、允许批处理任务的持久化，并且提供不同的持久化策略支持
+
+2、批处理任务的远程调度
+
+3、提供基于web的监控接口
+
+4、集群支持
+
+5、插件式的可拓展性
+
+Quartz拥有明确的角色划分，分别对应处理任务调度过程中的各种相关关注点。
+
+1、Job：代表将要被调度的任务，一个任务要想让Quartz能够调度它，Job的帽子是必须戴上。
+
+2、JobDetail：JobDetail的主要职能是提供Job执行的上下文信息。Job所依赖的某些配置信息可以通过JobDetail提供，二者通过JobDataMap进行数据交互。
+
+3、Trigger：Trigger用于触发被调度任务的执行，可以根据不同的触发条件，提供不同的Trigger实现。
+
+4、Schedule：Quartz的核心调度程序，负责管理所有相关的Trigger和JobDetail，是最终掌管调度任务生杀大权的“人”。
+
+
+ ![upload successful](/images/pasted-134.png)
+ 
+ 通常情况下，一个Trigger只能用于一个Job，但多个Trigger可以用于一个Job。要使用Quartz进行任务调度，首先我们必须有能够被调度的任务实现，给将被调度的对象冠以Job或者StatefulJob的“头衔”，可以让我们得到一个可被Quartz调度的任务类。
+ 
+ 有了要调度的任务，接着需要考虑的是应该在什么时机调用它，而这就是Trigger存在的意义。Quartz中常用的两个Trigger一个是SimpleTrigger（可以指定简单的基于时间间隔的调度规则），另一个就是CronTrigger，可以类似于Unix/Linux操作系统中Cron程序所使用的表达式来指定调度规则。
+ 
+ ![upload successful](/images/pasted-136.png)
+ 
+ Quartz中的每一个Trigger都归属于相应的组，在他们各自的组中需要唯一的名称。
+ 
+ 在Job和Trigger都准备好后，我们就可以通过Schedule将他们关联起来进行最终的调度任务。
+ 
+ ![upload successful](/images/pasted-137.png)
+ 
+ Scheduler是从相应的Factory中获取的。在使用获取的Scheduler进行任务调度前，需要start（）。同时，相应的job也是通过Class类型提供的，即Schedule通过反射实例化执行相应调度任务。
+ 
