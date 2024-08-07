@@ -75,29 +75,29 @@
           <li class="timeline-item">
             <!-- <h4 class="h4 timeline-item-title">Creative director</h4> -->
 
-            <span>2001 - 2007</span>
+            <span>2019</span>
 
             <p class="timeline-text">
-              生命的起点，家庭环境为初生的我提供了安全与爱。世界从简单的怀抱中展开，成了我初识的舞台...
+              步入大学校园，为"计算机科学与技术"的学士学位🎓努力着，并于2020年期间加入了学院的创新实验室AC&Lab💻，开启了自己后端开发的学习旅程📚...
             </p>
           </li>
 
           <li class="timeline-item">
             <!-- <h4 class="h4 timeline-item-title">Art director</h4> -->
 
-            <span>2007 — 2023</span>
+            <span>2022</span>
 
             <p class="timeline-text">
-              求学生涯，学业是主要任务，课堂上知识的积累与课外的探索，逐步构建起对世界的理解与认知...
+              纸上得来终觉浅，绝知此事要躬行🖊。在大三期间独自去往杭州某互联网公司实习，从理论到实际，抽象到具体的蜕变，让我真正体会到知识与实际应用...
             </p>
           </li>
 
           <li class="timeline-item">
             <!-- <h4 class="h4 timeline-item-title">Web designer</h4> -->
 
-            <span>2023 — present</span>
+            <span>2023 — 至今</span>
             <p class="timeline-text">
-              步入职场后，工作成为主要内容，面对各种挑战与机遇，梦想指引着每一步的坚定前行，生命的篇章仍在继续...
+              毕业啦🍻，编码🖱是工作的主旋律。面对各种各样的挑战与机遇⛰，梦想指引着每一步的坚定前行🍃，年轻人，加油吧💪🏻...
             </p>
           </li>
         </ol>
@@ -109,18 +109,18 @@
         <ul class="skills-list content-card">
           <li class="skills-item">
             <div class="title-wrapper">
-              <h5 class="h5">Web design</h5>
-              <data value="80">80%</data>
+              <h5 class="h5">后端开发</h5>
+              <data value="80">90%</data>
             </div>
 
             <div class="skill-progress-bg">
-              <div class="skill-progress-fill" style="width: 80%"></div>
+              <div class="skill-progress-fill" style="width: 90%"></div>
             </div>
           </li>
 
           <li class="skills-item">
             <div class="title-wrapper">
-              <h5 class="h5">Graphic design</h5>
+              <h5 class="h5">系统优化</h5>
               <data value="70">70%</data>
             </div>
 
@@ -131,18 +131,18 @@
 
           <li class="skills-item">
             <div class="title-wrapper">
-              <h5 class="h5">Branding</h5>
-              <data value="90">90%</data>
+              <h5 class="h5">数据设计</h5>
+              <data value="90">80%</data>
             </div>
 
             <div class="skill-progress-bg">
-              <div class="skill-progress-fill" style="width: 90%"></div>
+              <div class="skill-progress-fill" style="width: 80%"></div>
             </div>
           </li>
 
           <li class="skills-item">
             <div class="title-wrapper">
-              <h5 class="h5">WordPress</h5>
+              <h5 class="h5">架构设计</h5>
               <data value="50">50%</data>
             </div>
 
@@ -162,7 +162,7 @@
             <!-- 假设您使用的是图像文件 -->
             <!-- <img src="/path-to-your-icon-1.png" alt="文档解析"> -->
           </div>
-          <h3 class="card-title">系统解析方案</h3>
+          <h3 class="card-title">解决方案</h3>
           <p class="card-detail">
             为客户提供定制化的专业解决方案，以满足特定行业的独特需求。
           </p>
