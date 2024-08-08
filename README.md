@@ -37,3 +37,23 @@
 ```
 
 </div>
+
+
+## 关于站点
+
+站点基于Vitepress进行搭建，集成了giscus评论、RSS订阅等功能，站点内容遵循MIT 授权许可，详情可参阅[LICENSE](https://github.com/binarycoder777/binarycoder777.github.io?tab=MIT-1-ov-file)。
+
+## 快速上手
+
+**步骤**
+```
+1. clone the repo
+2. npm install
+3. npm run dev
+4. change astro.config.mjs config
+5. more info refer to https://vitepress.dev/
+```
+## 订阅
+
+喜欢的朋友可以通过 [这里](https://binarycoder777.cn/feed.rss) 免费订阅我的更新。 感谢您的关注和支持！
+
