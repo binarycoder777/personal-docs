@@ -1,6 +1,7 @@
 <template>
   <div class="container">
-    <div class="introduction">
+    <div class="container-top">
+      <div class="introduction">
       <div class="language-stats">
         <img
           id="profile-img"
@@ -78,7 +79,7 @@
             <span>2019</span>
 
             <p class="timeline-text">
-              步入大学校园，为"计算机科学与技术"的学士学位🎓努力着，并于2020年期间加入了学院的创新实验室AC&Lab💻，开启了自己后端开发的学习旅程📚...
+              步入大学校园，为"计算机科学与技术"的学士学位🎓努力着，并于2020年期间加入了学院的创新实验室AC&Lab💻，开启了后端开发的学习旅程📚...
             </p>
           </li>
 
@@ -88,7 +89,7 @@
             <span>2022</span>
 
             <p class="timeline-text">
-              纸上得来终觉浅，绝知此事要躬行🖊。在大三期间独自去往杭州某互联网公司实习，从理论到实际，抽象到具体的蜕变，让我真正体会到知识与实际应用...
+              纸上得来终觉浅，绝知此事要躬行🖊。在大三期间独自去往杭州某互联网公司实习，从理论到实际，抽象到具体的蜕变，此时真正体会到了知识与实际的应用...
             </p>
           </li>
 
@@ -152,42 +153,47 @@
           </li>
         </ul>
       </section>
-      <h2 class="features-title">当前正在做的...</h2>
-      <p class="features-subtitle">
+    </div>
+
+    </div>
+
+    <h2 class="features-title" style="text-align: center;margin-top: 0px">当前正在做的...</h2>
+      <p class="features-subtitle" style="text-align: center;">
         探索创新的技术解决方案，让编程之旅更加有趣。
       </p>
       <div class="features-cards">
         <div class="feature-card">
           <div class="card-icon">
             <!-- 假设您使用的是图像文件 -->
-            <!-- <img src="/path-to-your-icon-1.png" alt="文档解析"> -->
+            <img src="../../public/icon-app.svg" alt="文档解析">
+            <h3 class="card-title">解决方案</h3>
           </div>
-          <h3 class="card-title">解决方案</h3>
           <p class="card-detail">
             为客户提供定制化的专业解决方案，以满足特定行业的独特需求。
           </p>
         </div>
         <div class="feature-card">
           <div class="card-icon">
-            <!-- <img src="/path-to-your-icon-2.png" alt="软件开发"> -->
+            <img src="../../public/icon-dev.svg" alt="文档解析">
+            <h3 class="card-title">软件开发</h3>
           </div>
-          <h3 class="card-title">软件开发</h3>
           <p class="card-detail">
             承诺提供卓越的软件开发服务，确保每一次交付都是高效和高质量的。
           </p>
         </div>
         <div class="feature-card">
           <div class="card-icon">
-            <!-- <img src="/path-to-your-icon-3.png" alt="数据分析"> -->
+            <img src="../../public/icon-design.svg" alt="文档解析">
+            <h3 class="card-title">数字创新</h3>
+
           </div>
-          <h3 class="card-title">数字创新</h3>
           <p class="card-detail">
             挖掘生活中的创新灵感，将酷炫的想法转化为实际可行的数字产品。
           </p>
         </div>
       </div>
-    </div>
   </div>
+
 </template>
 
 
@@ -250,7 +256,7 @@
   background: linear-gradient(
     to right, 
     hsl(45, 100%, 72%), 
-    hsl(35, 100%, 68%)
+    hsl(45, 100%, 68%)
   );
   border-radius: 50%;
   box-shadow: 0 0 0 4px hsl(0, 0%, 22%);
@@ -299,7 +305,7 @@
 }
 
 .skill-progress-fill {
-  background: linear-gradient(to right, hsl(45, 100%, 72%), hsl(35, 100%, 68%));
+  background: linear-gradient(to right, hsl(45, 53%, 50%), hsl(45, 100%, 68%));
   height: 100%;
   border-radius: inherit;
 }
@@ -307,10 +313,22 @@
 .container {
   position: relative;
   display: flex;
-  max-width: 100%;
+  max-width: 90%;
   margin: auto;
   box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
   margin-bottom: 50px;
+  margin-top: 20px;
+  flex-direction: column;
+}
+
+.container-top {
+  position: relative;
+  display: flex;
+  max-width: 90%;
+  margin: auto;
+  /* box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1); */
+  margin-bottom: 10px;
+  margin-top: 20px;
 }
 
 .introduction {
@@ -345,7 +363,7 @@
   padding: 10px 15px;
   border-radius: 5px;
   color: #fff;
-  background-color: #007bff;
+  background-color: hsl(45, 68%, 54%);
   /* 以下是新增样式，用于提升可读性和美观 */
   font-weight: 500;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
@@ -420,7 +438,7 @@
 }
 
 .language-stats img {
-  max-width: 30%;
+  max-width: 50%;
   height: auto;
 }
 
@@ -464,6 +482,7 @@
 .features-cards {
   display: flex;
   justify-content: space-around;
+  margin-bottom: 2%;
 }
 
 .feature-card {
@@ -477,7 +496,8 @@
 }
 
 .card-icon {
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
+  display: flex;justify-content: center;justify-items: center;
 }
 
 .card-icon img {
@@ -488,12 +508,13 @@
 .card-title {
   font-size: 1.2rem;
   /* color: #333; */
-  margin-bottom: 0.5rem;
+  align-content: center;
 }
 
 .card-detail {
   /* color: #666; */
   font-size: 0.9rem;
+  text-align: center;
 }
 /* Add more styles as necessary */
 </style>
