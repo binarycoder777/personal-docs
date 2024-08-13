@@ -128,6 +128,11 @@ export const NAV_DATA: NavData[] = [
       title: '扣子',
       desc: '扣子是新一代AI 大模型智能体开发平台。整合了插件、长短期记忆、工作流、卡片等丰富能力',
       link: 'https://www.coze.cn'
+    },{
+      icon:'https://tools.webcrumbs.org/static/media/frontend_ai.8fa63940a5bc5d041f25fd1be390f1c1.svg',
+      title:'Frontend AI',
+      desc:'只需写下你想要的内容或粘贴图片，预览你的组件并获取代码。试试看吧——无需登录！',
+      link:'https://www.webcrumbs.org/frontend-ai'
     }
     ]
   },
