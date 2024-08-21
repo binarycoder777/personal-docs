@@ -55,6 +55,9 @@ export default defineConfig({
   // 站点配置
   title: "BinaryCoder777",
   description: "个人站点",
+  head:[
+    ['link',{rel:'icon',href:'/.vitepress/public/favicon.ico'}]
+  ],
   themeConfig: {
     siteTitle: 'BinaryCoder777',
     // 搜索栏
@@ -86,10 +89,6 @@ export default defineConfig({
           {
             text: "个人周刊",
             link: "https://binarycoder777.com/zh-cn"
-          },
-          {
-            text:'Doraemon',
-            link:'https://www.coze.cn/store/bot/7390582775252238372?bot_id=true'
           },{
             text:'LeetCode',
             link:'https://leetcode.cn/'

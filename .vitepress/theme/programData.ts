@@ -112,6 +112,11 @@ export const NAV_DATA: NavData[] = [
         title: '表情符号备忘单',
         desc: 'markdown及github支持的表情',
         link: 'https://www.webfx.com/tools/emoji-cheat-sheet/'
+      },{
+        icon: '',
+        title: 'Animated Favicon Generator',
+        desc: '动态图标生成器, 动态Favicon, GIF转Favicon, 网站图标, 品牌形象, 吸引用户, 动态效果, 自定义图标, 网站设计, 动画图标',
+        link: 'https://www.producthunt.com/posts/animated-favicon-generator?utm_campaign=producthunt-api&utm_medium=api-v2&utm_source=Application%3A+decohack+%28ID%3A+131684%29
       }
     ]
   },
