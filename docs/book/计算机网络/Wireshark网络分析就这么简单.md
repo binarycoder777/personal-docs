@@ -65,7 +65,7 @@
 
 服务器B通过ARP广播查询默认网关192.168.26.2的MAC地址。为什么我ping的是服务器A的IP，B却去查询默认网关的MAC地址呢？这是因为B根据自己的子网掩码，计算出A属于不同子网，跨子网通信需要默认网关的转发。而要和默认网关通信，就需要获得其MAC地址。2号包（见图7）：  
 
-默认网关192.168.26.2向B回复了自己的MAC地址。为什么这些MAC地址的开头明明是 $"00\cdot50\cdot56"$ 或者 $"00;0{\circ}.29"$ ，Wireshark上显示出来却都是“Vmware”？这是因为MAC地址的前3个字节表示厂商。而00:50:56和00:0c:29都被分配给Vmware公司。这是全球统一的标准，所以Wireshark干脆显示出厂商名了。  
+默认网关192.168.26.2向B回复了自己的MAC地址。为什么这些MAC地址的开头明明是 $"00\cdot50\cdot56"$ 或者 $"00;0 {\circ}.29"$ ，Wireshark上显示出来却都是“Vmware”？这是因为MAC地址的前3个字节表示厂商。而00:50:56和00:0c:29都被分配给Vmware公司。这是全球统一的标准，所以Wireshark干脆显示出厂商名了。  
 
 3号包（见图8  
 
@@ -117,7 +117,7 @@ B终于收到了A的ping回复。从MAC地址00:0c:29:0c:22:10可以看出，这
 
 ![](https://cdn-xlab-data.openxlab.org.cn/pdf/918e5ced-60f0-4dcc-836c-e5b250281d60.pdf/fd029b4d78bcf1bab21fe031f7b79c8e2f417d992b33304ab73ae36945c0a010.jpg)  
 
-这说明A上存在一项符合192.168.182.131的路由，促使A通过eth1直接与B通信。我赶紧逐项检查路由表，果然发现有这么一项（见图3）：  
+这说明A上存在一项符合192.168.182.131的路由，促使A通过eth1直接与B通信。我赶紧逐项检查路由表，果然发现有这么一项（见图3）：
 
 ![](https://cdn-xlab-data.openxlab.org.cn/pdf/918e5ced-60f0-4dcc-836c-e5b250281d60.pdf/6c48bf7c3d0bbd081173da060dd94698eda0bea02b9a34f887e7b779bc50b899.jpg)  
 图3  
@@ -131,7 +131,7 @@ B终于收到了A的ping回复。从MAC地址00:0c:29:0c:22:10可以看出，这
 我们能从这个案例中学习到什么呢？最直接的启示便是翻出简历，投奔甲方去。这样就可以在搞砸系统的时候，义正词严地要求乙方解决了。假如你固执地想继续当乙方，那就开始学习Wireshark吧。再有经验的工程师也有犯迷糊的时候，而Wireshark从来不会，它随时随地都能告诉你真相，不偏不倚。  
 # Excel文件的保存过程  
 
-当我们在Notepad等文本编辑器上单击File-->Save的时候，底层的操作非常简单—编辑器上的内容被直接写入文件了（见图1）。假如这个文件是被保存到了网络盘上，我们就可以从Wireshark抓包上看到这个过程（见图2）。  
+当我们在Notepad等文本编辑器上单击File-- >Save的时候，底层的操作非常简单—编辑器上的内容被直接写入文件了（见图1）。假如这个文件是被保存到了网络盘上，我们就可以从Wireshark抓包上看到这个过程（见图2）。  
 
 ![](https://cdn-xlab-data.openxlab.org.cn/pdf/918e5ced-60f0-4dcc-836c-e5b250281d60.pdf/e155e005fe9e6bc5b28b51490b228eb75222cc7d064fa7e56b81b504d2a17997.jpg)  
 
@@ -193,7 +193,7 @@ Wireshark正是获得这些细节的通用法宝，任何经过网络所完成�
 
 拿到一个网络包时，我们总是希望它尽可能小。因为操作一个大包相当费时，有时甚至会死机。如果让初学者分析1GB以上的包，估计会被打击得信心全无。所以抓包时应该尽量只抓必要的部分。有很多方法可以实现这一点。  
 
-1．只抓包头。一般能抓到的每个包（称为“帧”更准确，但是出于表达习惯，本书可能会经常用“包”代替“帧”和“分段”）的最大长度为1514字节，启用了Jumbo Frame（巨型帧）之后可达9000字节以上，而大多数时候我们只需要IP头或者TCP头就足够分析了。在Wireshark上可以这样抓到包头：单击菜单栏上的Capture-->Options，然后在弹出的窗口上定义“Limit each packet to”的值。我一般设个偏大的数字：80字节，也就是说每个包只抓前80字节。这样TCP层、网络层和数据链路层的信息都可以包括在内（见图1）。  
+1．只抓包头。一般能抓到的每个包（称为“帧”更准确，但是出于表达习惯，本书可能会经常用“包”代替“帧”和“分段”）的最大长度为1514字节，启用了Jumbo Frame（巨型帧）之后可达9000字节以上，而大多数时候我们只需要IP头或者TCP头就足够分析了。在Wireshark上可以这样抓到包头：单击菜单栏上的Capture-- >Options，然后在弹出的窗口上定义“Limit each packet to”的值。我一般设个偏大的数字：80字节，也就是说每个包只抓前80字节。这样TCP层、网络层和数据链路层的信息都可以包括在内（见图1）。  
 
 ![](https://cdn-xlab-data.openxlab.org.cn/pdf/918e5ced-60f0-4dcc-836c-e5b250281d60.pdf/0ce6caa1ac03701d89d828821ae7696d6255ef507cb04fdc7d21f68488b7a324.jpg)  
 图1  
@@ -204,7 +204,7 @@ Wireshark正是获得这些细节的通用法宝，任何经过网络所完成�
 
 [root@server_1 /]# tcpdump -i eth0 -s 80 -w /tmp/tcpdump.cap  
 
-2．只抓必要的包。服务器上的网络连接可能非常多，而我们只需要其中的一小部分。Wireshark的Capture Filter可以在抓包时过滤掉不需要的包。比如在成百上千的网络连接中，我们只对IP为10.32.200.131的包感兴趣，那就可以在Wireshark上这样设置：单击菜单栏上的Capture-->Options，然后在Capture Filter中输入“host 10.32.200.131”（见图2）。  
+2．只抓必要的包。服务器上的网络连接可能非常多，而我们只需要其中的一小部分。Wireshark的Capture Filter可以在抓包时过滤掉不需要的包。比如在成百上千的网络连接中，我们只对IP为10.32.200.131的包感兴趣，那就可以在Wireshark上这样设置：单击菜单栏上的Capture-- >Options，然后在Capture Filter中输入“host 10.32.200.131”（见图2）。  
 ![](https://cdn-xlab-data.openxlab.org.cn/pdf/918e5ced-60f0-4dcc-836c-e5b250281d60.pdf/a32e9fa29f078651ebbb232942adf984e1fcc79ca502fdbd81d0eadd6e868615.jpg)  
 图2  
 
@@ -214,7 +214,7 @@ Wireshark正是获得这些细节的通用法宝，任何经过网络所完成�
 
 注意：设置Capture Filter之前务必三思，以免把有用的包也过滤掉，尤其是容易被忽略的广播包。当然有时候再怎么考虑也会失算，比如我有一次把对方的IP地址设为filter，结果一个包都没抓到。最后只能去掉filter再抓，才发现是NAT（网络地址转换）设备把对方的IP地址改掉了。抓的包除了要小，最好还能为每步操作打上标记。这样的包一目了然，赏心悦目。比如要在Windows上抓一个包含三步操作的问题，我会这样抓。  
 
-（1）ping <IP> -n 1 -l 1（2）操作步骤1（3）ping <IP> -n 1 -l 2（4）操作步骤2（5）ping <IP> -n 1 -l 3（6）操作步骤3  
+（1）ping  < IP > -n 1 -l 1（2）操作步骤1（3）ping  < IP > -n 1 -l 2（4）操作步骤2（5）ping  < IP > -n 1 -l 3（6）操作步骤3  
 
 如图3所示，如果我需要分析步骤1，则只要看 $\uparrow\!46\!\sim\!\uparrow\!83$ 之间的包即可。注意到146号包最底下的“Data（1 byte）”了吗？byte的数目表示是第几步，这样就算在步骤很多的情况下也不会混乱。  
 
@@ -223,17 +223,17 @@ Wireshark正是获得这些细节的通用法宝，任何经过网络所完成�
 
 # 二、个性化设置  
 
-Wireshark的默认设置堪称友好，但不同用户的从事领域和使用习惯各有不同，所以有时需要根据自己的情况对配置略作修改。1．我经常需要参照服务器上的日志时间，找到发生问题时的网络包。所以就把Wireshark的时间调成跟服务器一样的格式。单击Wireshark的View-->Time Display Format-->Date and Time of Day，就可以实现此设置（见图4）。  
+Wireshark的默认设置堪称友好，但不同用户的从事领域和使用习惯各有不同，所以有时需要根据自己的情况对配置略作修改。1．我经常需要参照服务器上的日志时间，找到发生问题时的网络包。所以就把Wireshark的时间调成跟服务器一样的格式。单击Wireshark的View-- >Time Display Format-- >Date and Time of Day，就可以实现此设置（见图4）。  
 
 ![](https://cdn-xlab-data.openxlab.org.cn/pdf/918e5ced-60f0-4dcc-836c-e5b250281d60.pdf/31ed15c3e5979fb817c9e7c0e7188b49d50c2dd8e30282d33d216ebcd7d3c3cb.jpg)  
 图4  
 
-2．不同类型的网络包可以自定义颜色，比如网络管理员可能会把OSPF等协议或者与Spanning Tree Protocol（生成树协议）相关的网络包设成最显眼的颜色。而文件服务器的管理员则更关心FTP、SMB和NFS协议的颜色。我们可以通过View -->Coloring Rules来设置颜色。如果同事已经有一套非常适合你工作内容的配色方案，可以请他从Coloring Rules窗口导出，然后导入到你的Wireshark里（见图5）。记得下次和他吃饭时主动买单，要知道配一套养眼的颜色可要花不少时间。  
+2．不同类型的网络包可以自定义颜色，比如网络管理员可能会把OSPF等协议或者与Spanning Tree Protocol（生成树协议）相关的网络包设成最显眼的颜色。而文件服务器的管理员则更关心FTP、SMB和NFS协议的颜色。我们可以通过View -- >Coloring Rules来设置颜色。如果同事已经有一套非常适合你工作内容的配色方案，可以请他从Coloring Rules窗口导出，然后导入到你的Wireshark里（见图5）。记得下次和他吃饭时主动买单，要知道配一套养眼的颜色可要花不少时间。  
 
 ![](https://cdn-xlab-data.openxlab.org.cn/pdf/918e5ced-60f0-4dcc-836c-e5b250281d60.pdf/f7e511952819e8c1781c630a9a1ffb103d438d54e8ea88b8164295d9b06469f1.jpg)  
 图5  
 
-3．更多的设置可以在Edit-->Preferences窗口中完成。这个窗口的设置精度可以达到一些协议的细节。比如在此窗口单击Protocols-->TCP就可以看到多个TCP相关选项，将鼠标停在每一项上都会有详细介绍。假如经常要对Sequence Number做加减运算，不妨选中Relative  
+3．更多的设置可以在Edit-- >Preferences窗口中完成。这个窗口的设置精度可以达到一些协议的细节。比如在此窗口单击Protocols-- >TCP就可以看到多个TCP相关选项，将鼠标停在每一项上都会有详细介绍。假如经常要对Sequence Number做加减运算，不妨选中Relative  
 ![](https://cdn-xlab-data.openxlab.org.cn/pdf/918e5ced-60f0-4dcc-836c-e5b250281d60.pdf/3ca625ed7c4945612d0ab30ac122d6e88539792984b914ae8b88565ada108361.jpg)  
 图6  
 
@@ -255,19 +255,19 @@ Wireshark的默认设置堪称友好，但不同用户的从事领域和使用�
 
 ![](https://cdn-xlab-data.openxlab.org.cn/pdf/918e5ced-60f0-4dcc-836c-e5b250281d60.pdf/d1bd03b929835e98e54c791a58ae875e86bc92e34b05db9372f53d267ccf91c7.jpg)  
 
-2．IP地址加port号是最常用的过滤方式。除了手工输入ip.addreq<IP地址> &&tcp.porteq<端口号>之类的过滤表达式，Wireshark还提供了更快捷的方式：右键单击感兴趣的包，选择Follow TCP/UDP Stream（选择TCP还是UDP要视传输层协议而定）就可以自动过滤（见图10）。  
+2．IP地址加port号是最常用的过滤方式。除了手工输入ip.addreq < IP地址 > &&tcp.porteq < 端口号 >之类的过滤表达式，Wireshark还提供了更快捷的方式：右键单击感兴趣的包，选择Follow TCP/UDP Stream（选择TCP还是UDP要视传输层协议而定）就可以自动过滤（见图10）。  
 而且该Stream的对话内容会在新弹出的窗口中显示出来。  
 
 ![](https://cdn-xlab-data.openxlab.org.cn/pdf/918e5ced-60f0-4dcc-836c-e5b250281d60.pdf/b0b8c05f92309878ace702b592fe83afb2bc272b09c2a4934f482d0da9155c9d.jpg)  
 
-经常有人在论坛上问，Wireshark是按照什么过滤出一个TCP/UDP Stream的？答案就是：两端的IP加port。单击Wireshark的Statistics-->Conversations，再单击TCP或者UDP标签就可以看到所有的Stream（见图11）。  
+经常有人在论坛上问，Wireshark是按照什么过滤出一个TCP/UDP Stream的？答案就是：两端的IP加port。单击Wireshark的Statistics-- >Conversations，再单击TCP或者UDP标签就可以看到所有的Stream（见图11）。  
 
 ![](https://cdn-xlab-data.openxlab.org.cn/pdf/918e5ced-60f0-4dcc-836c-e5b250281d60.pdf/2750fcb41b22aa82783618b98d5b3788aece1b1703a5c91e96b13359bd711ed3.jpg)  
 图11  
 
-3．用鼠标帮助过滤。我们有时因为Wireshark而苦恼，并不是因为它功能不够，而是强大到难以驾驭。比如在过滤时，有成千上万的条件可供选择，但怎么写才是合乎语法的？虽然http://www.wireshark.org/docs/dfref/ 提供了参考，但经常查找毕竟太费时费力了。Wireshark考虑到了这个需求，右键单击Wireshark上感兴趣的内容，然后选择Prepare a Filter-->Selected，就会在Filter框中自动生成过滤表达式。在有复杂需求的时候，还可以选择And、Or等选项来生成一个组合的过滤表达式。  
+3．用鼠标帮助过滤。我们有时因为Wireshark而苦恼，并不是因为它功能不够，而是强大到难以驾驭。比如在过滤时，有成千上万的条件可供选择，但怎么写才是合乎语法的？虽然http://www.wireshark.org/docs/dfref/ 提供了参考，但经常查找毕竟太费时费力了。Wireshark考虑到了这个需求，右键单击Wireshark上感兴趣的内容，然后选择Prepare a Filter-- >Selected，就会在Filter框中自动生成过滤表达式。在有复杂需求的时候，还可以选择And、Or等选项来生成一个组合的过滤表达式。  
 
-假如右键单击之后选择的不是Prepare a Filter，而是Apply as Filter-->Selected，则该过滤表达式生成之后还会自动执行。图12显示了在一个SMB包的SMB Command: Read AndX上右键单击，并选择Selected之后，所有的Read包都会被过滤出来。  
+假如右键单击之后选择的不是Prepare a Filter，而是Apply as Filter-- >Selected，则该过滤表达式生成之后还会自动执行。图12显示了在一个SMB包的SMB Command: Read AndX上右键单击，并选择Selected之后，所有的Read包都会被过滤出来。  
 
 ![](https://cdn-xlab-data.openxlab.org.cn/pdf/918e5ced-60f0-4dcc-836c-e5b250281d60.pdf/12b5cca897d0764432a24c3d079955ffac1c952db5f4ecd09304645de7dc81ac.jpg)  
 ![](https://cdn-xlab-data.openxlab.org.cn/pdf/918e5ced-60f0-4dcc-836c-e5b250281d60.pdf/2f2b5db3df992f607fbc29a6e0b4feda8d074cc8466850242f72cc897a3556cb.jpg)  
@@ -275,24 +275,24 @@ Wireshark的默认设置堪称友好，但不同用户的从事领域和使用�
 
 有时候你会发现，保存后的文件再打开时会显示很多错误。这是因为过滤后得到的不再是一个完整的TCP Stream，就像抓包时漏抓了很多一样。所以选择 Displayed 选项时要慎重考虑。  
 
-注意：有些Wireshark版本把这个功能移到了菜单File-->Export Specified Packets…选项中，如图14所示。  
+注意：有些Wireshark版本把这个功能移到了菜单File-- >Export Specified Packets…选项中，如图14所示。  
 
 ![](https://cdn-xlab-data.openxlab.org.cn/pdf/918e5ced-60f0-4dcc-836c-e5b250281d60.pdf/218503a6397dfc45278049258614c29d6b8a66f45d2401500b6ed0f91d5971a2.jpg)  
 # 四、让Wireshark自动分析  
 
 有些类型的问题，我们根本不需要研究包里的细节，直接交给Wireshark分析就行了。  
 
-1．单击Wireshark的Analyze-->Expert Info Composite，就可以在不同标签下看到不同级别的提示信息。比如重传的统计、连接的建立和重置统计，等等。在分析网络性能和连接问题时，我们经常需要借助这个功能。图15是TCP包的重传统计。  
+1．单击Wireshark的Analyze-- >Expert Info Composite，就可以在不同标签下看到不同级别的提示信息。比如重传的统计、连接的建立和重置统计，等等。在分析网络性能和连接问题时，我们经常需要借助这个功能。图15是TCP包的重传统计。  
 
 ![](https://cdn-xlab-data.openxlab.org.cn/pdf/918e5ced-60f0-4dcc-836c-e5b250281d60.pdf/a7904e9e97f92b8804ece06333d62ccf70867e93a2f30234f765bd2b07156fee.jpg)  
 图15  
 
-2．单击Statistics-->Service Response Time，再选定协议名称，可以得到响应时间的统计表。我们在衡量服务器性能时经常需要此统计结果。图16展示的是SMB2读写操作的响应时间。  
+2．单击Statistics-- >Service Response Time，再选定协议名称，可以得到响应时间的统计表。我们在衡量服务器性能时经常需要此统计结果。图16展示的是SMB2读写操作的响应时间。  
 
 ![](https://cdn-xlab-data.openxlab.org.cn/pdf/918e5ced-60f0-4dcc-836c-e5b250281d60.pdf/85d8059490afa9ffc6756f9a9c24ea2927883ecad9e5ab4422f3f660b3813522.jpg)  
 图16  
 
-3．单击Statistics- $\scriptscriptstyle->$ TCP Stream Graph，可以生成几类统计图。比如我曾经用Time-Sequence Graph (Stevens)生成了图17。  
+3．单击Statistics- $\scriptscriptstyle- >$ TCP Stream Graph，可以生成几类统计图。比如我曾经用Time-Sequence Graph (Stevens)生成了图17。  
 ![](https://cdn-xlab-data.openxlab.org.cn/pdf/918e5ced-60f0-4dcc-836c-e5b250281d60.pdf/4746461d4dd059b8632b564116a62f89d165a29184dda06bcdacce6dcb94c60e.jpg)  
 图17  
 
@@ -300,7 +300,7 @@ Wireshark的默认设置堪称友好，但不同用户的从事领域和使用�
 
 为什么Wireshark要把这个图称为“Stevens”呢？我猜是为了向《TCP/IP Illustrated》的作者Richard Stevens致敬。这也是我非常喜欢的一套书，在此推荐给所有读者。  
 
-4．单击Statistics-->Summary，可以看到一些统计信息，比如平均流量等，这有助于我们推测负载状况。比如图18中的网络包才1.594Mbit/s，说明流量低得很。  
+4．单击Statistics-- >Summary，可以看到一些统计信息，比如平均流量等，这有助于我们推测负载状况。比如图18中的网络包才1.594Mbit/s，说明流量低得很。  
 #  
 
 #  
@@ -701,7 +701,7 @@ Ack：确认号，如图5中的 $\mathsf{A c k}\!=\!6577$ ，接收方向发送�
 如图7所示，我故意尝试连接一台Linux服务器的445端口（一般只有Windows上才开启这个端口，Wireshark上把该端口显示为microsoft-ds），结果就被RST了。当然这个实验属于“没事找抽型”，实际环境中的RST往往意味着大问题。如果你在Wireshark中看到一个RST包，务必睁大眼睛好好检查。  
 
 ![](https://cdn-xlab-data.openxlab.org.cn/pdf/918e5ced-60f0-4dcc-836c-e5b250281d60.pdf/63fe8bfde4aa8ccfaa82a1887a837bd5de6df074e3d91095229135b4a7f246fc.jpg)  
-这三个包就是传说中的“三次握手”。事实上，握手时Seq号并不是从0开始的。我们之所以在Wireshark上看到 ${\mathsf{S e q}}{=}0$ ，是因为Wireshark启用了Relative Sequence Number。如果你想关闭这个功能，可以在Edit-->Preferences-->protocols-->TCP里设置。  
+这三个包就是传说中的“三次握手”。事实上，握手时Seq号并不是从0开始的。我们之所以在Wireshark上看到 ${\mathsf{S e q}}{=}0$ ，是因为Wireshark启用了Relative Sequence Number。如果你想关闭这个功能，可以在Edit-- >Preferences-- >protocols-- >TCP里设置。  
 
 握手过程可以用图9来表示。  
 
@@ -845,7 +845,7 @@ TCP显然不用电瓶车送包，但它也有“往返”的需要。因为发�
 ![](https://cdn-xlab-data.openxlab.org.cn/pdf/491af04e-9d5a-498c-a2f4-63ec5e7592dd.pdf/3dcbd58f7e331079e850f40ade814597341c5505491ea90bc190aea92ced359d.jpg)  
 图3  
 
-不难想象，超时重传对传输性能有严重影响。原因之一是在RTO阶段不能传数据，相当于浪费了一段时间；原因之二是拥塞窗口的急剧减小，相当于接下来传得慢多了。以我的个人经验，即便是万分之一的超时重传对性能的影响也非同小可。我们在Wireshark中如何检查重传情况呢？单击Analyze-->Expert Info Composite菜单，就能在Notes标签看到它们了，如图4所示。点开 $^{\cdot+}$ 号还能看到具体是哪些包发生了重传。  
+不难想象，超时重传对传输性能有严重影响。原因之一是在RTO阶段不能传数据，相当于浪费了一段时间；原因之二是拥塞窗口的急剧减小，相当于接下来传得慢多了。以我的个人经验，即便是万分之一的超时重传对性能的影响也非同小可。我们在Wireshark中如何检查重传情况呢？单击Analyze-- >Expert Info Composite菜单，就能在Notes标签看到它们了，如图4所示。点开 $^{\cdot+}$ 号还能看到具体是哪些包发生了重传。  
 
 ![](https://cdn-xlab-data.openxlab.org.cn/pdf/491af04e-9d5a-498c-a2f4-63ec5e7592dd.pdf/b372e51761cf4837f4c46c37b06913294d6b4a76bc25d74172097e6e152c75e0.jpg)  
 图4  
@@ -1024,7 +1024,7 @@ $   $=$  关于UDP就简单介绍这么多。虽然我觉得这个协议实在�
 
 前文介绍过一个文件共享协议，即Sun设计的NFS。理论上NFS可以应用在任何操作系统上，但是因为历史原因，现实中只在Linux/UNIX上流行。那Windows上一般使用什么共享协议呢？它就是微软维护的SMB协议，也叫Common Internet File System（CIFS）。CIFS协议有三个版本：SMB、SMB2和SMB3，目前SMB 和SMB2比较普遍。  
 
-在Windows上创建CIFS共享非常简单，只要在一个目录上右键单击，在弹出的菜单中选择属性-->共享，再配置一下权限就可以了。如图1所示，在其他电脑上只要输入IP和共享名就可以访问它了。  
+在Windows上创建CIFS共享非常简单，只要在一个目录上右键单击，在弹出的菜单中选择属性-- >共享，再配置一下权限就可以了。如图1所示，在其他电脑上只要输入IP和共享名就可以访问它了。  
 
 ![](https://cdn-xlab-data.openxlab.org.cn/pdf/f1b0314f-8c23-4a64-ac24-2b808dd06145.pdf/b87b61eb0bbd3795c5e0807b95d5d159009002a25ffdfa3751a0635180491c6f.jpg)  
 图1  
@@ -1461,7 +1461,7 @@ HTTP算不上一个复杂的协议，出问题的时候也能在浏览器上看�
 
 2 ．用 Wireshark 打开 rsasnakeoil2.cap  
 
-3．单击Wireshark的Edit-->Preferences-->Protocols-->SSL-->RSA keys list。然后按照IP Address,Port,Protocol,Private Key 的格式填好，如图10所示。  
+3．单击Wireshark的Edit-- >Preferences-- >Protocols-- >SSL-- >RSA keys list。然后按照IP Address,Port,Protocol,Private Key 的格式填好，如图10所示。  
 
 ![](https://cdn-xlab-data.openxlab.org.cn/pdf/0a901ddf-843c-46f2-8402-9078e63350be.pdf/2902d2058146227babaa137eb03eed18b1f6813627a2903176ace0b8ea97deed.jpg)  
 
@@ -1549,7 +1549,7 @@ AP_REQ $=$ “{账号A的信息，时间戳} Kclt-srv”，Ticket
 
 当你完全理解Kerberos之后，可能会意识到一个问题：不对啊，那么多加密信息都被Wireshark显示出来了，还有 什么安全可言？其实我是用linp1的密码生成了一个keytab文件，再用它来解密的。具体操作如下。  
 
-1．参照Wireshark的官方说明生成keytab文件，步骤请参考http://wiki. wireshark.org/Kerberos。2．把这个文件和网络包放到同一个目录里。3．打开Wireshark的Edit-->Preferences-->Protocols-->KRB5菜单，在图7所示的窗口勾上两个选项，然后输入keytab文件的名字。  
+1．参照Wireshark的官方说明生成keytab文件，步骤请参考http://wiki. wireshark.org/Kerberos。2．把这个文件和网络包放到同一个目录里。3．打开Wireshark的Edit-- >Preferences-- >Protocols-- >KRB5菜单，在图7所示的窗口勾上两个选项，然后输入keytab文件的名字。  
 ![](https://cdn-xlab-data.openxlab.org.cn/pdf/0a901ddf-843c-46f2-8402-9078e63350be.pdf/c3725971d083d72fb10755f3256483dc8a04e3ea446f41b71778f99b0d3454e6.jpg)  
 图7  
 
@@ -1557,7 +1557,7 @@ AP_REQ $=$ “{账号A的信息，时间戳} Kclt-srv”，Ticket
 
 这也是我喜欢Wireshark的原因之一，即使像Kerberos这么复杂的协议，它也能完全解析出来。这简直是域管理员的福音。我稍作回忆，就能想到很多处理过的Kerberos相关例子。  
 
-桎侑  ${\boldsymbol{1}}\,\mathbf{x}$  柖宨戽叵仫甮  $^\infty\backslash\backslash^{\infty}\mathrm{IP}$  圶坆  $\tt{:}\tt{>}\tt{N o}$  诅间柖斍仼朓劧噮  $=$  佌甮二℃\\<埥吓>№刟专脃诅间ザ  
+桎侑  ${\boldsymbol{1}}\,\mathbf{x}$  柖宨戽叵仫甮  $^\infty\backslash\backslash^{\infty}\mathrm{IP}$  圶坆  $\tt{:}\tt{ >}\tt{N o}$  诅间柖斍仼朓劧噮  $=$  佌甮二℃\\ < 埥吓 >№刟专脃诅间ザ  
 
 用了Wireshark抓包才知道，客户端用IP访问时用了NTLM作身份验证，而用域名访问时则用Kerberos。由于两种验证方法机制不同，所以结果也不一样。比如当客户端和服务器的时间没有同步时，Kerberos会认为该访问是重放攻击而拒绝访问，但NTLM不会。  
 
@@ -1812,15 +1812,15 @@ Isilon上了。也许明天关闭Isilon上的NIC teaming和LSO，问题就解决
 
 用Wireshark打开网络包之后，我习惯性地试了“性能问题三板斧”。  
 
-1．单击Statistics-->Summary。从Avg.MBit/sec看到，那段时间的流量不高，所以该存储的负担似乎并不重（见图1）  
+1．单击Statistics-- >Summary。从Avg.MBit/sec看到，那段时间的流量不高，所以该存储的负担似乎并不重（见图1）  
 
 ![](https://cdn-xlab-data.openxlab.org.cn/pdf/45354b27-0897-493e-9a2e-1323821f31c7.pdf/b481f3b90cd8411576cb778235119ea17c4b58763e9ed0a78ce3b67a76625f33.jpg)  
 
-2.单击Statistics- $->$ ServiceResponseTime-->ONC-RPC-- $\cdot>$ Program:NFSVersion:3-->CreateStat，可以看到各项操作的ServicResponseTime都不错（见图2），这进一步说明该存储并没有过载。  
+2.单击Statistics- $- >$ ServiceResponseTime-- >ONC-RPC-- $\cdot >$ Program:NFSVersion:3-- >CreateStat，可以看到各项操作的ServicResponseTime都不错（见图2），这进一步说明该存储并没有过载。  
 ![](https://cdn-xlab-data.openxlab.org.cn/pdf/45354b27-0897-493e-9a2e-1323821f31c7.pdf/a06a66e1541f386544afa6d343398d0d875521a57028d23189511081dba4c9c8.jpg)  
 图2  
 
-3．单击Analyze-->Expert InfoComposite，从Error和Warning里都没有看到报错，这说明网络没有问题（见图3）。假如有重传、乱序之类的现象，应该能在这个窗口里看到。  
+3．单击Analyze-- >Expert InfoComposite，从Error和Warning里都没有看到报错，这说明网络没有问题（见图3）。假如有重传、乱序之类的现象，应该能在这个窗口里看到。  
 
 ![](https://cdn-xlab-data.openxlab.org.cn/pdf/45354b27-0897-493e-9a2e-1323821f31c7.pdf/3064724a5518d4bf9fe48aaa85d498b2b3767ebb359f21fc7c448d5c7bf6f5c7.jpg)  
 图3  
@@ -1853,17 +1853,17 @@ NLM我是听说过的，是NetworkLockManager的简称。客户端用它来锁�
 
 为什么我要人工地去做如此简单的重复劳动呢？这明显更适合由程序来完成，但是Wireshark没有提供这项功能。几天后我随口向Patrick提起了这个问题，没想到他立即分享给我一段脚本。我只需要运行以下命令，该脚本就可以把总停滞时间计算出来了。  
 
-$\Lsh$  tshark -n -r <tcpdump_name> -z  
+$\Lsh$  tshark -n -r  < tcpdump_name > -z  
 
-proto,colinfo,frame.time_relative,frame.time_relative'-z proto,colinfo,tcp.ack&&(tcp.srcport  $==$  <source_port>&&tcp.dstport  $==
+proto,colinfo,frame.time_relative,frame.time_relative'-z proto,colinfo,tcp.ack&&(tcp.srcport  $==$   < source_port >&&tcp.dstport  $==
 
-$  <destination port>),tcp.ack'-z'proto,colinfo,tcp.window_size &&(tcp.srcport  $==
+$   < destination port >,tcp.ack'-z'proto,colinfo,tcp.window_size &&tcp.srcport  $==
 
-$  <source_port>&&tcp.dstport  $==$  <destination port>),tcp.window_size'lawk-f
+$   < source_port >&&tcp.dstport  $==$   < destination port >),tcp.window_size'lawk-f
 
- <script>  
+  < script >  
 
-<script>指的就是Patrick分享的脚本。由于篇幅所限，我就不把脚本内容贴出来了，这也不是本文的重点。我们真正要关注的是上面用到的tshark命令，它相当于Wireshark的命令行版本。和图形界面相比，命令行有一些先天的优势。  
+ < script >指的就是Patrick分享的脚本。由于篇幅所限，我就不把脚本内容贴出来了，这也不是本文的重点。我们真正要关注的是上面用到的tshark命令，它相当于Wireshark的命令行版本。和图形界面相比，命令行有一些先天的优势。  
 
 ·如上例所示，命令行的输出可以通过awk之类的方式直接处理，这是图形界面无法实现的。有一些高手之所以说tshark的功能比Wireshark强大，也大多出于这个原因。  
 
@@ -1943,7 +1943,7 @@ $3\,\mathfrak{s}$  妈佛绥订工丰萄金岭宸寿诣· "conv，xxx"就可以�
 ![](https://cdn-xlab-data.openxlab.org.cn/pdf/45354b27-0897-493e-9a2e-1323821f31c7.pdf/d7cb0dff853947754ac9a90e2845eadc38b5d7c14bd74d4edf3ef32a977d4908.jpg)  
 图8  
 
-4.如果一个包大得连tshark都无法打开，有没有办法切分成多个？有办法，可以使用editcap命令来做到。我常用"editcap <input file><output file>-i<seconds per file>"或者“editcap <input file><output file>-c<packetsperfile>"两种方式。图9所示的例子以每8秒为间隔切分了这个包。  
+4.如果一个包大得连tshark都无法打开，有没有办法切分成多个？有办法，可以使用editcap命令来做到。我常用"editcap  < input file > < output file >-i < seconds per file >"或者“editcap  < input file > < output file >-c < packetsperfile >"两种方式。图9所示的例子以每8秒为间隔切分了这个包。  
 
 ![](https://cdn-xlab-data.openxlab.org.cn/pdf/45354b27-0897-493e-9a2e-1323821f31c7.pdf/8049d5a5ad65ccdc79ed6c4cfc98a91d3a33c5be6f5b55d86590fc234fda82a6.jpg)  
 图9  
