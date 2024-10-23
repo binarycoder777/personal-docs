@@ -8,3 +8,5 @@
 
 希望你能在这些随笔中找到对你有用的信息。如果有任何问题或想法，欢迎通过社交媒体或邮箱与我交流。让我们一起学习，一起成长！
 
+本站总访问量 <span id="busuanzi_value_site_pv" /> 次
+本站访客数 <span id="busuanzi_value_site_uv" /> 人次

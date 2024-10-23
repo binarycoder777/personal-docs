@@ -6,7 +6,8 @@ import MNavLinks from './components/MNavLinks.vue'
 import About from './components/About.vue'
 import GiscusComment from './components/GiscusComment.vue'
 
-
+import { inBrowser } from 'vitepress'
+import busuanzi from 'busuanzi.pure.js'
 
 
 import './style.css'
@@ -35,5 +36,10 @@ export default {
     app.component('About',About);
     app.component('PersonalInfo',PersonalInfo);
     app.component('GiscusComment',GiscusComment);
+    if (inBrowser) {
+      router.onAfterRouteChanged = () => {
+        busuanzi.fetch()
+      }
+    }
   }
 }
