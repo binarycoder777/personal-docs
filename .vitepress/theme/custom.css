@@ -12,6 +12,10 @@
     border-radius: 50%; 
 }
 
+.content-body {
+    font-size: 18px !important;
+}
+
 body {
     font-family: 'Liu Jian Mao Cao', cursive;
     margin: 0;
