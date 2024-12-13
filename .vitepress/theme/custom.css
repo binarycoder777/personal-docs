@@ -11,3 +11,11 @@
 .VPImage{
     border-radius: 50%; 
 }
+
+body {
+    font-family: 'Liu Jian Mao Cao', cursive;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+  
