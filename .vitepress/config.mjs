@@ -56,7 +56,7 @@ export default defineConfig({
   title: "BinaryCoder777",
   description: "个人站点",
   head:[
-    ['link',{rel:'icon',href:'/.vitepress/public/favicon.ico'}]
+    ['link',{rel:'icon',href:'./public/favicon.ico'}]
   ],
   themeConfig: {
     siteTitle: 'BinaryCoder777',
