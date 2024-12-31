@@ -437,10 +437,7 @@
   margin-bottom: 15px;
 }
 
-.language-stats img {
-  max-width: 50%;
-  height: auto;
-}
+
 
 .lastes-news {
   padding: 2rem;
@@ -516,6 +513,22 @@
   font-size: 0.9rem;
   text-align: center;
 }
+
+.language-stats img {
+  max-width: 50%;
+  height: auto;
+  transition: transform 0.3s ease-in-out; /* 平滑过渡效果 */
+}
+
+.language-stats img:hover {
+  transform: scale(1.2); /* 鼠标悬停时放大 1.2 倍 */
+}
+
+
+
+
+
+
 /* Add more styles as necessary */
 </style>
   
