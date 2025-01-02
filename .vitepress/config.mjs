@@ -56,7 +56,7 @@ export default defineConfig({
   title: "BinaryCoder777",
   description: "个人站点",
   head:[
-    ['link',{rel:'icon',href:'./public/favicon.ico'}]
+    ['link', { rel: 'icon', href: '/favicon.ico' }]  // 使用根路径引用
   ],
   themeConfig: {
     siteTitle: 'BinaryCoder777',
@@ -89,9 +89,6 @@ export default defineConfig({
           {
             text: "个人周刊",
             link: "https://binarycoder777.com/zh-cn"
-          },{
-            text:'LeetCode',
-            link:'https://leetcode.cn/'
           }
         ]
       }

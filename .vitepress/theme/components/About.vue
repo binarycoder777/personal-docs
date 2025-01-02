@@ -199,12 +199,76 @@
 
 
 <style scoped>
+/* 1. 组织样式结构，添加注释分类 */
+/* Base styles
+-------------------------- */
+.container {
+  position: relative;
+  display: flex;
+  max-width: 90%;
+  margin: 2rem auto;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+  flex-direction: column;
+}
 
-/**
- * education and experience 
- */
+.container-top {
+  position: relative;
+  display: flex;
+  max-width: 90%;
+  margin: 2rem auto 10px;
+}
 
- .timeline { margin-bottom: 30px; }
+/* Profile section
+-------------------------- */
+.introduction {
+  flex: 1;
+  padding: 20px;
+}
+
+.introduction h1 {
+  font-size: 24px;
+  color: var(--vp-c-text-1);
+}
+
+.introduction p {
+  font-size: 16px;
+  line-height: 1.6;
+  /* color: var(--vp-c-text-2); */
+}
+
+/* Social links
+-------------------------- */
+.social-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 25px;
+  margin-top: 20px;
+}
+
+.social-links a {
+  text-decoration: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  color: #fff;
+  background-color: hsl(45, 68%, 54%);
+  font-weight: 500;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.social-links a:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Timeline section
+-------------------------- */
+.timeline { 
+  margin-bottom: 30px; 
+}
 
 .timeline .title-wrapper {
   display: flex;
@@ -269,8 +333,8 @@
 }
 
 
-/* 个人技能 */
-
+/* Skills section
+-------------------------- */
 .skills-title {
   margin-bottom: 20px;
   font-size: 1.5rem;
@@ -298,128 +362,62 @@
 }
 
 .skill-progress-bg {
-  background: hsl(0, 0%, 22%);
+  background: var(--vp-c-bg-soft);
   width: 100%;
   height: 8px;
   border-radius: 10px;
+  overflow: hidden;
 }
 
 .skill-progress-fill {
   background: linear-gradient(to right, hsl(45, 53%, 50%), hsl(45, 100%, 68%));
   height: 100%;
   border-radius: inherit;
+  transition: width 0.8s ease-in-out;
 }
 
-.container {
-  position: relative;
+/* Feature cards
+-------------------------- */
+.features-cards {
   display: flex;
-  max-width: 90%;
-  margin: auto;
-  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-  margin-bottom: 50px;
-  margin-top: 20px;
-  flex-direction: column;
+  justify-content: space-around;
+  margin-bottom: 2%;
+  gap: 2rem;
 }
 
-.container-top {
-  position: relative;
-  display: flex;
-  max-width: 90%;
-  margin: auto;
-  /* box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1); */
-  margin-bottom: 10px;
-  margin-top: 20px;
+.feature-card {
+  width: 300px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.introduction {
-  flex: 1;
-  padding: 20px;
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-.introduction h1 {
-  font-size: 24px;
-  color: #333;
+.card-icon {
+  margin-bottom: 0.5rem;
+  display: flex;justify-content: center;justify-items: center;
 }
 
-.introduction p {
-  font-size: 16px;
-  line-height: 1.6;
-  color: #666;
+.card-icon img {
+  width: 50px;
+  /* 根据实际需求调整 */
 }
 
-.social-links {
-  display: flex;
-  justify-content: center;
-  /* 水平居中 */
-  align-items: center;
-  /* 垂直居中 */
-  gap: 25px;
-  /* 设置链接之间的间隔 */
-  margin-top: 20px;
+.card-title {
+  font-size: 1.2rem;
+  /* color: #333; */
+  align-content: center;
 }
 
-.social-links a {
-  text-decoration: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  color: #fff;
-  background-color: hsl(45, 68%, 54%);
-  /* 以下是新增样式，用于提升可读性和美观 */
-  font-weight: 500;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  display: flex; /* 使图标和文本水平对齐 */
-  align-items: center; /* 居中对齐图标和文本 */
-}
-
-.social-links i {
-  margin-right: 8px; /* 图标和文本之间的间隔 */
-}
-
-.tooltip {
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
-}
-
-.tooltip::after,
-.tooltip::before {
-  content: "";
-  position: absolute;
-  visibility: hidden;
-  opacity: 0;
-  transition: all 0.3s ease;
-}
-
-.tooltip::after {
-  content: attr(data-title);
-  bottom: 120%; /* 调整这个值来改变工具提示与图标的距离 */
-  left: 50%;
-  transform: translateX(-50%);
-  white-space: nowrap;
-  background-color: #555; /* 工具提示的背景色 */
-  color: #fff; /* 文字颜色 */
-  padding: 8px 12px; /* 内边距 */
-  border-radius: 6px; /* 圆角 */
-  font-size: 14px; /* 文字大小 */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 阴影效果 */
-  z-index: 1000;
-}
-
-.tooltip::before {
-  content: "";
-  bottom: 110%; /* 箭头与图标的距离 */
-  left: 50%;
-  transform: translateX(-50%) rotate(45deg);
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #555 transparent transparent transparent; /* 箭头颜色 */
-}
-
-.tooltip:hover::after,
-.tooltip:hover::before {
-  visibility: visible;
-  opacity: 1;
+.card-detail {
+  /* color: #666; */
+  font-size: 0.9rem;
+  text-align: center;
 }
 
 .language-stats {
@@ -473,45 +471,58 @@
 
 .features-subtitle {
   margin-bottom: 1rem;
-  color: #666;
-}
-
-.features-cards {
-  display: flex;
-  justify-content: space-around;
-  margin-bottom: 2%;
-}
-
-.feature-card {
-  width: 300px;
-  /* 根据实际需求调整 */
-  padding: 1rem;
-  /* background: #ffffff; */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  margin: 0 1rem;
-}
-
-.card-icon {
-  margin-bottom: 0.5rem;
-  display: flex;justify-content: center;justify-items: center;
-}
-
-.card-icon img {
-  width: 50px;
-  /* 根据实际需求调整 */
-}
-
-.card-title {
-  font-size: 1.2rem;
-  /* color: #333; */
-  align-content: center;
-}
-
-.card-detail {
   /* color: #666; */
-  font-size: 0.9rem;
-  text-align: center;
+}
+
+.social-links i {
+  margin-right: 8px; /* 图标和文本之间的间隔 */
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.tooltip::after,
+.tooltip::before {
+  content: "";
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.tooltip::after {
+  content: attr(data-title);
+  bottom: 120%; /* 调整这个值来改变工具提示与图标的距离 */
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  background-color: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.tooltip::before {
+  content: "";
+  bottom: 110%; /* 箭头与图标的距离 */
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: var(--vp-c-bg-soft) transparent transparent transparent; /* 箭头颜色 */
+}
+
+.tooltip:hover::after,
+.tooltip:hover::before {
+  visibility: visible;
+  opacity: 1;
 }
 
 .language-stats img {
@@ -524,11 +535,70 @@
   transform: scale(1.2); /* 鼠标悬停时放大 1.2 倍 */
 }
 
+/* Responsive design
+-------------------------- */
+@media (max-width: 768px) {
+  .container-top {
+    flex-direction: column;
+  }
 
+  .features-cards {
+    flex-direction: column;
+    align-items: center;
+  }
 
+  .feature-card {
+    width: 100%;
+    max-width: 300px;
+  }
 
+  .features-section {
+    max-width: 100%;
+  }
+}
 
+/* Animations
+-------------------------- */
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
 
-/* Add more styles as necessary */
+#profile-img {
+  transition: transform 0.6s ease-in-out;
+}
+
+#profile-img:hover {
+  animation: rotate 1s linear;
+}
+
+/* Tooltip enhancements
+-------------------------- */
+.tooltip::after {
+  transition: all 0.3s ease;
+  z-index: 1000;
+  font-size: 14px;
+  background-color: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
+  padding: 8px 12px;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
 </style>
+
+<script setup>
+import { ref } from 'vue'
+
+// State management
+const rotation = ref('rotate(0deg)')
+
+// Animation handlers
+const startRotation = () => {
+  rotation.value = 'rotate(360deg)'
+}
+
+const stopRotation = () => {
+  rotation.value = 'rotate(0deg)'
+}
+</script>
   
