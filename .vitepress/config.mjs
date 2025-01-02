@@ -56,7 +56,7 @@ export default defineConfig({
   title: "BinaryCoder777",
   description: "个人站点",
   head:[
-    ['link', { rel: 'icon', href: '/favicon.ico' }]  // 使用根路径引用
+    ['link', { rel: 'icon', href: 'https://raw.githubusercontent.com/binarycoder777/personal-pic/main/pic/favicon.ico' }]  // 使用根路径引用
   ],
   themeConfig: {
     siteTitle: 'BinaryCoder777',

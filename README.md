@@ -38,6 +38,7 @@
 
 </div>
 
+![](https://raw.githubusercontent.com/binarycoder777/personal-pic/main/pic/20250102102537.png)
 
 ## 关于站点
 
