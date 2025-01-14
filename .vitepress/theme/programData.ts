@@ -49,11 +49,17 @@ export const NAV_DATA: NavData[] = [
         title: 'StackOverFlow',
         desc: '专为程序员提供的国际性问题解答交流社区',
         link: 'https://stackoverflow.com'
+      },
+      {
+        icon: 'https://www.nodeseek.com/static/image/favicon/android-chrome-192x192.png',
+        title: 'nodeseek',
+        desc: 'nodeseek: Daily updates and insights on technology, software, and innovation.',
+        link: 'https://www.nodeseek.com',
       }
     ]
   },
   {
-    title: 'Java资源',
+    title: '后端资源',
     items: [
       {
         icon: 'https://besticon-demo.herokuapp.com/icon?url=https://docs.oracle.com&size=80..120..200',
@@ -72,12 +78,7 @@ export const NAV_DATA: NavData[] = [
         title: 'The Destination for Java Developers',
         desc: '来自专家的数百个教程、新闻和视频，都在这里。',
         link: 'https://dev.java/',
-      }
-    ]
-  },
-  {
-    title: 'Go语言资源',
-    items: [
+      },
       {
         icon: 'https://besticon-demo.herokuapp.com/icon?url=https://go.dev/&size=80..120..200',
         title: 'Go语言官网',
@@ -128,11 +129,6 @@ export const NAV_DATA: NavData[] = [
         title: '动手实战人工智能 AI By Doing',
         desc: '一本中文电子书，通过实例介绍一些AI算法',
         link: 'https://aibydoing.com/intro'
-    },{      
-      icon: 'https://lf-coze-web-cdn.coze.cn/obj/coze-web-cn/obric/coze/favicon.1970.png      ',
-      title: '扣子',
-      desc: '扣子是新一代AI 大模型智能体开发平台。整合了插件、长短期记忆、工作流、卡片等丰富能力',
-      link: 'https://www.coze.cn'
     },{
       icon:'https://tools.webcrumbs.org/static/media/frontend_ai.8fa63940a5bc5d041f25fd1be390f1c1.svg',
       title:'Frontend AI',
@@ -167,12 +163,6 @@ export const NAV_DATA: NavData[] = [
   {
     title: '常用工具',
     items: [
-      {
-        icon:'',
-        title:'ImageSearch',
-        desc:'一个以图搜图的网站，聚合了百度和谷歌的结果。',
-        link:'https://picfind.top'
-      },
       {
         icon: 'https://tinypng.com/images/apple-touch-icon.png',
         title: 'TinyPNG',
