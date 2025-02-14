@@ -81,7 +81,7 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    background: url('https://binarycoder777-site.oss-cn-chengdu.aliyuncs.com/demo.gif?Expires=1739514924&OSSAccessKeyId=TMP.3KiwYeoFmCv4ZYY81Pxtd8sQCrHPetjh6A3FJoRqDvvjGEULvX1Nczt9unPaHMbztDJYsyZNU9s5GMChZSs71MbgAiS8Sk&Signature=WHSk%2FlLaXSAf%2FtgIu40sehpKpjw%3D') no-repeat center center;
+    background: url('https://binarycoder777-site.oss-cn-chengdu.aliyuncs.com/demo.gif') no-repeat center center;
     background-size: cover;
     /* 确保背景图片覆盖整个页面 */
     z-index: -2;

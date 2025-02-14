@@ -95,6 +95,7 @@ export default defineConfig({
     ],
     socialLinks: [
       { icon: 'github', link: 'https://github.com/binarycoder777' },
+      { icon: 'twitter', link: 'https://x.com/binarycoder777' },
     ],
 
     footer: {
