@@ -30,7 +30,7 @@
 
 
 
-<p>基于VitePress，支持RSS订阅、Giscus评论、中英双语阅读、明暗主题等</p>
+<p>基于VitePress，支持RSS订阅、Giscus评论、中英双语阅读、明暗主题、live2d等</p>
 
 ```
 🕙 好记性不如烂笔头。一个记录自己在生活、工作亦或学习中遇到的一些问题、感触的博客～
@@ -42,7 +42,7 @@
 
 ## 关于站点
 
-站点基于Vitepress进行搭建，集成了giscus评论、RSS订阅等功能，站点内容遵循MIT 授权许可，详情可参阅[LICENSE](https://github.com/binarycoder777/personal-docs?tab=MIT-1-ov-file)。
+站点基于Vitepress进行搭建，集成了giscus评论、RSS订阅、live2d等功能，站点内容遵循MIT 授权许可，详情可参阅[LICENSE](https://github.com/binarycoder777/personal-docs?tab=MIT-1-ov-file)。
 
 ## 快速上手
 
