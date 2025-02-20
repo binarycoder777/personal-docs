@@ -1,29 +1,30 @@
 ---
-title: Wireshark网络分析就这么简单
+title: 深入剖析 Nginx
 layout: page
 ---
 <div class="book-info">
   <div class="book-cover">
-    <img src="https://raw.githubusercontent.com/binarycoder777/personal-pic/main/pic/20250220083753.png" alt="Wireshark网络分析就这么简单">
+    <img src="https://raw.githubusercontent.com/binarycoder777/personal-pic/main/pic/20250220083053.png" alt="深入剖析Nginx">
   </div>
   <div class="book-details">
     <div class="book-title">
-      <h1>Wireshark网络分析就这么简单</h1>
-      <a href="https://github.com/binarycoder777/perosonal-book/blob/main/book/Wireshark%E7%BD%91%E7%BB%9C%E5%88%86%E6%9E%90%E5%B0%B1%E8%BF%99%E4%B9%88%E7%AE%80%E5%8D%95%20(%E6%9E%97%E6%B2%9B%E6%BB%A1)%20.pdf" class="read-link">阅读</a>
+      <h1>深入剖析 Nginx</h1>
+      <a href="https://github.com/binarycoder777/perosonal-book/blob/main/book/%E6%B7%B1%E5%85%A5%E5%89%96%E6%9E%90Nginx(%E6%9C%AC%E4%B9%A6%E4%B8%8D%E6%8F%90%E4%BE%9B%E5%85%89%E7%9B%98%E4%B8%8B%E8%BD%BD%E9%93%BE%E6%8E%A5)%20(%E9%AB%98%E7%BE%A4%E5%87%AF)%20(Z-Library).pdf" class="read-link">阅读</a>
     </div>
     <div class="author-info">
       <h2>作者信息</h2>
-      <p><strong>作者</strong>: 林沛满</p>
+      <p><strong>作者</strong>: 陶辉</p>
     </div>
     <div class="book-intro">
       <h2>内容简介</h2>
       <div class="intro-content">
-        <p>本书详细介绍了使用 Wireshark 进行网络分析的方法和技巧。Wireshark 是世界上最广泛使用的网络协议分析器，它可以让你看到网络上发生的一切。</p>
-        <p>书中从 Wireshark 的基础知识开始，包括软件的安装和使用方法，然后深入讲解了各种网络协议的分析方法，包括 TCP/IP、HTTP、DNS 等常见协议。通过大量的实际案例和详细的操作步骤，读者可以快速掌握使用 Wireshark 进行网络故障排查、安全分析和性能优化的技能。</p>
+        <p>本书是深入讲解Nginx服务器的权威著作，基于Nginx 1.25.0版本，系统地梳理了Nginx的架构设计和模块开发。书中不仅详细解析了Nginx的源码实现，还包含了大量的实战经验和最佳实践。</p>
+        <p>全书分为基础架构、模块开发和架构解析三大部分。基础架构部分介绍了Nginx的设计理念、事件驱动模型和进程模型；模块开发部分详细讲解了HTTP模块、邮件代理模块等核心功能的开发方法；架构解析部分深入分析了Nginx的内存管理、进程间通信等关键技术，并探讨了其高性能的实现原理。</p>
       </div>
     </div>
   </div>
 </div>
+
 
 <style>
 .book-info {
@@ -112,3 +113,4 @@ layout: page
   background-color: var(--vp-c-brand-dark);
 }
 </style>
+

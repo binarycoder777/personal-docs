@@ -4,12 +4,12 @@ layout: page
 ---
 <div class="book-info">
   <div class="book-cover">
-    <img src="https://raw.githubusercontent.com/binarycoder777/personal-pic/main/pic/20250220083753.png" alt="Wireshark网络分析就这么简单">
+    <img src="https://raw.githubusercontent.com/binarycoder777/personal-pic/main/pic/20250220084512.png" alt="Wireshark网络分析的艺术">
   </div>
   <div class="book-details">
     <div class="book-title">
-      <h1>Wireshark网络分析就这么简单</h1>
-      <a href="https://github.com/binarycoder777/perosonal-book/blob/main/book/Wireshark%E7%BD%91%E7%BB%9C%E5%88%86%E6%9E%90%E5%B0%B1%E8%BF%99%E4%B9%88%E7%AE%80%E5%8D%95%20(%E6%9E%97%E6%B2%9B%E6%BB%A1)%20.pdf" class="read-link">阅读</a>
+      <h1>Wireshark网络分析的艺术</h1>
+      <a href="https://github.com/binarycoder777/perosonal-book/blob/main/book/Wireshark%E7%BD%91%E7%BB%9C%E5%88%86%E6%9E%90%E7%9A%84%E8%89%BA%E6%9C%AF%EF%BC%88%E5%BC%82%E6%AD%A5%E5%9B%BE%E4%B9%A6%EF%BC%89%20(%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E6%8A%80%E6%9C%AF%E4%B8%9B%E4%B9%A6)%20(%E6%9E%97%E6%B2%9B%E6%BB%A1%20%5B%E6%9E%97%E6%B2%9B%E6%BB%A1%5D)%20.epub" class="read-link">阅读</a>
     </div>
     <div class="author-info">
       <h2>作者信息</h2>
@@ -18,8 +18,8 @@ layout: page
     <div class="book-intro">
       <h2>内容简介</h2>
       <div class="intro-content">
-        <p>本书详细介绍了使用 Wireshark 进行网络分析的方法和技巧。Wireshark 是世界上最广泛使用的网络协议分析器，它可以让你看到网络上发生的一切。</p>
-        <p>书中从 Wireshark 的基础知识开始，包括软件的安装和使用方法，然后深入讲解了各种网络协议的分析方法，包括 TCP/IP、HTTP、DNS 等常见协议。通过大量的实际案例和详细的操作步骤，读者可以快速掌握使用 Wireshark 进行网络故障排查、安全分析和性能优化的技能。</p>
+        <p>《Wireshark网络分析的艺术》是一本深入浅出的网络分析指南，为读者揭示了使用Wireshark进行网络分析的专业技巧和方法论。本书不仅介绍了Wireshark的基础操作和核心功能，更着重于如何在实际工作中运用这些功能解决问题。</p>
+        <p>全书分为基础篇、进阶篇和实战篇三个部分。基础篇介绍Wireshark的安装配置和基本使用方法；进阶篇深入讲解抓包原理、过滤器使用、协议分析等核心技能；实战篇则通过大量真实案例，展示如何使用Wireshark解决网络故障、分析安全问题、优化网络性能等实际问题。书中还包含了大量实用的分析技巧和经验总结，帮助读者快速提升网络分析能力。</p>
       </div>
     </div>
   </div>

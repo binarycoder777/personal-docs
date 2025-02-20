@@ -51,6 +51,7 @@ export default {
             path: 'https://raw.githubusercontent.com/iCharlesZ/vscode-live2d-models/master/model-library/hijiki/hijiki.model.json'
           }
         ],
+        dockedPosition: "right",
         menus: {
           disable: true,
         },
