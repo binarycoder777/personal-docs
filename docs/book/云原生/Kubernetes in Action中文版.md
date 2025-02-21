@@ -4,7 +4,7 @@ layout: page
 ---
 <div class="book-info">
   <div class="book-cover">
-    <img src="https://github.com/binarycoder777/personal-pic/blob/main/pic/Xnip2025-02-21_08-54-37.jpg" alt="Kubernetes in Action中文版">
+    <img src="https://github.com/binarycoder777/personal-pic/blob/main/pic/Xnip2025-02-21_08-54-37.jpg?raw=true" alt="Kubernetes in Action中文版">
   </div>
   <div class="book-details">
     <div class="book-title">
