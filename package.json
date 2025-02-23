@@ -2,6 +2,7 @@
   "devDependencies": {
     "busuanzi.pure.js": "^1.0.3",
     "sass": "^1.71.1",
+    "vite-plugin-sitemap": "^0.7.1",
     "vitepress": "^1.0.0-rc.42",
     "vue": "^3.4.19"
   },
