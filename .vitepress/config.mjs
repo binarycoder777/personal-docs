@@ -88,7 +88,7 @@ export default defineConfig({
           },
           {
             text: "个人周刊",
-            link: "https://binarycoder777.com/zh-cn"
+            link: "https://binarycoder777.com"
           }
         ]
       }
