@@ -104,7 +104,8 @@ export default defineConfig({
     socialLinks: [
       { icon: 'github', link: 'https://github.com/binarycoder777' },
       { icon: 'twitter', link: 'https://x.com/binarycoder777' },
-      { icon: 'discord', link: 'https://discord.gg/7k3fsuas' }
+      { icon: 'discord', link: 'https://discord.gg/7k3fsuas' },
+      { icon: 'vercel', link: 'https://vercel.com/binarycoder777s-projects' }
     ],
 
     footer: {
