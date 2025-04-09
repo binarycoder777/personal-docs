@@ -86,18 +86,18 @@ export default defineConfig({
             text: "ChatGPT",
             link: "https://chat.openai.com/"
           },
-          {
-            text: "个人周刊",
-            link: "https://binarycoder777.com"
-          },
-          {
-            text:"个人工具",
-            link:"https://personal-k7of91wlx-binarycoder777s-projects.vercel.app/"
-          },
-          {
-            text: "LobChat",
-            link: "https://lobe-chat-eight-virid-32.vercel.app/chat"
-          },
+          // {
+          //   text: "个人周刊",
+          //   link: "https://binarycoder777.com"
+          // },
+          // {
+          //   text:"个人工具",
+          //   link:"https://personal-k7of91wlx-binarycoder777s-projects.vercel.app/"
+          // },
+          // {
+          //   text: "LobChat",
+          //   link: "https://lobe-chat-eight-virid-32.vercel.app/chat"
+          // },
           {
             text: "iFixit",
             link: "https://zh.ifixit.com/"
