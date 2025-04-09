@@ -72,7 +72,7 @@ export default defineConfig({
     // navbar栏
     nav: [
       { text: '主页', link: '/' },
-      { text: '编程导航', link: '/docs/program' },
+      // { text: '编程导航', link: '/docs/program' },
       { text: '随思随笔', link: '/docs/article/' },
       { text: '技术秘籍', link: '/docs/book/' },
       { text: '关于我', link: '/docs/about' },
@@ -89,6 +89,10 @@ export default defineConfig({
           {
             text: "个人周刊",
             link: "https://binarycoder777.com"
+          },
+          {
+            text:"个人工具",
+            link:"https://personal-k7of91wlx-binarycoder777s-projects.vercel.app/"
           },
           {
             text: "LobChat",
