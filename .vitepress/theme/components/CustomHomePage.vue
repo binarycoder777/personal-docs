@@ -117,6 +117,14 @@ export default {
             },
             {
                 id: 3,
+                title: 'News Now',
+                status: 'completed',
+                description: '优雅阅读实时最热门新闻',
+                tags: ['新闻', '热门', '阅读'],
+                link: 'https://newsnow.binarycoder.org/'
+            },
+            {
+                id: 4,
                 title: 'CodeAtlas',
                 status: 'completed',
                 description: '一个收录了笔者平时遇见的工具、资源、站点导航站，方便笔者自己使用，也分享给有需要的朋友。',
@@ -124,7 +132,7 @@ export default {
                 link: 'https://personal-k7of91wlx-binarycoder777s-projects.vercel.app/'
             },
             {
-                id: 4,
+                id: 5,
                 title: '礼尚往来',
                 status: 'in-progress',
                 description: '生活中记录人情往来，婚礼酒宴，生日宴会，满月酒，乔迁之喜，升学宴，寿宴等的一款小程序',
@@ -132,7 +140,7 @@ export default {
                 // link: '#'
             },
             {
-                id: 5,
+                id: 6,
                 title: '酒桌欢乐局',
                 status: 'in-progress',
                 description: '一款适合聚会、饭局、朋友局的拼酒小程序，让你和朋友边玩边喝，挑战喝酒极限！支持多种玩法，快速开局，让酒局更有趣！',
