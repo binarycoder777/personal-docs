@@ -10,7 +10,7 @@ layout: page
   <div class="book-details">
     <div class="book-title">
       <h1>SpringBoot技术内幕</h1>
-      <a href="https://github.com/binarycoder777/perosonal-book/blob/main/book/Spring%E6%8A%80%E6%9C%AF%E5%86%85%E5%B9%95%EF%BC%88%E7%AC%AC2%E7%89%88%EF%BC%89%20(%E8%AE%A1%E6%96%87%E6%9F%AF).epub" class="read-link">阅读</a>
+      <a href="https://weread.qq.com" class="read-link">阅读</a>
     </div>
     <div class="author-info">
       <h2>作者信息</h2>
