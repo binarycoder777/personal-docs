@@ -9,7 +9,7 @@ import sidebar_book from '../generateSidebarBook.js'; // 导入自动生成的�
 import { RssPlugin } from 'vitepress-plugin-rss'
 
 // 配置 RSS 插件选项
-const baseUrl = 'https://binarycoder777.cn'
+const baseUrl = 'https://binarycoder777.com'
 const RSS = {
   title: 'BinaryCoder777',
   baseUrl,
@@ -19,19 +19,19 @@ const RSS = {
   author: {
     name: 'binarycoder777',
     email: 'atao67276@gmail.com',
-    link: 'https://binarycoder777.cn'
+    link: 'https://binarycoder777.com'
   },
   icon: true,
   authors: [
     {
       name: 'BinaryCoder777',
       email: 'atao67276@gmail.com',
-      link: 'https://binarycoder777.cn'
+      link: 'https://binarycoder777.com'
     },
     {
       name: 'BinaryCoder777',
       email: '',
-      link: 'https://binarycoder777.cn'
+      link: 'https://binarycoder777.com'
     }
   ],
   filename: 'feed.rss',
@@ -150,7 +150,7 @@ export default defineConfig({
       }
     },
     sitemap: {
-        hostname: 'https://binarycoder777.cn'
+        hostname: 'https://binarycoder777.com'
       }
   },
 })
