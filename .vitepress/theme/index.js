@@ -18,6 +18,7 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 
 import CustomHomePage from './components/CustomHomePage.vue';
+import BookInfo from './components/BookInfo.vue';
 
 
 library.add(fas, fab);
@@ -37,6 +38,7 @@ export default {
     app.component('MNavLinks', MNavLinks);
     app.component('About',About);
     app.component('CustomHomePage',CustomHomePage);
+    app.component('BookInfo', BookInfo);
     app.component('GiscusComment',GiscusComment);
     if (inBrowser) {
       router.onAfterRouteChanged = () => {

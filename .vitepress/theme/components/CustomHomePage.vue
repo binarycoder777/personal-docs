@@ -113,7 +113,7 @@ export default {
                 status: 'completed',
                 description: '一个记录互联网上实时发生的科技新闻和奇闻趣事的站点，项目保持每周六或周日更新，喜欢的朋友可以免费订阅，不错过每周发生的科技奇闻趣事～',
                 tags: ['周刊', '科技', '前沿'],
-                link: 'https://binarycoder777.com/'
+                link: 'https://weekly.binarycoder.org/'
             },
             {
                 id: 3,
